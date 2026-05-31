@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Southern Namibia &amp; Kalahari Expedition</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap');
+
+:root{
+  --bg:#15110d;
+  --bg2:#1c1611;
+  --panel:#221a13;
+  --panel2:#2a2017;
+  --bone:#ece0cc;
+  --bone-dim:#b8a98f;
+  --muted:#8a7a64;
+  --rust:#c0512b;
+  --rust-bright:#dd6233;
+  --ochre:#dba23f;
+  --ochre-bright:#f0bd54;
+  --teal:#5b97a0;
+  --teal-bright:#74b7c0;
+  --green:#869150;
+  --green-bright:#a6b366;
+  --line:rgba(236,224,204,.10);
+  --line-soft:rgba(236,224,204,.05);
+  --shadow:0 30px 60px -20px rgba(0,0,0,.7);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--bone);
+  font-family:'Spectral',serif;
+  font-weight:300;
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.4;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(192,81,43,.06), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(219,162,63,.05), transparent 45%);
+}
+/* topographic texture overlay */
+.topo{
+  position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cg fill='none' stroke='%23ece0cc' stroke-opacity='0.03' stroke-width='1'%3E%3Cpath d='M0 120 Q150 60 300 110 T600 90'/%3E%3Cpath d='M0 200 Q150 150 300 200 T600 180'/%3E%3Cpath d='M0 290 Q160 230 320 290 T600 270'/%3E%3Cpath d='M0 380 Q140 320 300 380 T600 360'/%3E%3Cpath d='M0 470 Q160 410 320 470 T600 450'/%3E%3Cpath d='M0 560 Q150 500 300 560 T600 540'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ---------- type ---------- */
+.eyebrow{
+  font-family:'Oswald',sans-serif;font-weight:500;text-transform:uppercase;
+  letter-spacing:.42em;font-size:.72rem;color:var(--rust-bright);
+}
+h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:600;line-height:1.05;text-transform:uppercase;letter-spacing:.02em}
+.serif-ital{font-style:italic;font-family:'Spectral',serif}
+
+/* progress rail */
+#rail{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;
+  background:linear-gradient(90deg,var(--rust),var(--ochre));box-shadow:0 0 12px rgba(219,162,63,.5)}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  overflow:hidden;padding:80px 0 0}
+.hero-sky{position:absolute;inset:0;z-index:0;
+  background:linear-gradient(180deg,#0d0b09 0%,#241410 38%,#3a1d12 60%,#5a2c14 78%,#7a3d18 100%)}
+.hero-sun{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
+  width:340px;height:340px;border-radius:50%;z-index:0;
+  background:radial-gradient(circle,#f0bd54 0%,#dd6233 45%,rgba(221,98,51,0) 72%);
+  filter:blur(2px);opacity:.85;animation:rise 2.4s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{transform:translate(-50%,30%);opacity:0}to{transform:translate(-50%,-50%);opacity:.85}}
+.hero-dunes{position:absolute;left:0;right:0;bottom:0;z-index:1;display:block}
+.hero-content{position:relative;z-index:3;text-align:center;padding-bottom:60px}
+.hero-content .eyebrow{animation:fade 1s .3s both}
+.hero h1{font-size:clamp(2.6rem,8vw,6.4rem);font-weight:700;margin:.18em 0 .1em;
+  letter-spacing:.01em;text-shadow:0 4px 30px rgba(0,0,0,.6)}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero h1 .ln span{display:block;animation:up 1s cubic-bezier(.2,.8,.2,1) both}
+.hero h1 .ln:nth-child(1) span{animation-delay:.4s}
+.hero h1 .ln:nth-child(2) span{animation-delay:.55s;color:var(--ochre-bright)}
+@keyframes up{from{transform:translateY(110%)}to{transform:translateY(0)}}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.hero-meta{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;margin-top:26px;animation:fade 1s .9s both}
+.hero-meta div{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.16em;font-size:.82rem}
+.hero-meta b{display:block;font-size:1.5rem;color:var(--bone);letter-spacing:.04em;font-weight:600}
+.hero-meta span{color:var(--bone-dim);font-size:.66rem;letter-spacing:.28em}
+.scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:4;
+  font-family:'Oswald';text-transform:uppercase;letter-spacing:.3em;font-size:.62rem;color:var(--bone-dim);
+  animation:fade 1s 1.4s both,bob 2s 2s infinite}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* ---------- sections ---------- */
+section{padding:90px 0;position:relative}
+.sec-head{margin-bottom:50px}
+.sec-head h2{font-size:clamp(1.9rem,4.5vw,3rem);margin-top:.15em}
+.sec-head p{color:var(--bone-dim);max-width:620px;margin-top:14px;font-size:1.06rem}
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- laws ---------- */
+.laws{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.law{background:linear-gradient(160deg,var(--panel),var(--bg2));padding:30px 24px;position:relative;transition:.4s}
+.law:hover{background:linear-gradient(160deg,var(--panel2),var(--panel))}
+.law .no{font-family:'Oswald';font-size:2.6rem;font-weight:700;color:var(--rust);opacity:.55;line-height:1}
+.law h4{font-size:1rem;margin:14px 0 8px;color:var(--ochre-bright);letter-spacing:.05em}
+.law p{font-size:.94rem;color:var(--bone-dim)}
+
+/* ---------- map ---------- */
+.mapbox{background:linear-gradient(165deg,#1a130d,#0f0b08);border:1px solid var(--line);
+  border-radius:10px;padding:18px 18px 8px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.maptoggle{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.tg{font-family:'Oswald';text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;
+  padding:9px 16px;border:1px solid var(--line);border-radius:30px;background:transparent;color:var(--bone-dim);
+  cursor:pointer;transition:.3s}
+.tg:hover{color:var(--bone);border-color:var(--bone-dim)}
+.tg.act[data-r="1"]{background:rgba(91,151,160,.16);border-color:var(--teal);color:var(--teal-bright)}
+.tg.act[data-r="2"]{background:rgba(134,145,80,.16);border-color:var(--green);color:var(--green-bright)}
+.tg.act[data-r="0"]{background:rgba(219,162,63,.14);border-color:var(--ochre);color:var(--ochre-bright)}
+svg.map{width:100%;height:auto;display:block}
+.node{cursor:pointer}
+.node circle{transition:.3s}
+.node:hover circle.dot{r:11;fill:var(--ochre-bright)}
+.node text{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;fill:var(--bone);font-size:13px;pointer-events:none}
+.node .sub{fill:var(--bone-dim);font-size:9.5px;letter-spacing:.14em}
+.path-fixed{fill:none;stroke:var(--ochre);stroke-width:2.4;stroke-linecap:round;
+  stroke-dasharray:8 7;filter:drop-shadow(0 0 6px rgba(219,162,63,.4))}
+.path-r{fill:none;stroke-width:2.6;stroke-linecap:round;opacity:0;transition:opacity .5s}
+.path-r.show{opacity:1}
+.path-r1{stroke:var(--teal-bright);filter:drop-shadow(0 0 6px rgba(91,151,160,.5))}
+.path-r2{stroke:var(--green-bright);filter:drop-shadow(0 0 6px rgba(134,145,80,.5))}
+.draw{stroke-dasharray:2600;stroke-dashoffset:2600}
+.draw.go{animation:draw 2.6s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.maplegend{display:flex;gap:22px;flex-wrap:wrap;padding:12px 6px 6px;font-family:'Oswald';
+  text-transform:uppercase;letter-spacing:.12em;font-size:.68rem;color:var(--bone-dim)}
+.maplegend i{display:inline-block;width:22px;height:0;border-top:2.6px solid;margin-right:8px;vertical-align:middle}
+
+/* ---------- day cards ---------- */
+.day{display:grid;grid-template-columns:1fr 1.15fr;gap:0;margin-bottom:34px;
+  background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);
+  border-radius:10px;overflow:hidden;box-shadow:var(--shadow);transition:.5s}
+.day:hover{transform:translateY(-4px);border-color:rgba(219,162,63,.3)}
+.day .scene{position:relative;min-height:320px;overflow:hidden}
+.day .scene svg{position:absolute;inset:0;width:100%;height:100%}
+.day .scenetag{position:absolute;top:18px;left:18px;z-index:3;font-family:'Oswald';
+  text-transform:uppercase;letter-spacing:.2em;font-size:.66rem;color:#fff;
+  background:rgba(0,0,0,.4);backdrop-filter:blur(4px);padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.18)}
+.day .body{padding:34px 36px}
+.day .daynum{font-family:'Oswald';font-weight:700;font-size:.78rem;letter-spacing:.34em;
+  text-transform:uppercase;color:var(--rust-bright)}
+.day .body h3{font-size:1.85rem;margin:6px 0 4px}
+.day .leg{font-family:'Oswald';text-transform:uppercase;letter-spacing:.14em;font-size:.84rem;color:var(--bone-dim);margin-bottom:18px}
+.day .leg b{color:var(--bone)}
+.stats{display:flex;gap:26px;margin:16px 0 18px;flex-wrap:wrap}
+.stats div b{font-family:'Oswald';font-size:1.4rem;font-weight:600;color:var(--ochre-bright);display:block;line-height:1}
+.stats div span{font-family:'Oswald';font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.badge{font-family:'Oswald';text-transform:uppercase;letter-spacing:.12em;font-size:.64rem;
+  padding:5px 11px;border-radius:4px;border:1px solid var(--line)}
+.b-asphalt{color:#9fb4c9;border-color:rgba(159,180,201,.4)}
+.b-gravel{color:var(--ochre);border-color:rgba(219,162,63,.4)}
+.b-corr{color:var(--rust-bright);border-color:rgba(221,98,51,.45)}
+/* scene photography layer */
+.scene-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;
+  filter:saturate(.9) contrast(1.05) brightness(.95)}
+.scene-overlay{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(155deg,rgba(192,81,43,.20),rgba(21,17,13,.04) 42%,rgba(21,17,13,.62))}
+.scene-credit{position:absolute;bottom:8px;right:10px;z-index:3;font-family:'Oswald';
+  text-transform:uppercase;letter-spacing:.08em;font-size:.5rem;color:rgba(236,224,204,.62);
+  background:rgba(0,0,0,.34);padding:3px 7px;border-radius:4px}
+/* surface profile bars */
+.surf{margin:2px 0 18px}
+.surflabel{font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:.58rem;color:var(--muted);margin-bottom:7px}
+.surfbar{height:9px;border-radius:5px;overflow:hidden;display:flex;background:rgba(255,255,255,.04)}
+.surfseg{height:100%}
+.s-tar{background:#8fa9bf}.s-gravel{background:var(--ochre)}.s-corr{background:var(--rust-bright)}
+.surfkeys{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+.surfkeys span{font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;font-size:.6rem;color:var(--bone-dim);display:flex;align-items:center;gap:6px}
+.surfkeys i{width:10px;height:10px;border-radius:2px;display:inline-block}
+/* consolidated surface panel */
+.surfpanel{background:linear-gradient(165deg,#1a130d,#0f0b08);border:1px solid var(--line);border-radius:10px;padding:30px 32px;margin-top:22px;box-shadow:var(--shadow)}
+.surfpanel h4{font-size:1.05rem;letter-spacing:.06em;margin-bottom:4px}
+.surfpanel .ssub{color:var(--bone-dim);font-size:.9rem;margin-bottom:26px}
+.surfrow{margin-bottom:22px}
+.surfrow:last-of-type{margin-bottom:6px}
+.surfrow .rlabel{display:flex;justify-content:space-between;font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.74rem;margin-bottom:8px}
+.surfrow .rlabel b{color:var(--bone)}.surfrow .rlabel span{color:var(--muted)}
+.surfrow .surfbar{height:24px;border-radius:5px}
+.surfseg.lab{display:flex;align-items:center;justify-content:center;font-family:'Oswald';font-size:.62rem;letter-spacing:.03em;color:#10100c;font-weight:600;white-space:nowrap;overflow:hidden}
+.surfnote{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.6rem;color:var(--muted);margin-top:18px}
+.rc-surfline{padding:14px 28px 22px;font-family:'Oswald';text-transform:uppercase;letter-spacing:.09em;font-size:.66rem;color:var(--bone-dim);border-top:1px solid var(--line-soft)}
+.rc-surfline b{color:#8fa9bf}.rc-surfline .g{color:var(--ochre)}.rc-surfline .c{color:var(--rust-bright)}
+.stay{font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;font-size:1.05rem;color:var(--bone);
+  display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.stay::before{content:'▲';color:var(--rust);font-size:.7rem}
+.day p{color:var(--bone-dim);font-size:1rem;margin-bottom:12px}
+.callout{margin-top:16px;padding:14px 16px;border-left:3px solid var(--ochre);
+  background:rgba(219,162,63,.06);border-radius:0 6px 6px 0}
+.callout.warn{border-color:var(--rust);background:rgba(192,81,43,.07)}
+.callout.gold{border-color:var(--ochre-bright);background:rgba(240,189,84,.08)}
+.callout h5{font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:.66rem;color:var(--ochre-bright);margin-bottom:5px}
+.callout.warn h5{color:var(--rust-bright)}
+.callout p{font-size:.92rem;margin:0;color:var(--bone-dim)}
+
+/* ---------- decision split ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.routecard{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);
+  border-radius:10px;overflow:hidden;box-shadow:var(--shadow);transition:.4s}
+.routecard:hover{transform:translateY(-4px)}
+.rc-top{padding:30px 28px 24px;position:relative;overflow:hidden;min-height:165px;display:flex;flex-direction:column;justify-content:flex-end}
+.r1 .rc-top{background:linear-gradient(135deg,#2c4a4f,#16201f)}
+.r2 .rc-top{background:linear-gradient(135deg,#3a3f24,#1a1c12)}
+.rc-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:saturate(.92) contrast(1.04) brightness(.78)}
+.rc-top::after{content:'';position:absolute;inset:0;z-index:1}
+.r1 .rc-top::after{background:linear-gradient(135deg,rgba(91,151,160,.5),rgba(21,17,13,.82))}
+.r2 .rc-top::after{background:linear-gradient(135deg,rgba(134,145,80,.5),rgba(21,17,13,.82))}
+.rc-top .tag{font-family:'Oswald';text-transform:uppercase;letter-spacing:.28em;font-size:.66rem;position:relative;z-index:2}
+.r1 .rc-top .tag{color:var(--teal-bright)}.r2 .rc-top .tag{color:var(--green-bright)}
+.rc-top h3{font-size:1.7rem;margin:6px 0 2px;position:relative;z-index:2}
+.rc-top .sub{font-style:italic;color:rgba(236,224,204,.88);font-size:.98rem;position:relative;z-index:2}
+.rc-pitch{padding:18px 28px;font-size:.97rem;color:var(--bone-dim);border-bottom:1px solid var(--line);font-style:italic}
+.leglist{padding:8px 28px 22px}
+.legrow{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--line-soft)}
+.legrow:last-child{border-bottom:none}
+.legrow .d{font-family:'Oswald';font-weight:700;font-size:.7rem;letter-spacing:.18em;
+  color:var(--muted);min-width:46px;padding-top:3px}
+.legrow .info b{font-family:'Oswald';text-transform:uppercase;letter-spacing:.04em;font-size:.98rem;color:var(--bone);display:block}
+.legrow .info span{font-size:.86rem;color:var(--bone-dim)}
+.legrow .km{margin-left:auto;text-align:right;font-family:'Oswald';white-space:nowrap}
+.legrow .km b{font-size:1rem;color:var(--ochre-bright);display:block}
+.legrow .km.hard b{color:var(--rust-bright)}
+.legrow .km span{font-size:.6rem;letter-spacing:.18em;color:var(--muted)}
+
+/* matrix */
+.matrix{margin-top:36px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg2)}
+.matrix table{width:100%;border-collapse:collapse}
+.matrix th,.matrix td{padding:15px 20px;text-align:left;border-bottom:1px solid var(--line-soft);font-size:.94rem}
+.matrix thead th{font-family:'Oswald';text-transform:uppercase;letter-spacing:.12em;font-size:.74rem;background:var(--panel)}
+.matrix thead th:nth-child(2){color:var(--teal-bright)}
+.matrix thead th:nth-child(3){color:var(--green-bright)}
+.matrix tbody th{font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;font-size:.78rem;color:var(--bone-dim);font-weight:500}
+.matrix td{color:var(--bone-dim)}
+.matrix tr:last-child td,.matrix tr:last-child th{border-bottom:none}
+
+/* intensity chart */
+.chart{margin-top:36px;background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);
+  border-radius:10px;padding:30px 34px}
+.chart h4{font-size:1rem;letter-spacing:.06em;margin-bottom:4px}
+.chart .csub{color:var(--bone-dim);font-size:.9rem;margin-bottom:24px}
+.bargrp{margin-bottom:22px}
+.barlabel{display:flex;justify-content:space-between;font-family:'Oswald';text-transform:uppercase;
+  letter-spacing:.1em;font-size:.74rem;margin-bottom:7px;color:var(--bone-dim)}
+.bartrack{height:26px;background:rgba(255,255,255,.04);border-radius:5px;overflow:hidden;position:relative}
+.barfill{height:100%;border-radius:5px;width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1);
+  display:flex;align-items:center;justify-content:flex-end;padding-right:12px;
+  font-family:'Oswald';font-size:.74rem;letter-spacing:.06em;color:#10100c;font-weight:600}
+.bf-r1{background:linear-gradient(90deg,#3f6c73,var(--teal-bright))}
+.bf-r2{background:linear-gradient(90deg,#5c6638,var(--green-bright))}
+.bf-hard{background:linear-gradient(90deg,#8a371d,var(--rust-bright))}
+
+/* ---------- vote ---------- */
+.namebar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:34px;
+  background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);
+  border-radius:10px;padding:20px 24px}
+.namebar label{font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:.74rem;color:var(--ochre-bright)}
+.namebar input{flex:1;min-width:180px;background:var(--bg);border:1px solid var(--line);border-radius:6px;
+  padding:12px 16px;color:var(--bone);font-family:'Spectral';font-size:1rem}
+.namebar input:focus{outline:none;border-color:var(--ochre)}
+.namebar .who{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.78rem;color:var(--bone-dim)}
+.namebar .who b{color:var(--ochre-bright)}
+
+.poll{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);
+  border-radius:10px;padding:30px 32px;margin-bottom:22px;box-shadow:var(--shadow)}
+.poll .q{font-family:'Oswald';text-transform:uppercase;letter-spacing:.04em;font-size:1.25rem;color:var(--bone);margin-bottom:4px}
+.poll .qno{font-family:'Oswald';font-size:.7rem;letter-spacing:.3em;color:var(--rust-bright);text-transform:uppercase}
+.poll .qd{color:var(--bone-dim);font-size:.95rem;margin:6px 0 22px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.opt{position:relative;border:1px solid var(--line);border-radius:9px;padding:20px 20px 18px;cursor:pointer;
+  background:rgba(255,255,255,.015);transition:.3s;overflow:hidden}
+.opt:hover{border-color:var(--bone-dim);transform:translateY(-2px)}
+.opt.mine{border-color:var(--ochre);background:rgba(219,162,63,.08)}
+.opt .ot{font-family:'Oswald';text-transform:uppercase;letter-spacing:.04em;font-size:1.02rem;color:var(--bone);position:relative;z-index:2}
+.opt .od{font-size:.88rem;color:var(--bone-dim);margin-top:5px;position:relative;z-index:2}
+.opt .fill{position:absolute;left:0;top:0;bottom:0;width:0;z-index:1;transition:width .9s cubic-bezier(.2,.8,.2,1);opacity:.16}
+.opt .pct{position:absolute;right:16px;top:16px;z-index:2;font-family:'Oswald';font-weight:600;font-size:1.3rem;color:var(--bone)}
+.opt .count{position:relative;z-index:2;margin-top:14px;font-family:'Oswald';text-transform:uppercase;
+  letter-spacing:.1em;font-size:.64rem;color:var(--muted);min-height:14px}
+.opt .voters{position:relative;z-index:2;margin-top:8px;display:flex;gap:5px;flex-wrap:wrap}
+.opt .voters span{font-family:'Oswald';font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+  background:rgba(255,255,255,.06);padding:3px 8px;border-radius:20px;color:var(--bone-dim)}
+.opt.a .fill{background:var(--rust)}.opt.a.lead{border-color:var(--rust)}
+.opt.b .fill{background:var(--teal-bright)}.opt.b.lead{border-color:var(--teal)}
+.notice{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.66rem;
+  color:var(--muted);margin-top:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.resetbtn{font-family:'Oswald';text-transform:uppercase;letter-spacing:.14em;font-size:.64rem;
+  background:transparent;border:1px solid var(--line);color:var(--muted);padding:7px 14px;border-radius:20px;cursor:pointer;transition:.3s}
+.resetbtn:hover{border-color:var(--rust);color:var(--rust-bright)}
+
+footer{text-align:center;padding:60px 0 80px;color:var(--muted);font-family:'Oswald';
+  text-transform:uppercase;letter-spacing:.24em;font-size:.66rem}
+footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10px}
+
+@media(max-width:880px){
+  .laws{grid-template-columns:1fr 1fr}
+  .day{grid-template-columns:1fr}
+  .day .scene{min-height:200px}
+  .split{grid-template-columns:1fr}
+  .opts{grid-template-columns:1fr}
+  .matrix{overflow-x:auto}
+  .hero-meta{gap:24px}
+}
+</style>
+</head>
+<body>
+<div class="topo"></div>
+<div id="rail"></div>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+  <div class="hero-sky"></div>
+  <div class="hero-sun"></div>
+  <svg class="hero-dunes" viewBox="0 0 1440 320" preserveAspectRatio="none" style="height:42vh">
+    <path d="M0,200 C240,120 480,260 720,180 C960,110 1200,240 1440,170 L1440,320 L0,320 Z" fill="#3a1d11" opacity="0.85"/>
+    <path d="M0,250 C300,190 560,300 840,230 C1100,170 1280,280 1440,240 L1440,320 L0,320 Z" fill="#26130b"/>
+    <path d="M0,300 C360,260 700,320 1040,290 C1240,272 1340,300 1440,295 L1440,320 L0,320 Z" fill="#16100a"/>
+  </svg>
+  <div class="wrap hero-content">
+    <div class="eyebrow">Self-Sufficient 4&times;4 Overlanding &bull; Field Dossier</div>
+    <h1>
+      <span class="ln"><span>Southern Namibia</span></span>
+      <span class="ln"><span>&amp; The Kalahari</span></span>
+    </h1>
+    <div class="hero-meta">
+      <div><b>7</b><span>Days</span></div>
+      <div><b>Joburg</b><span>Highveld Origin</span></div>
+      <div><b>4&times;4</b><span>Convoy Only</span></div>
+      <div><b>~3,400 km</b><span>Full Circuit</span></div>
+    </div>
+  </div>
+  <div class="scrollcue">Scroll to deploy ↓</div>
+</header>
+
+<!-- ===================== LAWS ===================== -->
+<section id="laws">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The Non-Negotiables</div>
+      <h2>The Core Expedition Laws</h2>
+      <p>Four fixed rules keep the convoy safe, tight, and moving — no fatigue, no night driving, no compromise on the camps.</p>
+    </div>
+    <div class="laws reveal">
+      <div class="law"><div class="no">01</div><h4>Wheels Turning by 08:00</h4><p>Maximum daylight utilisation, every single day.</p></div>
+      <div class="law"><div class="no">02</div><h4>Strict 8-Hour Limit</h4><p>No driver fatigue. No driving in the dark.</p></div>
+      <div class="law"><div class="no">03</div><h4>No Trailing Placeholders</h4><p>High-standard private ablutions or verified inner-park camps only.</p></div>
+      <div class="law"><div class="no">04</div><h4>Tyre &amp; Fuel Rigor</h4><p>Deflate for corrugations. Fuel up at every opportunity.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MAP ===================== -->
+<section id="map">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The Circuit</div>
+      <h2>The Route Map</h2>
+      <p>Days 1&ndash;5 form the fixed spine out to the dunes. From Sesriem the trail splits — toggle each option to see how the convoy gets home. Tap any waypoint to jump to its day.</p>
+    </div>
+    <div class="mapbox reveal">
+      <div class="maptoggle">
+        <button class="tg act" data-r="0">Fixed Spine · Days 1–5</button>
+        <button class="tg" data-r="1">Route 1 · Coast-to-Coast</button>
+        <button class="tg" data-r="2">Route 2 · South Kalahari</button>
+      </div>
+      <svg class="map" viewBox="0 0 1000 560">
+        <!-- abstract coastline -->
+        <path d="M120,90 C150,180 95,260 130,340 C155,410 110,470 140,540" fill="none" stroke="rgba(91,151,160,.25)" stroke-width="2"/>
+        <text x="60" y="300" transform="rotate(-90 60 300)" fill="rgba(91,151,160,.35)" font-family="Oswald" font-size="12" letter-spacing="6">SOUTH ATLANTIC</text>
+        <!-- faint land masses -->
+        <path d="M170,120 C420,80 760,90 880,150 C940,200 930,420 840,470 C600,520 320,520 200,460 C150,360 150,220 170,120 Z" fill="rgba(236,224,204,.022)" stroke="rgba(236,224,204,.06)"/>
+        <text x="430" y="250" fill="rgba(236,224,204,.10)" font-family="Oswald" font-size="42" letter-spacing="14">NAMIBIA</text>
+        <text x="700" y="330" fill="rgba(134,145,80,.16)" font-family="Oswald" font-size="26" letter-spacing="10">BOTSWANA</text>
+
+        <!-- FIXED path: Joburg->Kuruman->FRC->Luderitz->Sesriem -->
+        <polyline class="path-fixed draw" id="pFixed" points="840,360 660,430 360,500 180,470 300,330"/>
+        <!-- Route1: Sesriem->Swakop->Gobabis->Joburg -->
+        <polyline class="path-r path-r1" id="pR1" points="300,330 250,230 560,300 840,360"/>
+        <!-- Route2: Sesriem->Gobabis->Gaborone->Joburg -->
+        <polyline class="path-r path-r2" id="pR2" points="300,330 560,300 760,220 840,360"/>
+
+        <!-- nodes -->
+        <g class="node" data-go="day1"><circle class="dot" cx="840" cy="360" r="8" fill="#dba23f"/><circle cx="840" cy="360" r="14" fill="none" stroke="#dba23f" stroke-opacity=".35"/><text x="840" y="392" text-anchor="middle">Joburg</text><text class="sub" x="840" y="406" text-anchor="middle">START / FINISH</text></g>
+        <g class="node" data-go="day1"><circle class="dot" cx="660" cy="430" r="7" fill="#dba23f"/><text x="660" y="458" text-anchor="middle">Kuruman</text><text class="sub" x="660" y="471" text-anchor="middle">DAY 1</text></g>
+        <g class="node" data-go="day2"><circle class="dot" cx="360" cy="500" r="7" fill="#dba23f"/><text x="360" y="528" text-anchor="middle">Fish River Canyon</text><text class="sub" x="360" y="541" text-anchor="middle">DAY 2</text></g>
+        <g class="node" data-go="day3"><circle class="dot" cx="180" cy="470" r="7" fill="#dba23f"/><text x="180" y="498" text-anchor="middle">Lüderitz</text><text class="sub" x="180" y="511" text-anchor="middle">DAY 3</text></g>
+        <g class="node" data-go="day4"><circle class="dot" cx="300" cy="330" r="7" fill="#dba23f"/><text x="300" y="316" text-anchor="middle">Sesriem</text><text class="sub" x="300" y="303" text-anchor="middle">DAY 4 · SPLIT</text></g>
+        <g class="node nr1" data-go="decision" style="opacity:.35"><circle class="dot" cx="250" cy="230" r="6" fill="#74b7c0"/><text x="250" y="216" text-anchor="middle" fill="#74b7c0">Swakopmund</text><text class="sub" x="250" y="203" text-anchor="middle">ROUTE 1</text></g>
+        <g class="node" data-go="decision"><circle class="dot" cx="560" cy="300" r="6" fill="#cdbf9f"/><text x="560" y="288" text-anchor="middle">Gobabis</text></g>
+        <g class="node nr2" data-go="decision" style="opacity:.35"><circle class="dot" cx="760" cy="220" r="6" fill="#a6b366"/><text x="760" y="206" text-anchor="middle" fill="#a6b366">Gaborone</text><text class="sub" x="760" y="193" text-anchor="middle">ROUTE 2</text></g>
+      </svg>
+      <div class="maplegend">
+        <span><i style="border-color:var(--ochre)"></i>Fixed Spine</span>
+        <span><i style="border-color:var(--teal-bright)"></i>Route 1 · Coast-to-Coast</span>
+        <span><i style="border-color:var(--green-bright)"></i>Route 2 · South Kalahari</span>
+      </div>
+    </div>
+
+    <div class="surfpanel reveal">
+      <h4>Estimated Surface Profile</h4>
+      <div class="ssub">Roughly how the kilometres divide across tar, graded gravel and heavy corrugation — deflate the tyres before every gravel section.</div>
+
+      <div class="surfrow">
+        <div class="rlabel"><b>Days 1–5 · The Fixed Spine</b><span>≈ 2,086 km</span></div>
+        <div class="surfbar">
+          <div class="surfseg s-tar lab" style="width:70.2%">Tar · 1,465 km</div>
+          <div class="surfseg s-gravel lab" style="width:13.4%">Gravel · 280</div>
+          <div class="surfseg s-corr lab" style="width:16.4%">Corrugated · 341</div>
+        </div>
+      </div>
+
+      <div class="surfrow">
+        <div class="rlabel"><b>Route 1 · Coast-to-Coast — Full Circuit</b><span>≈ 3,840 km</span></div>
+        <div class="surfbar">
+          <div class="surfseg s-tar lab" style="width:77.8%">Tar · 2,989 km</div>
+          <div class="surfseg s-gravel lab" style="width:13.3%">Gravel · 510</div>
+          <div class="surfseg s-corr lab" style="width:8.9%">Corr · 341</div>
+        </div>
+      </div>
+
+      <div class="surfrow">
+        <div class="rlabel"><b>Route 2 · South Kalahari — Full Circuit</b><span>≈ 3,878 km</span></div>
+        <div class="surfbar">
+          <div class="surfseg s-tar lab" style="width:76.2%">Tar · 2,957 km</div>
+          <div class="surfseg s-gravel lab" style="width:15%">Gravel · 580</div>
+          <div class="surfseg s-corr lab" style="width:8.8%">Corr · 341</div>
+        </div>
+      </div>
+
+      <div class="surfkeys">
+        <span><i class="s-tar"></i>Tar / Asphalt</span>
+        <span><i class="s-gravel"></i>Graded Gravel</span>
+        <span><i class="s-corr"></i>Heavy Corrugation</span>
+      </div>
+      <div class="surfnote">Estimates drawn from the leg descriptions &amp; route geography — confirm against live road reports before departure.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAYS ===================== -->
+<section id="days">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The Fixed Spine</div>
+      <h2>The Daily Track Guide</h2>
+      <p>Days 1 through 5-morning are locked. Each leg below is the experience as proposed — the stays, the surfaces, and the calls to make along the way.</p>
+    </div>
+    <div id="dayCards"></div>
+  </div>
+</section>
+
+<!-- ===================== DECISION ===================== -->
+<section id="decision">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Day 5 · 11:00 AM Departure</div>
+      <h2>The Homeward Decision Point</h2>
+      <p>After the dawn light in the red dunes, the convoy breaks camp and two distinct routes emerge to close the circuit. Both finish on 100% paved highway — the difference is where the weight of the driving lands.</p>
+    </div>
+    <div class="split reveal">
+      <div class="routecard r1">
+        <div class="rc-top">
+          <img class="rc-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Namibia-Swakopmund-2009.JPG?width=1100" alt="Swakopmund coast" loading="lazy" onerror="this.style.display='none'">
+          <div class="tag">Route 1</div>
+          <h3>Coast-to-Coast</h3>
+          <div class="sub">via Swakopmund &amp; Botswana</div>
+        </div>
+        <div class="rc-pitch">For the crew that wants a refreshing premium coastal rest after the deep desert heat — and 100% smooth asphalt for the final long haul home.</div>
+        <div class="leglist">
+          <div class="legrow"><div class="d">Day 5</div><div class="info"><b>→ Windpomp 14, Swakopmund</b><span>Solitaire apple-crumble stop + Kuiseb Canyon. Beachside stands, private windbreaks, seafood pub on the sand — no camp cooking.</span></div><div class="km"><b>364 km</b><span>~4.5 hrs</span></div></div>
+          <div class="legrow"><div class="d">Day 6</div><div class="info"><b>→ Gobabis (Frontier)</b><span>East across the spine of Namibia on the paved B2 &amp; B6 via Windhoek. Stay at Zelda Game Cabin.</span></div><div class="km"><b>610 km</b><span>~6.5 hrs</span></div></div>
+          <div class="legrow"><div class="d">Day 7</div><div class="info"><b>→ Johannesburg</b><span>The full width of Botswana on the Trans-Kalahari A2, entering SA at Skilpadshek.</span></div><div class="km hard"><b>780 km</b><span>~8 hrs</span></div></div>
+        </div>
+        <div class="rc-surfline">Full circuit ≈ <b>78% tar</b> · <span class="g">13% gravel</span> · <span class="c">9% corrugated</span></div>
+      </div>
+      <div class="routecard r2">
+        <div class="rc-top">
+          <img class="rc-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Quiver-Tree-Forest-2015.JPG?width=1100" alt="Quiver tree forest" loading="lazy" onerror="this.style.display='none'">
+          <div class="tag">Route 2</div>
+          <h3>South Kalahari</h3>
+          <div class="sub">the direct Botswana loop</div>
+        </div>
+        <div class="rc-pitch">Bypasses the northern coast entirely to maximise wild bush transit — cutting the final Sunday drive to a short, effortless hop.</div>
+        <div class="leglist">
+          <div class="legrow"><div class="d">Day 5</div><div class="info"><b>→ Gobabis</b><span>Diagonally across the central plateau gravel directly to the edge of the Kalahari corridor. Zelda Game Cabin.</span></div><div class="km"><b>560 km</b><span>~6.5 hrs</span></div></div>
+          <div class="legrow"><div class="d">Day 6</div><div class="info"><b>→ Gaborone (The Big Crush)</b><span>Sunrise-to-sunset marathon across the heart of Botswana — wheels at 06:30 to clear the border. Phakalane Golf Estate, clubhouse dining.</span></div><div class="km hard"><b>882 km</b><span>~10.5 hrs</span></div></div>
+          <div class="legrow"><div class="d">Day 7</div><div class="info"><b>→ Johannesburg</b><span>A quick N4 dash — back on the highveld by lunch, full afternoon to clean the rigs and wind down.</span></div><div class="km"><b>350 km</b><span>~4.5 hrs</span></div></div>
+        </div>
+        <div class="rc-surfline">Full circuit ≈ <b>76% tar</b> · <span class="g">15% gravel</span> · <span class="c">9% corrugated</span></div>
+      </div>
+    </div>
+
+    <!-- MATRIX -->
+    <div class="matrix reveal">
+      <table>
+        <thead><tr><th>Feature</th><th>Route 1 · Coast-to-Coast</th><th>Route 2 · South Kalahari</th></tr></thead>
+        <tbody>
+          <tr><th>Total Distance</th><td>~3,430 km</td><td>~3,410 km</td></tr>
+          <tr><th>Highlights</th><td>2 ocean stops, Solitaire, Kuiseb Canyon</td><td>Ancient quivertrees, deep Kalahari transit</td></tr>
+          <tr><th>Day 6 Intensity</th><td>610 km / 6.5 hrs — comfortable tar</td><td>882 km / 10.5 hrs — heavy endurance push</td></tr>
+          <tr><th>Day 7 Return</th><td>780 km / 8 hrs — long transit Sunday</td><td>350 km / 4.5 hrs — relaxed lunch arrival</td></tr>
+          <tr><th>Final 3 Days Surface</th><td>100% paved highway</td><td>100% paved highway</td></tr>
+          <tr><th>Best Suited For</th><td>Seaside vibes &amp; fresh seafood</td><td>A fast, easy Sunday home</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- INTENSITY CHART -->
+    <div class="chart reveal">
+      <h4>Where the Driving Lands</h4>
+      <div class="csub">Hours behind the wheel, Days 6 &amp; 7 — the heart of the trade-off.</div>
+      <div class="bargrp">
+        <div class="barlabel"><span>Route 1 · Day 6 (Swakop → Gobabis)</span></div>
+        <div class="bartrack"><div class="barfill bf-r1" data-w="62">6.5 hrs</div></div>
+      </div>
+      <div class="bargrp">
+        <div class="barlabel"><span>Route 1 · Day 7 (Gobabis → Joburg)</span></div>
+        <div class="bartrack"><div class="barfill bf-r1" data-w="76">8.0 hrs</div></div>
+      </div>
+      <div class="bargrp">
+        <div class="barlabel"><span>Route 2 · Day 6 (Gobabis → Gaborone)</span></div>
+        <div class="bartrack"><div class="barfill bf-hard" data-w="100">10.5 hrs · the crush</div></div>
+      </div>
+      <div class="bargrp">
+        <div class="barlabel"><span>Route 2 · Day 7 (Gaborone → Joburg)</span></div>
+        <div class="bartrack"><div class="barfill bf-r2" data-w="43">4.5 hrs</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== VOTE ===================== -->
+<section id="vote">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The Commander's Checklist</div>
+      <h2>The Call — Cast Your Vote</h2>
+      <p>Three definitive rulings decide the trip. Enter your name once, then tap your pick on each. Tallies update live for the whole convoy.</p>
+    </div>
+
+    <div class="namebar reveal">
+      <label for="nm">Crew Member</label>
+      <input id="nm" type="text" placeholder="Enter your name to vote…" maxlength="22" autocomplete="off">
+      <div class="who" id="whoLabel">Not signed in</div>
+    </div>
+
+    <div id="polls"></div>
+
+    <div class="notice reveal">
+      <span id="storeNote">Votes sync across the convoy.</span>
+      <button class="resetbtn" id="resetBtn">Reset all votes</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="mark">▲ ▲ ▲</div>
+  Wheels turning by 08:00 · Fuel at every opportunity · Bring it home
+</footer>
+
+<script type="module">
+/* ============================================================
+   SYNCED VOTING — Supabase
+   ------------------------------------------------------------
+   1. Create a free project at https://supabase.com
+   2. SQL Editor → New query → paste & RUN this:
+
+        create table if not exists votes (
+          poll       text not null,
+          voter_key  text not null,
+          voter_name text not null,
+          choice     text not null,
+          updated_at timestamptz default now(),
+          primary key (poll, voter_key)
+        );
+        alter table votes enable row level security;
+        create policy "crew read"   on votes for select using (true);
+        create policy "crew insert" on votes for insert with check (true);
+        create policy "crew update" on votes for update using (true) with check (true);
+        create policy "crew delete" on votes for delete using (true);
+        alter publication supabase_realtime add table votes;
+
+   3. Project Settings → API → copy the Project URL + the "anon public" key
+      into the two values below.
+   Until you do this, voting still works but is device-only (not synced).
+   ============================================================ */
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SUPABASE_URL      = "";       // e.g. https://abcdwxyz.supabase.co
+const SUPABASE_ANON_KEY = "";
+
+let SB = null;
+const CONFIGURED = !SUPABASE_URL.includes("");
+if (CONFIGURED) {
+  try { SB = createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
+  catch (e) { console.warn("Supabase init failed, using device-only votes.", e); }
+}
+
+/* ============ SCENE GENERATORS (inline SVG) ============ */
+function scene(type){
+  const defs = `<defs>
+    <linearGradient id="sky-${type}" x1="0" y1="0" x2="0" y2="1"></linearGradient>
+  </defs>`;
+  switch(type){
+    case 'grassland': return `<svg viewBox="0 0 400 320" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="320" fill="#d99a3a"/>
+      <rect width="400" height="200" fill="url(#g1)"/>
+      <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9c373"/><stop offset="1" stop-color="#dba23f"/></linearGradient>
+      <circle cx="310" cy="80" r="46" fill="#f4d488" opacity=".9"/>
+      <path d="M0,210 Q120,180 240,205 T400,200 L400,320 L0,320 Z" fill="#b9852f"/>
+      <path d="M0,250 Q140,225 280,250 T400,248 L400,320 L0,320 Z" fill="#8f6321"/>
+      <g stroke="#5e3f15" stroke-width="3" fill="none">
+        <path d="M70,250 L70,205 M70,215 L52,200 M70,215 L88,200 M70,225 L56,214 M70,225 L84,214"/>
+      </g>
+      <g fill="#3a2710"><ellipse cx="70" cy="200" rx="34" ry="10"/></g>
+    </svg>`;
+    case 'canyon': return `<svg viewBox="0 0 400 320" preserveAspectRatio="xMidYMid slice">
+      <linearGradient id="csky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7a85a"/><stop offset="1" stop-color="#f2cf86"/></linearGradient>
+      <rect width="400" height="320" fill="url(#csky)"/>
+      <path d="M0,120 L120,110 L180,150 L260,120 L340,160 L400,140 L400,200 L0,200 Z" fill="#c76a2e"/>
+      <path d="M0,170 L80,150 L160,190 L240,160 L320,200 L400,180 L400,250 L0,250 Z" fill="#a84e22"/>
+      <path d="M0,210 L100,195 L180,230 L280,205 L400,235 L400,320 L0,320 Z" fill="#7d361a"/>
+      <path d="M140,230 L160,250 L150,290 L175,260 L185,300 L200,255 L220,290 L235,250 L255,300 L255,320 L140,320 Z" fill="#52210f"/>
+      <path d="M0,250 Q90,240 170,260 Q260,242 400,266 L400,320 L0,320 Z" fill="#3a160a"/>
+    </svg>`;
+    case 'coast': return `<svg viewBox="0 0 400 320" preserveAspectRatio="xMidYMid slice">
+      <linearGradient id="csk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8aa0ad"/><stop offset="1" stop-color="#c2cdd2"/></linearGradient>
+      <rect width="400" height="320" fill="url(#csk2)"/>
+      <g stroke="#dfe7ea" stroke-width="2" opacity=".55" fill="none">
+        <path d="M-20,60 Q120,48 260,62 T540,58"/><path d="M-20,80 Q140,70 300,84 T560,80"/>
+      </g>
+      <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f6c73"/><stop offset="1" stop-color="#27474d"/></linearGradient>
+      <rect y="150" width="400" height="170" fill="url(#sea)"/>
+      <g stroke="#9fc3c7" stroke-width="1.5" opacity=".5" fill="none">
+        <path d="M0,175 Q60,170 120,176 T260,176 T400,174"/>
+        <path d="M0,200 Q70,194 140,201 T300,200 T400,199"/>
+        <path d="M0,228 Q80,221 160,229 T340,228 T400,227"/>
+      </g>
+      <path d="M40,150 L70,140 L120,150 L150,148 L150,160 L40,162 Z" fill="#2b3b40"/>
+      <rect x="92" y="118" width="9" height="34" fill="#1f2d31"/><rect x="88" y="112" width="17" height="9" fill="#c0512b"/>
+      <g fill="#1f2d31"><ellipse cx="250" cy="186" rx="16" ry="5"/><ellipse cx="300" cy="205" rx="14" ry="4"/><ellipse cx="200" cy="210" rx="12" ry="4"/></g>
+    </svg>`;
+    case 'dunes': return `<svg viewBox="0 0 400 320" preserveAspectRatio="xMidYMid slice">
+      <linearGradient id="dsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d79a"/><stop offset="1" stop-color="#f6b65f"/></linearGradient>
+      <rect width="400" height="320" fill="url(#dsky)"/>
+      <circle cx="120" cy="95" r="38" fill="#fff0c8" opacity=".85"/>
+      <path d="M0,180 C120,120 260,210 400,150 L400,320 L0,320 Z" fill="#e8943a"/>
+      <path d="M0,180 C120,120 200,170 200,170 L0,320 Z" fill="#c96f29"/>
+      <path d="M0,235 C150,190 280,255 400,210 L400,320 L0,320 Z" fill="#b85a23"/>
+      <path d="M0,235 C150,190 220,220 220,220 L0,320 Z" fill="#8f3f17"/>
+      <path d="M0,285 C160,255 300,300 400,270 L400,320 L0,320 Z" fill="#7a3414"/>
+      <g stroke="#4a1f0c" stroke-width="2.5" fill="none" opacity=".85">
+        <path d="M285,300 L290,255 M290,272 L272,260 M290,272 L308,258 M290,285 L276,275 M290,285 L306,274"/>
+        <path d="M330,302 L334,268 M334,280 L322,272 M334,280 L348,270"/>
+      </g>
+    </svg>`;
+    default: return '';
+  }
+}
+
+/* ============ DAY DATA ============ */
+const days = [
+  {id:'day1',num:'Day 01',title:'The Launch',from:'Johannesburg',to:'Kuruman',dist:'530',time:'~6 hrs',scene:'grassland',
+   photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Kgalagadi%20Transfrontier%20Park%20Gate%2C%20Red%20Dune%20Route%2C%20Northern%20Cape%2C%20South%20Africa%20(19917615043).jpg?width=1000',
+   credit:'Kalahari Red Dune Route · Wikimedia (CC BY-SA)',
+   surface:[['tar',530]],
+   badges:[['100% Asphalt','b-asphalt']],route:'N14 via Ventersdorp & Vryburg',
+   stay:'Red Sands Country Lodge',
+   body:'Pristine, manicured grass stands, private luxury stone ablution blocks, and an exceptional on-site restaurant for the first night out.',
+   callouts:[['gold','Objective','An easy, clear daylight run to settle the vehicles and crew into the convoy format.']]},
+  {id:'day2',num:'Day 02',title:'The Frontier',from:'Kuruman',to:'Fish River Canyon',dist:'670',time:'~7.5 hrs',scene:'canyon',
+   photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Fish%20River%20Canyon%2C%20Namibia.jpg?width=1000',
+   credit:'Fish River Canyon · Wikimedia (CC BY-SA)',
+   surface:[['tar',540],['gravel',130]],
+   badges:[['Asphalt → Gravel','b-gravel'],['Nakop Border','b-asphalt']],route:'N14 to Upington → Nakop → B1 & C12 gravel corridors',
+   stay:'Hobas Campsite (NWR)',
+   body:'Sitting directly inside the national park gates — unrestricted access to the canyon rim for sunset and sunrise with no gate-closure worries. Clean central ablutions, power, and massive shade trees.',
+   callouts:[['','Scenic Backup · Canyon Roadhouse (Gondwana)','Vote here for premium private stands over park proximity — flawless facilities and cold craft draught beer.']]},
+  {id:'day3',num:'Day 03',title:'The Atlantic Coast',from:'Fish River Canyon',to:'Lüderitz',dist:'420',time:'~4.5 hrs',scene:'coast',
+   photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Aerial%20view%20of%20L%C3%BCderitz%20(2017).jpg?width=1000',
+   credit:'Lüderitz · Wikimedia (CC BY-SA)',
+   surface:[['tar',270],['gravel',150]],
+   badges:[['Deep Gravel','b-gravel'],['Paved B4','b-asphalt']],route:'Gravel climbing to the B4 — watch for desert horses near Aus',
+   stay:'Shark Island Campsite (NWR)',
+   body:'A rugged, bare peninsula jutting straight into the freezing South Atlantic — 360° marine views, with pelicans and flamingos right below camp.',
+   callouts:[['warn','The Reality · Wind','It will be intensely windy and cold. Rooftop tents will shake and setting up camp requires full teamwork. A raw coastal experience.'],
+             ['','Quiet Backup · Klein-Aus Vista','Pivot 120 km inland to the calm granite valleys if the crew prefers peace and quiet.']]},
+  {id:'day4',num:'Day 04',title:'The Dune Corridor',from:'Lüderitz',to:'Sesriem',dist:'466',time:'~6 hrs',scene:'dunes',
+   photo:'https://commons.wikimedia.org/wiki/Special:FilePath/006%20Dune%2045%20in%20Sossusvlei%20at%20sunrise%20Photo%20by%20Giles%20Laurent.jpg?width=1000',
+   credit:'Dune 45, Sossusvlei · Giles Laurent / Wikimedia (CC BY-SA)',
+   surface:[['tar',125],['corr',341]],
+   badges:[['Corrugated Gravel','b-corr'],['C13 & C27','b-gravel']],route:'High-impact tracks slicing through the NamibRand Nature Reserve',
+   stay:'Sesriem Campsite (NWR)',
+   body:'Stunning but heavily corrugated tracks through glowing red sand. Deflate the tyres and take it steady.',
+   callouts:[['gold','The Golden Ticket','The double-gate system gets our vehicles to the inner gate one full hour before the public — the only way to drive the 60 km to Sossusvlei and climb Dune 45 or Deadvlei as the first sun hits the sand.']]},
+];
+
+const dayCards = document.getElementById('dayCards');
+days.forEach((d,i)=>{
+  const flip = i%2===1;
+  const co = d.callouts.map(c=>`<div class="callout ${c[0]}"><h5>${c[1]}</h5><p>${c[2]}</p></div>`).join('');
+  const bd = d.badges.map(b=>`<span class="badge ${b[1]}">${b[0]}</span>`).join('');
+  const cls = t => t==='tar'?'s-tar':t==='gravel'?'s-gravel':'s-corr';
+  const nm  = t => t==='tar'?'Tar':t==='gravel'?'Gravel':'Corrugated';
+  const totalKm = parseInt(d.dist,10);
+  const surfSeg = d.surface.map(s=>`<div class="surfseg ${cls(s[0])}" style="width:${(s[1]/totalKm*100).toFixed(1)}%"></div>`).join('');
+  const surfKeys = d.surface.map(s=>`<span><i class="${cls(s[0])}"></i>${nm(s[0])} ${s[1]} km</span>`).join('');
+  const surf = `<div class="surf"><div class="surflabel">Surface mix</div><div class="surfbar">${surfSeg}</div><div class="surfkeys">${surfKeys}</div></div>`;
+  const sceneCol = `<div class="scene"><span class="scenetag">${d.to}</span>${scene(d.scene)}<img class="scene-photo" src="${d.photo}" alt="${d.to}" loading="lazy" onerror="this.style.display='none'"><div class="scene-overlay"></div><span class="scene-credit">${d.credit}</span></div>`;
+  const bodyCol = `<div class="body">
+      <div class="daynum">${d.num} · ${d.title}</div>
+      <h3>${d.from} → ${d.to}</h3>
+      <div class="leg">${d.route}</div>
+      <div class="stats"><div><b>${d.dist}<span style="font-size:.8rem"> km</span></b><span>Distance</span></div><div><b>${d.time}</b><span>Drive Time</span></div></div>
+      <div class="badges">${bd}</div>
+      ${surf}
+      <div class="stay">${d.stay}</div>
+      <p>${d.body}</p>
+      ${co}
+    </div>`;
+  const el = document.createElement('div');
+  el.className='day reveal';
+  el.id=d.id;
+  el.innerHTML = flip ? bodyCol+sceneCol : sceneCol+bodyCol;
+  dayCards.appendChild(el);
+});
+
+/* ============ VOTING ENGINE ============ */
+const POLLS = [
+  {key:'shark', no:'Ruling 01', q:'Shark Island Wind',
+   d:'A blustery, classic coastal night exposed on the Lüderitz peninsula — or the quiet granite valleys inland?',
+   a:{t:'Shark Island',s:'Embrace the raw, windy Atlantic peninsula — pelicans, flamingos and shaking tents.'},
+   b:{t:'Klein-Aus Vista',s:'Pivot 120 km inland to calm, sheltered granite valleys for a peaceful night.'}},
+  {key:'driving', no:'Ruling 02', q:'The Day 6 / Day 7 Trade-off',
+   d:'A massive 10.5-hour Saturday push to Gaborone so Sunday is a breeze — or balanced 5-to-7 hour days?',
+   a:{t:'The Big Saturday Crush',s:'10.5 hrs to Gabs, then a relaxed 4.5 hr lunch arrival home (Route 2).'},
+   b:{t:'Balanced Days',s:'Comfortable 6.5 & 8 hr legs via the coast — a longer but easier Sunday (Route 1).'}},
+  {key:'coast', no:'Ruling 03', q:'The Coastal Add-on',
+   d:'Cold draughts and fresh Atlantic seafood at Windpomp 14 in Swakopmund — or keep the loop tight in the south?',
+   a:{t:'Add the Coast',s:'Swakopmund seafood, beachside windbreaks, no camp cooking (Route 1).'},
+   b:{t:'Tight Southern Loop',s:'Skip the north, maximise Kalahari bush transit, fast home (Route 2).'}},
+];
+
+let MEM = {};
+const VOTE_PATH = 'votes';
+const NAME_KEY  = 'namibia-myname';
+
+const safeKey = s => (s.toLowerCase().replace(/[.#$\[\]\/\s]+/g,'_').slice(0,40) || 'crew');
+function ensure(){ POLLS.forEach(p=>{ if(!MEM[p.key]) MEM[p.key]={}; }); }
+function currentName(){ return (document.getElementById('nm').value||'').trim(); }
+
+function rowsToMEM(rows){
+  const m = {};
+  (rows||[]).forEach(r=>{ (m[r.poll] = m[r.poll] || {})[r.voter_key] = {n:r.voter_name, c:r.choice}; });
+  return m;
+}
+async function fetchVotes(){
+  if(!SB) return;
+  const { data, error } = await SB.from('votes').select('poll,voter_key,voter_name,choice');
+  if(!error){ MEM = rowsToMEM(data); ensure(); renderPolls(); }
+  else console.warn(error);
+}
+function startVotes(){
+  ensure(); renderPolls();
+  if (SB){
+    fetchVotes();
+    SB.channel('votes-stream')
+      .on('postgres_changes', { event:'*', schema:'public', table:'votes' }, fetchVotes)
+      .subscribe();
+  } else {
+    try { MEM = JSON.parse(localStorage.getItem(VOTE_PATH)) || {}; } catch(e){ MEM = {}; }
+    ensure(); renderPolls();
+    document.getElementById('storeNote').textContent =
+      'Device-only — paste a Supabase URL + key (see code comments) to sync the whole convoy.';
+  }
+}
+
+async function castVote(pollKey, choice){
+  const name = currentName();
+  if(!name){
+    const inp=document.getElementById('nm');
+    inp.focus(); inp.style.borderColor='var(--rust)';
+    setTimeout(()=>inp.style.borderColor='',1200);
+    return;
+  }
+  const k = safeKey(name);
+  MEM[pollKey] = MEM[pollKey]||{};
+  MEM[pollKey][k] = {n:name, c:choice};
+  renderPolls();
+  if (SB){
+    const { error } = await SB.from('votes')
+      .upsert({ poll:pollKey, voter_key:k, voter_name:name, choice }, { onConflict:'poll,voter_key' });
+    if(error) console.warn(error);
+  } else {
+    try { localStorage.setItem(VOTE_PATH, JSON.stringify(MEM)); } catch(e){}
+  }
+}
+
+function renderPolls(){
+  const name = currentName();
+  const myK  = name ? safeKey(name) : null;
+  const host = document.getElementById('polls');
+  host.innerHTML='';
+  POLLS.forEach(p=>{
+    const votes = MEM[p.key]||{};
+    const vals  = Object.values(votes);
+    const aV = vals.filter(v=>v && v.c==='a');
+    const bV = vals.filter(v=>v && v.c==='b');
+    const total = aV.length + bV.length;
+    const aPct = total? Math.round(aV.length/total*100):0;
+    const bPct = total? 100-aPct:0;
+    const mine = (myK && votes[myK]) ? votes[myK].c : null;
+    const aLead = total && aV.length>bV.length;
+    const bLead = total && bV.length>aV.length;
+    const chip = arr => arr.map(v=>`<span>${v.n}</span>`).join('');
+
+    const el=document.createElement('div');
+    el.className='poll reveal in';
+    el.innerHTML=`
+      <div class="qno">${p.no}</div>
+      <div class="q">${p.q}</div>
+      <div class="qd">${p.d}</div>
+      <div class="opts">
+        <div class="opt a ${mine==='a'?'mine':''} ${aLead?'lead':''}" data-poll="${p.key}" data-c="a">
+          <div class="fill" style="width:${aPct}%"></div>
+          <div class="pct">${total?aPct+'%':''}</div>
+          <div class="ot">${p.a.t}</div>
+          <div class="od">${p.a.s}</div>
+          <div class="count">${aV.length} vote${aV.length!==1?'s':''}</div>
+          <div class="voters">${chip(aV)}</div>
+        </div>
+        <div class="opt b ${mine==='b'?'mine':''} ${bLead?'lead':''}" data-poll="${p.key}" data-c="b">
+          <div class="fill" style="width:${bPct}%"></div>
+          <div class="pct">${total?bPct+'%':''}</div>
+          <div class="ot">${p.b.t}</div>
+          <div class="od">${p.b.s}</div>
+          <div class="count">${bV.length} vote${bV.length!==1?'s':''}</div>
+          <div class="voters">${chip(bV)}</div>
+        </div>
+      </div>`;
+    host.appendChild(el);
+  });
+  host.querySelectorAll('.opt').forEach(o=>{
+    o.addEventListener('click',()=>castVote(o.dataset.poll,o.dataset.c));
+  });
+}
+
+function loadName(){ try{ const n=localStorage.getItem(NAME_KEY); if(n) document.getElementById('nm').value=n; }catch(e){} }
+function saveName(){ try{ localStorage.setItem(NAME_KEY, currentName()); }catch(e){} }
+function updateWho(){
+  const n=currentName();
+  document.getElementById('whoLabel').innerHTML = n? `Signed in as <b>${n}</b>` : 'Not signed in';
+}
+document.getElementById('nm').addEventListener('input',()=>{ updateWho(); renderPolls(); });
+document.getElementById('nm').addEventListener('change',saveName);
+
+document.getElementById('resetBtn').addEventListener('click',async()=>{
+  if(!confirm('Clear every vote for the whole convoy? This cannot be undone.')) return;
+  MEM={}; ensure();
+  if (SB){ try{ await SB.from('votes').delete().neq('poll',''); }catch(e){ console.warn(e); } renderPolls(); }
+  else   { try{ localStorage.removeItem(VOTE_PATH); }catch(e){} renderPolls(); }
+});
+
+/* ============ MAP TOGGLES ============ */
+const tgs=document.querySelectorAll('.tg');
+const pR1=document.getElementById('pR1'), pR2=document.getElementById('pR2');
+const nr1=document.querySelectorAll('.nr1'), nr2=document.querySelectorAll('.nr2');
+tgs.forEach(t=>t.addEventListener('click',()=>{
+  const r=t.dataset.r;
+  if(r==='0'){ tgs.forEach(x=>x.classList.toggle('act',x.dataset.r==='0')); pR1.classList.remove('show');pR2.classList.remove('show');
+    nr1.forEach(n=>n.style.opacity=.35); nr2.forEach(n=>n.style.opacity=.35); return; }
+  t.classList.toggle('act');
+  if(r==='1'){ pR1.classList.toggle('show'); nr1.forEach(n=>n.style.opacity=pR1.classList.contains('show')?1:.35); }
+  if(r==='2'){ pR2.classList.toggle('show'); nr2.forEach(n=>n.style.opacity=pR2.classList.contains('show')?1:.35); }
+  document.querySelector('.tg[data-r="0"]').classList.remove('act');
+}));
+document.querySelectorAll('.node').forEach(n=>{
+  n.addEventListener('click',()=>{ const t=document.getElementById(n.dataset.go); if(t) t.scrollIntoView({behavior:'smooth',block:'center'}); });
+});
+
+/* ============ SCROLL REVEAL + RAIL + ANIM ============ */
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);
+    if(e.target.id==='map') document.getElementById('pFixed').classList.add('go');
+    if(e.target.querySelectorAll){ e.target.querySelectorAll('.barfill').forEach(b=>b.style.width=b.dataset.w+'%'); }
+  }});
+},{threshold:.15});
+function observeAll(){ document.querySelectorAll('.reveal').forEach(r=>io.observe(r)); io.observe(document.getElementById('map')); }
+
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  document.getElementById('rail').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+});
+
+/* ============ INIT ============ */
+(function init(){
+  loadName();
+  updateWho();
+  startVotes();
+  observeAll();
+})();
+</script>
+</body>
+</html>
