@@ -657,7 +657,7 @@ const SUPABASE_ANON_KEY = "PASTE_ANON_PUBLIC_KEY";
 let SB = null;
 let AUTH_USER = null;   // supabase auth user (or null)
 let CREW_ROW  = null;   // crew table row (or null)
-const CONFIGURED = !SUPABASE_URL.includes("PASTE_PROJECT_URL");
+const CONFIGURED = SUPABASE_URL.startsWith("https://");
 if (CONFIGURED) {
   try { SB = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { autoRefreshToken:true, persistSession:true, detectSessionInUrl:true }
@@ -797,9 +797,9 @@ days.forEach((d,i)=>{
 /* ============ VOTING ENGINE ============ */
 const POLLS = [
   {key:'departure_date', no:'Ruling 00', q:'The Departure Date',
-   d:'Anchored on finishing in Gaborone on a weekend — which only pays off if we also pick Route 2 (South Kalahari). Which window works?',
-   a:{t:'Sun 4 Oct — Weekend Arrival',s:'Reach Gaborone Fri 9 Oct, home Sat 10 Oct. Full Friday-night + Saturday window for the Gabs weekend scene.'},
-   b:{t:'Thu 8 Oct — Midweek',s:'Reach Gaborone Tue 13 Oct, home Wed 14 Oct. Quieter, midweek pricing, but no weekend in Gabs.'}},
+   d:'Anchored on finishing in Gaborone on a weekend — which only pays off if we also pick Route 2 (South Kalahari). Which window works?',
+   a:{t:'Sun 4 Oct — Weekend Arrival',s:'Reach Gaborone Fri 9 Oct, home Sat 10 Oct. Full Friday-night + Saturday window for the Gabs weekend scene.'},
+   b:{t:'Thu 8 Oct — Midweek',s:'Reach Gaborone Tue 13 Oct, home Wed 14 Oct. Quieter, midweek pricing, but no weekend in Gabs.'}},
   {key:'shark', no:'Ruling 01', q:'Shark Island Wind',
    d:'A blustery, classic coastal night exposed on the Lüderitz peninsula — or the quiet granite valleys inland?',
    a:{t:'Shark Island',s:'Embrace the raw, windy Atlantic peninsula — pelicans, flamingos and shaking tents.'},
@@ -1051,3 +1051,4 @@ window.addEventListener('scroll',()=>{
 </script>
 </body>
 </html>
+        
