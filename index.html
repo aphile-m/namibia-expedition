@@ -657,7 +657,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 let SB = null;
 let AUTH_USER = null;   // supabase auth user (or null)
 let CREW_ROW  = null;   // crew table row (or null)
-const CONFIGURED = !SUPABASE_URL.includes("https://uaqvqvrflzxulixdrmna.supabase.co");
+const CONFIGURED = SUPABASE_URL.startsWith("https://");
 if (CONFIGURED) {
   try { SB = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { autoRefreshToken:true, persistSession:true, detectSessionInUrl:true }
