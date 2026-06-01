@@ -333,6 +333,86 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
   .matrix{overflow-x:auto}
   .hero-meta{gap:24px}
 }
+
+/* ============================================================
+   REGISTRATION GATE
+   ============================================================ */
+#gate{background:var(--panel);border-bottom:1px solid var(--line)}
+#gate .wrap{padding-top:56px;padding-bottom:56px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+@media(max-width:720px){#gate .wrap{grid-template-columns:1fr;gap:32px}}
+.gate-headline{font-family:'Oswald';text-transform:uppercase;font-size:clamp(1.4rem,3vw,2rem);letter-spacing:.04em;margin-bottom:12px;color:var(--bone)}
+.gate-sub{color:var(--bone-dim);font-size:.96rem;margin-bottom:28px;line-height:1.6}
+.gate-benefits{list-style:none;margin-bottom:32px}
+.gate-benefits li{padding:6px 0;color:var(--bone-dim);font-size:.92rem;display:flex;align-items:center;gap:10px}
+.gate-benefits li::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--ochre);flex-shrink:0}
+.gate-benefits li b{color:var(--bone)}
+.gate-form{display:flex;flex-direction:column;gap:10px}
+.gate-form input[type=email]{background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--bone);padding:12px 16px;font-size:1rem;font-family:'Spectral',serif;width:100%}
+.gate-form input[type=email]:focus{outline:none;border-color:var(--ochre)}
+.gate-form .authbtn{width:100%;padding:13px;font-size:.82rem}
+.gate-signed{display:none;flex-direction:column;gap:8px}
+.gate-welcome{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:1.1rem;color:var(--ochre-bright)}
+.gate-quicklinks{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.gate-quicklinks a{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.68rem;color:var(--bone-dim);border:1px solid var(--line);padding:7px 14px;border-radius:4px;text-decoration:none;transition:border-color .15s,color .15s}
+.gate-quicklinks a:hover{border-color:var(--rust);color:var(--rust-bright)}
+.gate-card{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:28px}
+.gate-stat{font-family:'Oswald';font-size:2.2rem;color:var(--ochre-bright);line-height:1}
+.gate-stat-label{font-size:.8rem;color:var(--bone-dim);text-transform:uppercase;letter-spacing:.1em}
+/* ============================================================
+   CREW ROSTER  (Phase 3)
+   ============================================================ */
+#roster{border-top:1px solid var(--line)}
+#roster .wrap{padding-top:72px;padding-bottom:72px}
+.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:32px}
+.roster-card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px 18px;display:flex;align-items:center;gap:14px}
+.roster-avatar{width:40px;height:40px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Oswald';font-size:1rem;color:var(--ochre-bright);flex-shrink:0;text-transform:uppercase}
+.roster-name{font-family:'Oswald';text-transform:uppercase;letter-spacing:.05em;font-size:.88rem;color:var(--bone)}
+.roster-role{font-size:.75rem;color:var(--muted);text-transform:capitalize;margin-top:2px}
+.roster-counts{display:flex;gap:24px;margin-bottom:28px}
+.roster-count{font-family:'Oswald';font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--bone-dim)}
+.roster-count b{color:var(--ochre-bright);font-size:1.3rem;display:block;line-height:1.1}
+#roster-locked{display:none;padding:32px;text-align:center;color:var(--muted);font-size:.9rem}
+/* ============================================================
+   COSTS & PAYMENTS  (Phase 6)
+   ============================================================ */
+#costs{border-top:1px solid var(--line)}
+#costs .wrap{padding-top:72px;padding-bottom:72px}
+.costs-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+@media(max-width:700px){.costs-grid{grid-template-columns:1fr}}
+.cost-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:28px}
+.cost-panel h4{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;color:var(--rust-bright);margin-bottom:16px}
+.cost-amount{font-family:'Oswald';font-size:2.4rem;color:var(--ochre-bright);line-height:1}
+.cost-deadline{font-size:.8rem;color:var(--bone-dim);margin-top:6px}
+.cost-deadline b{color:var(--bone)}
+.pay-status{display:inline-flex;align-items:center;gap:6px;font-family:'Oswald';font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;padding:4px 10px;border-radius:20px;margin-bottom:16px}
+.pay-status.unpaid{background:rgba(192,81,43,.12);color:var(--rust-bright)}
+.pay-status.claimed{background:rgba(219,162,63,.12);color:var(--ochre-bright)}
+.pay-status.verified{background:rgba(134,145,80,.15);color:var(--green-bright)}
+.bank-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line-soft);font-size:.88rem}
+.bank-row:last-child{border-bottom:none}
+.bank-label{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
+.bank-val{color:var(--bone)}
+.pay-form{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.pay-form input{background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--bone);padding:10px 12px;font-size:.9rem;font-family:'Spectral',serif}
+.pay-form input:focus{outline:none;border-color:var(--ochre)}
+.pay-form input::placeholder{color:var(--muted)}
+.pay-table{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:16px}
+.pay-table th{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.66rem;color:var(--muted);text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
+.pay-table td{padding:9px 10px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+.pay-table .verify-btn{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.62rem;padding:4px 10px;background:var(--green);color:#fff;border:none;cursor:pointer;border-radius:4px}
+.pay-table .verify-btn:hover{background:var(--green-bright)}
+.admin-section{margin-top:40px;border-top:1px solid var(--line);padding-top:32px;display:none}
+.admin-section.vis{display:block}
+.admin-section>h4{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.78rem;color:var(--rust-bright);margin-bottom:20px}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.admin-grid{grid-template-columns:1fr}}
+.admin-field{display:flex;flex-direction:column;gap:5px}
+.admin-field label{font-family:'Oswald';font-size:.64rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+.admin-field input{background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--bone);padding:8px 10px;font-size:.88rem;font-family:'Spectral',serif}
+.admin-field input:focus{outline:none;border-color:var(--ochre)}
+.admin-save{margin-top:16px;font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.7rem;padding:9px 20px;background:var(--rust);color:#fff;border:none;cursor:pointer;border-radius:4px}
+.admin-save:hover{background:var(--rust-bright)}
+#costs-locked{padding:32px;text-align:center;color:var(--muted);font-size:.9rem}
 </style>
 </head>
 <body>
@@ -363,6 +443,45 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
   </div>
   <div class="scrollcue">Scroll to deploy ↓</div>
 </header>
+
+<!-- ===================== GATE ===================== -->
+<section id="gate">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="gate-headline">Join the Expedition</div>
+      <p class="gate-sub">Register once with your email — no password. A magic link lands in your inbox and you're in.</p>
+      <ul class="gate-benefits">
+        <li><b>Cast your votes</b> — lock the date, route, and daily calls</li>
+        <li><b>See the crew roster</b> — who's registered and their role</li>
+        <li><b>Track costs &amp; your deposit</b> — per-person amount and payment status</li>
+        <li><b>Carpool coordination</b> — claim a seat or register your vehicle (coming next)</li>
+      </ul>
+      <div class="gate-form" id="gateFormWrap">
+        <input type="email" id="gateEmail" placeholder="Your email address" autocomplete="email">
+        <button class="authbtn" id="gateSendBtn">Join the convoy →</button>
+        <div id="gateLinkSent" style="display:none;font-size:.84rem;color:var(--ochre-bright)">✓ Check your email — tap the magic link to sign in.</div>
+      </div>
+      <div class="gate-signed" id="gateSigned">
+        <div class="gate-welcome">Welcome back, <span id="gateWhoName">—</span></div>
+        <div class="gate-quicklinks">
+          <a href="#vote">Cast votes</a>
+          <a href="#roster">Crew roster</a>
+          <a href="#costs">Costs &amp; deposit</a>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" id="gateStatsPanel">
+      <div class="gate-card">
+        <div class="gate-stat" id="gateCrewCount">—</div>
+        <div class="gate-stat-label">Crew registered</div>
+        <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:18px;display:flex;gap:24px">
+          <div><div class="gate-stat" id="gateDriverCount" style="font-size:1.5rem">—</div><div class="gate-stat-label">Drivers</div></div>
+          <div><div class="gate-stat" id="gatePaxCount" style="font-size:1.5rem">—</div><div class="gate-stat-label">Passengers</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ===================== LAWS ===================== -->
 <section id="laws">
@@ -614,6 +733,100 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
     <div class="notice reveal">
       <span id="storeNote">Votes sync across the convoy.</span>
       <button class="resetbtn" id="resetBtn">Reset all votes</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== ROSTER ===================== -->
+<section id="roster">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The Convoy</div>
+      <h2>Registered Crew</h2>
+      <p>Everyone who has signed in. Vehicles and carpools follow in the next phase.</p>
+    </div>
+    <div id="roster-locked">Sign in above to see the crew roster.</div>
+    <div id="roster-content" style="display:none">
+      <div class="roster-counts reveal">
+        <div class="roster-count"><b id="rcTotal">0</b>Registered</div>
+        <div class="roster-count"><b id="rcDrivers">0</b>Drivers</div>
+        <div class="roster-count"><b id="rcPax">0</b>Passengers</div>
+      </div>
+      <div class="roster-grid reveal" id="rosterGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COSTS ===================== -->
+<section id="costs">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Phase 6 — Finance</div>
+      <h2>Costs &amp; Deposit</h2>
+      <p>Deposits secure the bookings. Get yours in by the deadline so the camps are locked.</p>
+    </div>
+    <div id="costs-locked">Sign in to see costs and your payment status.</div>
+    <div id="costs-content" style="display:none">
+      <div class="costs-grid reveal">
+        <div class="cost-panel">
+          <h4>Your Deposit</h4>
+          <div class="cost-amount">R<span id="depositAmt">—</span></div>
+          <div class="cost-deadline">Due by <b id="depositDeadline">TBC</b></div>
+          <div style="margin-top:20px;border-top:1px solid var(--line);padding-top:20px">
+            <div class="pay-status unpaid" id="myPayStatus">Unpaid</div>
+            <div id="payClaimForm">
+              <p style="font-size:.84rem;color:var(--bone-dim);margin-bottom:12px">Once you've done the EFT, mark it here so it can be verified.</p>
+              <div class="pay-form">
+                <input id="payRef" placeholder="Your payment reference (e.g. NAMIBIA-APHILE)" type="text">
+                <button class="authbtn" id="payClaimBtn">I've paid →</button>
+              </div>
+            </div>
+            <div id="payClaimedMsg" style="display:none;font-size:.84rem;color:var(--ochre-bright)">Payment claimed — awaiting admin verification.</div>
+            <div id="payVerifiedMsg" style="display:none;font-size:.84rem;color:var(--green-bright)">✓ Verified. You're locked in.</div>
+          </div>
+        </div>
+        <div class="cost-panel">
+          <h4>Banking Details</h4>
+          <div id="bankDetails">
+            <div class="bank-row"><span class="bank-label">Bank</span><span class="bank-val" id="bankName">—</span></div>
+            <div class="bank-row"><span class="bank-label">Account Name</span><span class="bank-val" id="bankAccName">—</span></div>
+            <div class="bank-row"><span class="bank-label">Account Number</span><span class="bank-val" id="bankAccNum">—</span></div>
+            <div class="bank-row"><span class="bank-label">Branch Code</span><span class="bank-val" id="bankBranch">—</span></div>
+            <div class="bank-row"><span class="bank-label">Reference Format</span><span class="bank-val" id="bankRef">—</span></div>
+          </div>
+          <p id="bankPlaceholder" style="color:var(--muted);font-size:.84rem;margin-top:8px;display:none">Banking details will be posted here by the admin before the deadline.</p>
+        </div>
+      </div>
+      <div class="admin-section" id="adminSection">
+        <h4>Admin Controls</h4>
+        <div class="reveal">
+          <p style="font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:var(--muted);margin-bottom:8px">Payment status — all crew</p>
+          <div style="overflow-x:auto"><table class="pay-table">
+            <thead><tr><th>Name</th><th>Status</th><th>Reference</th><th>Action</th></tr></thead>
+            <tbody id="adminPayTable"></tbody>
+          </table></div>
+        </div>
+        <div style="margin-top:32px" class="reveal">
+          <p style="font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:var(--muted);margin-bottom:16px">Deposit settings</p>
+          <div class="admin-grid">
+            <div class="admin-field"><label>Deposit Amount (R)</label><input id="adminDepAmt" type="number" placeholder="e.g. 2310"></div>
+            <div class="admin-field"><label>Collection Deadline</label><input id="adminDeadline" type="date"></div>
+          </div>
+          <button class="admin-save" id="adminSaveSettings">Save deposit settings</button>
+        </div>
+        <div style="margin-top:32px" class="reveal">
+          <p style="font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:var(--muted);margin-bottom:16px">Banking details</p>
+          <div class="admin-grid">
+            <div class="admin-field"><label>Bank</label><input id="adminBank" type="text" placeholder="e.g. FNB"></div>
+            <div class="admin-field"><label>Account Name</label><input id="adminAccName" type="text"></div>
+            <div class="admin-field"><label>Account Number</label><input id="adminAccNum" type="text"></div>
+            <div class="admin-field"><label>Branch Code</label><input id="adminBranch" type="text"></div>
+            <div class="admin-field" style="grid-column:1/-1"><label>Reference Format</label><input id="adminRefFmt" type="text" placeholder="e.g. NAMIBIA-{NAME}"></div>
+          </div>
+          <button class="admin-save" id="adminSaveBank">Save banking details</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -951,7 +1164,7 @@ if(SB){
   SB.auth.onAuthStateChange(async (_event, session)=>{
     AUTH_USER = session?.user ?? null;
     if(AUTH_USER){ await loadCrewRow(); if(!CREW_ROW) showOnboarding(); }
-    updateAuthUI(); renderPolls();
+    updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); } renderPolls();
   });
 }
 
@@ -999,7 +1212,7 @@ document.getElementById('obSave')?.addEventListener('click', async ()=>{
   if(!error){
     CREW_ROW = data;
     document.getElementById('onboardOverlay').style.display = 'none';
-    updateAuthUI(); renderPolls();
+    updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); } renderPolls();
   } else { console.warn(error); }
 });
 
@@ -1009,6 +1222,149 @@ document.getElementById('resetBtn').addEventListener('click',async()=>{
   MEM={}; ensure();
   if(SB){ try{ await SB.from('votes').delete().neq('poll',''); }catch(e){ console.warn(e); } renderPolls(); }
   else  { try{ localStorage.removeItem(VOTE_PATH); }catch(e){} renderPolls(); }
+});
+
+
+/* ============================================================
+   GATE — registration CTA
+   ============================================================ */
+function updateGate(){
+  const signedIn = !!(AUTH_USER && CREW_ROW);
+  document.getElementById('gateFormWrap').style.display = signedIn ? 'none' : 'flex';
+  const gs = document.getElementById('gateSigned');
+  gs.style.display = signedIn ? 'flex' : 'none';
+  if(signedIn) document.getElementById('gateWhoName').textContent = CREW_ROW.display_name || AUTH_USER.email;
+  if(CONFIGURED) loadGateStats();
+}
+async function loadGateStats(){
+  if(!SB) return;
+  const { data } = await SB.from('crew').select('role');
+  if(!data) return;
+  document.getElementById('gateCrewCount').textContent  = data.length;
+  document.getElementById('gateDriverCount').textContent = data.filter(r=>r.role==='driver').length;
+  document.getElementById('gatePaxCount').textContent    = data.filter(r=>r.role==='passenger').length;
+}
+document.getElementById('gateSendBtn')?.addEventListener('click', async ()=>{
+  const email = document.getElementById('gateEmail').value.trim();
+  if(!email || !CONFIGURED) return;
+  const { error } = await SB.auth.signInWithOtp({ email, options:{ emailRedirectTo: location.href } });
+  if(!error){
+    document.getElementById('gateEmail').disabled = true;
+    document.getElementById('gateSendBtn').disabled = true;
+    document.getElementById('gateLinkSent').style.display = 'block';
+    document.getElementById('stateLinkSent').style.display = 'block';
+    document.getElementById('stateSignIn').style.display = 'none';
+  }
+});
+document.getElementById('gateEmail')?.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('gateSendBtn').click(); });
+
+/* ============================================================
+   ROSTER  (Phase 3)
+   ============================================================ */
+async function loadRoster(){
+  if(!SB || !AUTH_USER) return;
+  document.getElementById('roster-locked').style.display = 'none';
+  document.getElementById('roster-content').style.display = 'block';
+  const { data } = await SB.from('crew').select('display_name,role').order('created_at');
+  if(!data) return;
+  document.getElementById('rcTotal').textContent   = data.length;
+  document.getElementById('rcDrivers').textContent = data.filter(r=>r.role==='driver').length;
+  document.getElementById('rcPax').textContent     = data.filter(r=>r.role==='passenger').length;
+  document.getElementById('rosterGrid').innerHTML  = data.map(m=>{
+    const init = (m.display_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    return `<div class="roster-card"><div class="roster-avatar">${init}</div><div><div class="roster-name">${m.display_name||'Unknown'}</div><div class="roster-role">${m.role==='driver'?'🚗 Driver':'🎒 Passenger'}</div></div></div>`;
+  }).join('');
+  observeAll();
+}
+
+/* ============================================================
+   COSTS & PAYMENTS  (Phase 6)
+   ============================================================ */
+let TRIP_SETTINGS = null;
+async function loadCosts(){
+  if(!SB || !AUTH_USER) return;
+  document.getElementById('costs-locked').style.display = 'none';
+  document.getElementById('costs-content').style.display = 'block';
+  const isAdmin = AUTH_USER.email === 'aphilem@gmail.com';
+  if(isAdmin) document.getElementById('adminSection').classList.add('vis');
+
+  const { data: ts } = await SB.from('trip_settings').select('*').eq('id',1).maybeSingle();
+  TRIP_SETTINGS = ts;
+  if(ts){
+    document.getElementById('depositAmt').textContent = ts.deposit_amount ? Number(ts.deposit_amount).toLocaleString('en-ZA') : '—';
+    document.getElementById('depositDeadline').textContent = ts.collection_deadline
+      ? new Date(ts.collection_deadline+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'})
+      : 'TBC';
+    if(isAdmin){ document.getElementById('adminDepAmt').value = ts.deposit_amount||''; document.getElementById('adminDeadline').value = ts.collection_deadline||''; }
+  }
+
+  const { data: pa } = await SB.from('payment_account').select('*').eq('id',1).maybeSingle();
+  const hasBankDetails = pa && (pa.bank || pa.account_number);
+  document.getElementById('bankPlaceholder').style.display = hasBankDetails ? 'none' : 'block';
+  if(hasBankDetails){
+    document.getElementById('bankName').textContent    = pa.bank||'—';
+    document.getElementById('bankAccName').textContent = pa.account_name||'—';
+    document.getElementById('bankAccNum').textContent  = pa.account_number||'—';
+    document.getElementById('bankBranch').textContent  = pa.branch_code||'—';
+    document.getElementById('bankRef').textContent     = pa.reference_format||'—';
+  }
+  if(isAdmin && pa){ document.getElementById('adminBank').value=pa.bank||''; document.getElementById('adminAccName').value=pa.account_name||''; document.getElementById('adminAccNum').value=pa.account_number||''; document.getElementById('adminBranch').value=pa.branch_code||''; document.getElementById('adminRefFmt').value=pa.reference_format||''; }
+
+  const { data: myPay } = await SB.from('payments').select('*').eq('crew_id',AUTH_USER.id).maybeSingle();
+  renderMyPayment(myPay);
+  if(isAdmin) loadAdminPayments();
+  observeAll();
+}
+function renderMyPayment(pay){
+  const s = pay?.status||'unpaid';
+  const el = document.getElementById('myPayStatus');
+  el.className = 'pay-status '+s;
+  el.textContent = s.charAt(0).toUpperCase()+s.slice(1);
+  document.getElementById('payClaimForm').style.display   = s==='unpaid'   ? 'block':'none';
+  document.getElementById('payClaimedMsg').style.display  = s==='claimed'  ? 'block':'none';
+  document.getElementById('payVerifiedMsg').style.display = s==='verified' ? 'block':'none';
+}
+document.getElementById('payClaimBtn')?.addEventListener('click', async ()=>{
+  if(!SB||!AUTH_USER) return;
+  const ref = document.getElementById('payRef').value.trim();
+  if(!ref){ document.getElementById('payRef').focus(); return; }
+  const amt = TRIP_SETTINGS?.deposit_amount || 2310;
+  const { data, error } = await SB.from('payments').upsert(
+    { crew_id:AUTH_USER.id, amount_due:amt, status:'claimed', reference:ref, paid_at:new Date().toISOString() },
+    { onConflict:'crew_id' }
+  ).select().maybeSingle();
+  if(!error) renderMyPayment(data);
+  else console.warn(error);
+});
+async function loadAdminPayments(){
+  const { data: crew } = await SB.from('crew').select('id,display_name');
+  const { data: pays } = await SB.from('payments').select('*');
+  if(!crew) return;
+  const pm = {}; (pays||[]).forEach(p=>{ pm[p.crew_id]=p; });
+  document.getElementById('adminPayTable').innerHTML = crew.map(m=>{
+    const p=pm[m.id]; const s=p?.status||'unpaid';
+    return `<tr><td>${m.display_name}</td><td><span class="pay-status ${s}" style="font-size:.62rem">${s}</span></td><td style="color:var(--bone-dim);font-size:.8rem">${p?.reference||'—'}</td><td>${s==='claimed'?`<button class="verify-btn" onclick="verifyPayment('${m.id}')">Verify</button>`:''}</td></tr>`;
+  }).join('');
+}
+window.verifyPayment = async function(id){
+  if(!SB) return;
+  await SB.from('payments').update({ status:'verified', verified_at:new Date().toISOString() }).eq('crew_id',id);
+  if(id===AUTH_USER?.id) renderMyPayment({ status:'verified' });
+  loadAdminPayments();
+};
+document.getElementById('adminSaveSettings')?.addEventListener('click', async ()=>{
+  if(!SB) return;
+  const btn = document.getElementById('adminSaveSettings');
+  await SB.from('trip_settings').upsert({ id:1, deposit_amount:parseFloat(document.getElementById('adminDepAmt').value)||null, collection_deadline:document.getElementById('adminDeadline').value||null, updated_at:new Date().toISOString() },{ onConflict:'id' });
+  btn.textContent='Saved ✓'; setTimeout(()=>btn.textContent='Save deposit settings',2000);
+  loadCosts();
+});
+document.getElementById('adminSaveBank')?.addEventListener('click', async ()=>{
+  if(!SB) return;
+  const btn = document.getElementById('adminSaveBank');
+  await SB.from('payment_account').upsert({ id:1, bank:document.getElementById('adminBank').value.trim(), account_name:document.getElementById('adminAccName').value.trim(), account_number:document.getElementById('adminAccNum').value.trim(), branch_code:document.getElementById('adminBranch').value.trim(), reference_format:document.getElementById('adminRefFmt').value.trim(), updated_at:new Date().toISOString() },{ onConflict:'id' });
+  btn.textContent='Saved ✓'; setTimeout(()=>btn.textContent='Save banking details',2000);
+  loadCosts();
 });
 
 /* ============ MAP TOGGLES ============ */
@@ -1045,6 +1401,7 @@ window.addEventListener('scroll',()=>{
 /* ============ INIT ============ */
 (function init(){
   updateAuthUI();   // set initial UI state (not signed in)
+  updateGate();     // sync registration gate
   startVotes();     // loads, live-subscribes, and renders the polls
   observeAll();
 })();
