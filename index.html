@@ -735,7 +735,7 @@ const days = [
    surface:[['tar',530]],
    badges:[['100% Asphalt','b-asphalt']],route:'N14 via Ventersdorp & Vryburg',
    stay:'Red Sands Country Lodge',
-   body:'Pristine, manicured grass stands, private luxury stone ablution blocks, and an exceptional on-site restaurant for me first night out.',
+   body:'Pristine, manicured grass stands, private luxury stone ablution blocks, and an exceptional on-site restaurant for the first night out.',
    callouts:[['gold','Objective','An easy, clear daylight run to settle the vehicles and crew into the convoy format.']]},
   {id:'day2',num:'Day 02',title:'The Frontier',from:'Kuruman',to:'Fish River Canyon',dist:'670',time:'~7.5 hrs',scene:'canyon',
    photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Fish%20River%20Canyon%2C%20Namibia.jpg?width=1000',
@@ -761,7 +761,7 @@ const days = [
    badges:[['Corrugated Gravel','b-corr'],['C13 & C27','b-gravel']],route:'High-impact tracks slicing through the NamibRand Nature Reserve',
    stay:'Sesriem Campsite (NWR)',
    body:'Stunning but heavily corrugated tracks through glowing red sand. Deflate the tyres and take it steady.',
-   callouts:[['gold','The Golden Ticket','The double-gate system gets our vehicles to the inner gate one full hour before the public ◤ — the only way to drive the 60 km to Sossusvlei and climb Dune 45 or Deadvlei as the first sun hits the sand.']]},
+   callouts:[['gold','The Golden Ticket','The double-gate system gets our vehicles to the inner gate one full hour before the public — the only way to drive the 60 km to Sossusvlei and climb Dune 45 or Deadvlei as the first sun hits the sand.']]},
 ];
 
 const dayCards = document.getElementById('dayCards');
@@ -815,62 +815,91 @@ const POLLS = [
 ];
 
 let MEM = {};                       // live mirror of all votes
-const VOTEE_PATH = 'votes';
-const safeKey = s => (s.toLowerCase().replace(/[.#\$\[\]\/\s]+/g,'_').slice(0,40) || 'crew');
-function ensure(){ POLS#��ܑXX�
-O��Y�SQSV���^WJHQSV���^WO^�N�JN�B��ʈKKKH�Y
-�]�H�X��ܚX�HKKKH
-��[��[ۈ�����QSJ����^�ۜ�HH�N
-�����JK��ܑXX�
-�O��ۜ��H��ܙ]��Y����\���^N���ܙ]��Y
-]]
-H܈��\���^H
-Y�X�H�[�X��B�
-V܋��HHV܋��H�JV��HHێ�����\�ۘ[YKΜ����X�_NJN�]\��NB�\�[���[��[ۈ�]���\�
-^Y�TЊH�]\���ۜ��]K\��܈HH]�Z]Ћ����J	ݛ�\��K��[X�
-	��ܙ]��Y��\�ۘ[YK��X�I�NY�Y\��܊^�QSHH�����QSJ]JN�[��\�J
-N��[�\���
-N�B�[�H�ۜ��K��\��\��܊NB��[��[ۈ�\���\�
-^[��\�J
-N��[�\���
-N���[��[�Z[��Y�
-Њ^�]���\�
-N���[�]X[�Y�Ћ��[��[
-	ݛ�\�\��X[I�H���X[[YN�[�H�[��K[�H]�X�B��ۊ	���ܙ\���[��\���]�[��ʉ���[XN��X�X��X�N�ݛ�\��K�]���\�B���X��ܚX�J
-NH[�H�H�QSHH��Ӌ�\��J��[�ܘY�K��]][J��W�U
-JH�N�H�]�
-J^�QSHH�N�B�[��\�J
-N��[�\���
-N��[Y[���][[Y[��RY
-	��ܙS��I�K�^�۝[�B�	�]�X�K[ۛH8�%\�HH�\X�\�HT�
-��^H
-�YH��H��[Y[��H��[��H��H�۝��K��B�B��\�[���[��[ۈ�\���J��^K��X�J^Y�P�ӑ�Q�T�Q
-^��]�X�K[ۛH�[�X��
-��]]�ۙ�Y�\�Y
-B��ۜ��[YHH
-��[Y[���][[Y[��RY
-	�]][XZ[	�O˝�[Y_	��K��[J
-H���[�ܘY�K��]][J	ۘ[ZX�XK[^[�[YI�H	��Y�[�[YJ^���[Y[���][[Y[��RY
-	�]][XZ[	�O˙���\�
-N��]\���B��ۜ��H�Y�R�^J�[YJNQSV���^WHHQSV���^W_�N�QSV���^WV��HHێ��[YKΘ��X�_N�[�\���
-N�H���[�ܘY�K��]][J��W�U��Ӌ���[��Y�JQSJJN�H�]�
-J^�B��]\��B���]]�\]Z\�Y�Y�PԑU�ԓ��^�ۜ�[�[H��[Y[���][[Y[��RY
-	�]][�[	�N[�[˜�ܛ�[�՚Y]�ؙZ]�[܎���[��	����Ή��[�\��JN��[Y[���][[Y[��RY
-	�]][XZ[	�O˙���\�
-N�]\��B��ۜ�ܙ]�YHԑU�ԓ�˚YQSV���^WHHQSV���^W_�NQSV���^WV�ܙ]�YHHێ�ԑU�ԓ�˙\�^Wۘ[YKΘ��X�_N�[�\���
-N����[Z\�X�ۜ��\��܈HH]�Z]Ћ����J	ݛ�\��B��\�\�
-�����^Kܙ]��Y�ܙ]�Y��\�ۘ[YN�ԑU�ԓ�˙\�^Wۘ[YK��X�HK��ې�ۙ�X����ܙ]��Y	�JNY�\��܊H�ۜ��K��\��\��܊NB���[��[ۈ�[�\���
-^�ۜ�^R�HԑU�ԓ��˚Y���[�ۜ���H��[Y[���][[Y[��RY
-	����N���[��\�SI���˙�ܑXX�
-O��ۜ���\�HQSV���^W_�N�ۜ��[�Hؚ�X���[Y\���\�N�ۜ�U�H�[˙�[\��O��	�����OOI�I�N�ۜ���H�[˙�[\��O��	�����OOI؉�N�ۜ��[HU��[��
-����[���ۜ�T�H�[�X]���[�
-U��[����[
-�L
-N��ۜ���H�[�LXT���ۜ�Z[�HH
-^R�	����\��^R�JH���\��^R�K����[�ۜ�SXYH�[	��U��[������[���ۜ��XYH�[	�����[���U��[���ۜ��\H\��O�\���X\
-�O��[��݋��O��[��
-K���[�	��N��ۜ�[Y��[Y[��ܙX]Q[[Y[�
-	�]��N[��\�Ә[YOI���]�X[[��[�[��\�SX�]��\��H�[�ȏ�����O�]���]��\ss="q">${p.q}</div>
+const VOTE_PATH = 'votes';
+const safeKey = s => (s.toLowerCase().replace(/[.#$\[\]\/\s]+/g,'_').slice(0,40) || 'crew');
+function ensure(){ POLLS.forEach(p=>{ if(!MEM[p.key]) MEM[p.key]={}; }); }
+
+/* ---- load + live subscribe ---- */
+function rowsToMEM(rows){
+  const m = {};
+  (rows||[]).forEach(r=>{
+    const k = r.crew_id || r.voter_key;   // crew_id (auth) or voter_key (legacy fallback)
+    (m[r.poll] = m[r.poll] || {})[k] = {n:r.voter_name, c:r.choice};
+  });
+  return m;
+}
+async function fetchVotes(){
+  if(!SB) return;
+  const { data, error } = await SB.from('votes').select('poll,crew_id,voter_name,choice');
+  if(!error){ MEM = rowsToMEM(data); ensure(); renderPolls(); }
+  else console.warn(error);
+}
+function startVotes(){
+  ensure(); renderPolls();                          // instant paint
+  if (SB){
+    fetchVotes();                                   // initial load
+    SB.channel('votes-stream')                      // realtime: any change, any device
+      .on('postgres_changes', { event:'*', schema:'public', table:'votes' }, fetchVotes)
+      .subscribe();
+  } else {
+    try { MEM = JSON.parse(localStorage.getItem(VOTE_PATH)) || {}; } catch(e){ MEM = {}; }
+    ensure(); renderPolls();
+    document.getElementById('storeNote').textContent =
+      'Device-only — paste a Supabase URL + key (see code comments) to sync the whole convoy.';
+  }
+}
+
+async function castVote(pollKey, choice){
+  if(!CONFIGURED){
+    // Device-only fallback (no auth configured)
+    const name = (document.getElementById('authEmail')?.value||'').trim() ||
+                 localStorage.getItem('namibia-myname') || '';
+    if(!name){ document.getElementById('authEmail')?.focus(); return; }
+    const k = safeKey(name);
+    MEM[pollKey] = MEM[pollKey]||{}; MEM[pollKey][k] = {n:name, c:choice};
+    renderPolls();
+    try { localStorage.setItem(VOTE_PATH, JSON.stringify(MEM)); } catch(e){}
+    return;
+  }
+  // Auth required
+  if(!CREW_ROW){
+    const panel = document.getElementById('authPanel');
+    panel?.scrollIntoView({behavior:'smooth', block:'center'});
+    document.getElementById('authEmail')?.focus();
+    return;
+  }
+  const crewId = CREW_ROW.id;
+  MEM[pollKey] = MEM[pollKey]||{};
+  MEM[pollKey][crewId] = {n:CREW_ROW.display_name, c:choice};
+  renderPolls();    // optimistic
+  const { error } = await SB.from('votes')
+    .upsert({ poll:pollKey, crew_id:crewId, voter_name:CREW_ROW.display_name, choice },
+            { onConflict:'poll,crew_id' });
+  if(error) console.warn(error);
+}
+
+function renderPolls(){
+  const myK = CREW_ROW?.id ?? null;
+  const host = document.getElementById('polls');
+  host.innerHTML='';
+  POLLS.forEach(p=>{
+    const votes = MEM[p.key]||{};
+    const vals  = Object.values(votes);
+    const aV = vals.filter(v=>v && v.c==='a');
+    const bV = vals.filter(v=>v && v.c==='b');
+    const total = aV.length + bV.length;
+    const aPct = total? Math.round(aV.length/total*100):0;
+    const bPct = total? 100-aPct:0;
+    const mine = (myK && votes[myK]) ? votes[myK].c : null;
+    const aLead = total && aV.length>bV.length;
+    const bLead = total && bV.length>aV.length;
+    const chip = arr => arr.map(v=>`<span>${v.n}</span>`).join('');
+
+    const el=document.createElement('div');
+    el.className='poll reveal in';
+    el.innerHTML=`
+      <div class="qno">${p.no}</div>
+      <div class="q">${p.q}</div>
       <div class="qd">${p.d}</div>
       <div class="opts">
         <div class="opt a ${mine==='a'?'mine':''} ${aLead?'lead':''}" data-poll="${p.key}" data-c="a">
