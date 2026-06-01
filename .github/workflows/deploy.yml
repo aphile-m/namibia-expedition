@@ -1,0 +1,32 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "namibia-expedition-live.html"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy to index.html
+        run: cp namibia-expedition-live.html index.html
+
+      - name: Inject Supabase credentials
+        run: |
+          sed -i "s|PASTE_PROJECT_URL|${{ secrets.SUPABASE_URL }}|g" index.html
+          sed -i "s|PASTE_ANON_PUBLIC_KEY|${{ secrets.SUPABASE_ANON_KEY }}|g" index.html
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          include_files: index.html
