@@ -601,11 +601,11 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
    ============================================================ */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL      = "";       // e.g. https://abcdwxyz.supabase.co
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_URL      = "https://uaqvqvrflzxulixdrmna.supabase.co";       // e.g. https://abcdwxyz.supabase.co
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcXZxdnJmbHp4dWxpeGRybW5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MDg0MjYsImV4cCI6MjA5MDk4NDQyNn0.CB486BMb9ZNelvm05hgxHru1Dqs8o2YloBV5Nted_68";
 
 let SB = null;
-const CONFIGURED = !SUPABASE_URL.includes("");
+const CONFIGURED = !SUPABASE_URL.includes("https://uaqvqvrflzxulixdrmna.supabase.co");
 if (CONFIGURED) {
   try { SB = createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
   catch (e) { console.warn("Supabase init failed, using device-only votes.", e); }
@@ -917,3 +917,4 @@ window.addEventListener('scroll',()=>{
 </script>
 </body>
 </html>
+<!-- supabase wired -->
