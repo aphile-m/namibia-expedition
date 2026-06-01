@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Southern Namibia &amp; Kalahari Expedition</title>
+<title>The Southern Namibia & Kalahari Expedition</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap');
 
@@ -302,6 +302,23 @@ svg.map{width:100%;height:auto;display:block}
 .resetbtn{font-family:'Oswald';text-transform:uppercase;letter-spacing:.14em;font-size:.64rem;
   background:transparent;border:1px solid var(--line);color:var(--muted);padding:7px 14px;border-radius:20px;cursor:pointer;transition:.3s}
 .resetbtn:hover{border-color:var(--rust);color:var(--rust-bright)}
+.authbtn{font-family:'Oswald';text-transform:uppercase;letter-spacing:.12em;font-size:.74rem;padding:9px 20px;background:var(--rust);color:#fff;border:none;cursor:pointer;border-radius:6px;white-space:nowrap}
+.authbtn:hover{background:var(--rust-bright)}
+.authbtn.sec{background:transparent;border:1px solid var(--line);color:var(--bone-dim)}
+.authbtn.sec:hover{border-color:var(--rust);color:var(--rust-bright)}
+.authnote{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;color:var(--teal-bright)}
+#onboardOverlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:none;align-items:center;justify-content:center}
+#onboardModal{background:var(--panel);border:1px solid var(--line);padding:36px 32px;max-width:420px;width:90%;border-radius:4px}
+#onboardModal h3{font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;color:var(--bone);font-size:1.4rem;margin:0 0 6px}
+#onboardModal p{color:var(--bone-dim);font-size:.9rem;margin:0 0 28px}
+#onboardModal .oblabel{font-family:'Oswald';font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--rust-bright);display:block;margin-bottom:6px}
+#obName{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--bone);padding:10px 12px;font-size:1rem;border-radius:6px;margin-bottom:22px;box-sizing:border-box}
+#obName:focus{outline:none;border-color:var(--ochre)}
+.roleopts{display:flex;gap:12px;margin-bottom:28px}
+.roleopt{flex:1;padding:16px 10px;background:var(--bg);border:1px solid var(--line);text-align:center;cursor:pointer;color:var(--bone-dim);font-size:.88rem;border-radius:6px;transition:all .15s}
+.roleopt.sel{border-color:var(--rust-bright);color:var(--rust-bright);background:rgba(192,80,50,.08)}
+#obSave{width:100%;font-family:'Oswald';text-transform:uppercase;letter-spacing:.12em;font-size:.8rem;padding:13px;background:var(--rust);color:#fff;border:none;cursor:pointer;border-radius:6px}
+#obSave:hover{background:var(--rust-bright)}
 
 footer{text-align:center;padding:60px 0 80px;color:var(--muted);font-family:'Oswald';
   text-transform:uppercase;letter-spacing:.24em;font-size:.66rem}
@@ -550,13 +567,46 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
     <div class="sec-head reveal">
       <div class="eyebrow">The Commander's Checklist</div>
       <h2>The Call — Cast Your Vote</h2>
-      <p>Three definitive rulings decide the trip. Enter your name once, then tap your pick on each. Tallies update live for the whole convoy.</p>
+      <p>Four definitive rulings decide the trip. Enter your name once, then tap your pick on each. Tallies update live for the whole convoy.</p>
     </div>
 
-    <div class="namebar reveal">
-      <label for="nm">Crew Member</label>
-      <input id="nm" type="text" placeholder="Enter your name to vote…" maxlength="22" autocomplete="off">
-      <div class="who" id="whoLabel">Not signed in</div>
+    <!-- AUTH PANEL -->
+    <div class="namebar reveal" id="authPanel">
+      <!-- Not signed in -->
+      <div id="stateSignIn">
+        <label class="namebar" style="margin-bottom:6px;display:block">Crew Member</label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <input id="authEmail" type="email" placeholder="Enter your email to vote…" autocomplete="email"
+            style="flex:1;min-width:200px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--bone);padding:9px 12px;font-size:.95rem">
+          <button class="authbtn" id="sendLinkBtn">Send magic link →</button>
+        </div>
+      </div>
+      <!-- Link sent -->
+      <div id="stateLinkSent" style="display:none">
+        <span class="authnote">✓ Check your email — tap the link to sign in</span>
+      </div>
+      <!-- Signed in -->
+      <div id="stateSignedIn" style="display:none;align-items:center;gap:14px;flex-wrap:wrap">
+        <label class="namebar" style="margin:0">Crew Member</label>
+        <span class="namebar who" id="whoLabel" style="flex:1">—</span>
+        <button class="authbtn sec" id="signOutBtn">Sign out</button>
+      </div>
+    </div>
+
+    <!-- ONBOARDING MODAL (first login) -->
+    <div id="onboardOverlay">
+      <div id="onboardModal">
+        <h3>Welcome to the Convoy</h3>
+        <p>Quick setup — takes 30 seconds. You can update this any time.</p>
+        <span class="oblabel">Your name on the convoy</span>
+        <input id="obName" type="text" placeholder="e.g. Aphile" maxlength="22" autocomplete="off">
+        <span class="oblabel">Your role</span>
+        <div class="roleopts">
+          <div class="roleopt" data-role="driver">🚗 Driver</div>
+          <div class="roleopt" data-role="passenger">🎒 Passenger</div>
+        </div>
+        <button id="obSave">Join the convoy →</button>
+      </div>
     </div>
 
     <div id="polls"></div>
@@ -605,9 +655,13 @@ const SUPABASE_URL      = "https://uaqvqvrflzxulixdrmna.supabase.co";       // e
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcXZxdnJmbHp4dWxpeGRybW5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MDg0MjYsImV4cCI6MjA5MDk4NDQyNn0.CB486BMb9ZNelvm05hgxHru1Dqs8o2YloBV5Nted_68";
 
 let SB = null;
+let AUTH_USER = null;   // supabase auth user (or null)
+let CREW_ROW  = null;   // crew table row (or null)
 const CONFIGURED = !SUPABASE_URL.includes("https://uaqvqvrflzxulixdrmna.supabase.co");
 if (CONFIGURED) {
-  try { SB = createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
+  try { SB = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { autoRefreshToken:true, persistSession:true, detectSessionInUrl:true }
+  }); }
   catch (e) { console.warn("Supabase init failed, using device-only votes.", e); }
 }
 
@@ -681,7 +735,7 @@ const days = [
    surface:[['tar',530]],
    badges:[['100% Asphalt','b-asphalt']],route:'N14 via Ventersdorp & Vryburg',
    stay:'Red Sands Country Lodge',
-   body:'Pristine, manicured grass stands, private luxury stone ablution blocks, and an exceptional on-site restaurant for the first night out.',
+   body:'Pristine, manicured grass stands, private luxury stone ablution blocks, and an exceptional on-site restaurant for me first night out.',
    callouts:[['gold','Objective','An easy, clear daylight run to settle the vehicles and crew into the convoy format.']]},
   {id:'day2',num:'Day 02',title:'The Frontier',from:'Kuruman',to:'Fish River Canyon',dist:'670',time:'~7.5 hrs',scene:'canyon',
    photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Fish%20River%20Canyon%2C%20Namibia.jpg?width=1000',
@@ -707,7 +761,7 @@ const days = [
    badges:[['Corrugated Gravel','b-corr'],['C13 & C27','b-gravel']],route:'High-impact tracks slicing through the NamibRand Nature Reserve',
    stay:'Sesriem Campsite (NWR)',
    body:'Stunning but heavily corrugated tracks through glowing red sand. Deflate the tyres and take it steady.',
-   callouts:[['gold','The Golden Ticket','The double-gate system gets our vehicles to the inner gate one full hour before the public — the only way to drive the 60 km to Sossusvlei and climb Dune 45 or Deadvlei as the first sun hits the sand.']]},
+   callouts:[['gold','The Golden Ticket','The double-gate system gets our vehicles to the inner gate one full hour before the public ◤ — the only way to drive the 60 km to Sossusvlei and climb Dune 45 or Deadvlei as the first sun hits the sand.']]},
 ];
 
 const dayCards = document.getElementById('dayCards');
@@ -742,6 +796,10 @@ days.forEach((d,i)=>{
 
 /* ============ VOTING ENGINE ============ */
 const POLLS = [
+  {key:'departure_date', no:'Ruling 00', q:'The Departure Date',
+   d:'Anchored on finishing in Gaborone on a weekend — which only pays off if we also pick Route 2 (South Kalahari). Which window works?',
+   a:{t:'Sun 4 Oct — Weekend Arrival',s:'Reach Gaborone Fri 9 Oct, home Sat 10 Oct. Full Friday-night + Saturday window for the Gabs weekend scene.'},
+   b:{t:'Thu 8 Oct — Midweek',s:'Reach Gaborone Tue 13 Oct, home Wed 14 Oct. Quieter, midweek pricing, but no weekend in Gabs.'}},
   {key:'shark', no:'Ruling 01', q:'Shark Island Wind',
    d:'A blustery, classic coastal night exposed on the Lüderitz peninsula — or the quiet granite valleys inland?',
    a:{t:'Shark Island',s:'Embrace the raw, windy Atlantic peninsula — pelicans, flamingos and shaking tents.'},
@@ -756,84 +814,63 @@ const POLLS = [
    b:{t:'Tight Southern Loop',s:'Skip the north, maximise Kalahari bush transit, fast home (Route 2).'}},
 ];
 
-let MEM = {};
-const VOTE_PATH = 'votes';
-const NAME_KEY  = 'namibia-myname';
-
-const safeKey = s => (s.toLowerCase().replace(/[.#$\[\]\/\s]+/g,'_').slice(0,40) || 'crew');
-function ensure(){ POLLS.forEach(p=>{ if(!MEM[p.key]) MEM[p.key]={}; }); }
-function currentName(){ return (document.getElementById('nm').value||'').trim(); }
-
-function rowsToMEM(rows){
-  const m = {};
-  (rows||[]).forEach(r=>{ (m[r.poll] = m[r.poll] || {})[r.voter_key] = {n:r.voter_name, c:r.choice}; });
-  return m;
-}
-async function fetchVotes(){
-  if(!SB) return;
-  const { data, error } = await SB.from('votes').select('poll,voter_key,voter_name,choice');
-  if(!error){ MEM = rowsToMEM(data); ensure(); renderPolls(); }
-  else console.warn(error);
-}
-function startVotes(){
-  ensure(); renderPolls();
-  if (SB){
-    fetchVotes();
-    SB.channel('votes-stream')
-      .on('postgres_changes', { event:'*', schema:'public', table:'votes' }, fetchVotes)
-      .subscribe();
-  } else {
-    try { MEM = JSON.parse(localStorage.getItem(VOTE_PATH)) || {}; } catch(e){ MEM = {}; }
-    ensure(); renderPolls();
-    document.getElementById('storeNote').textContent =
-      'Device-only — paste a Supabase URL + key (see code comments) to sync the whole convoy.';
-  }
-}
-
-async function castVote(pollKey, choice){
-  const name = currentName();
-  if(!name){
-    const inp=document.getElementById('nm');
-    inp.focus(); inp.style.borderColor='var(--rust)';
-    setTimeout(()=>inp.style.borderColor='',1200);
-    return;
-  }
-  const k = safeKey(name);
-  MEM[pollKey] = MEM[pollKey]||{};
-  MEM[pollKey][k] = {n:name, c:choice};
-  renderPolls();
-  if (SB){
-    const { error } = await SB.from('votes')
-      .upsert({ poll:pollKey, voter_key:k, voter_name:name, choice }, { onConflict:'poll,voter_key' });
-    if(error) console.warn(error);
-  } else {
-    try { localStorage.setItem(VOTE_PATH, JSON.stringify(MEM)); } catch(e){}
-  }
-}
-
-function renderPolls(){
-  const name = currentName();
-  const myK  = name ? safeKey(name) : null;
-  const host = document.getElementById('polls');
-  host.innerHTML='';
-  POLLS.forEach(p=>{
-    const votes = MEM[p.key]||{};
-    const vals  = Object.values(votes);
-    const aV = vals.filter(v=>v && v.c==='a');
-    const bV = vals.filter(v=>v && v.c==='b');
-    const total = aV.length + bV.length;
-    const aPct = total? Math.round(aV.length/total*100):0;
-    const bPct = total? 100-aPct:0;
-    const mine = (myK && votes[myK]) ? votes[myK].c : null;
-    const aLead = total && aV.length>bV.length;
-    const bLead = total && bV.length>aV.length;
-    const chip = arr => arr.map(v=>`<span>${v.n}</span>`).join('');
-
-    const el=document.createElement('div');
-    el.className='poll reveal in';
-    el.innerHTML=`
-      <div class="qno">${p.no}</div>
-      <div class="q">${p.q}</div>
+let MEM = {};                       // live mirror of all votes
+const VOTEE_PATH = 'votes';
+const safeKey = s => (s.toLowerCase().replace(/[.#\$\[\]\/\s]+/g,'_').slice(0,40) || 'crew');
+function ensure(){ POLS#��ܑXX�
+O��Y�SQSV���^WJHQSV���^WO^�N�JN�B��ʈKKKH�Y
+�]�H�X��ܚX�HKKKH
+��[��[ۈ�����QSJ����^�ۜ�HH�N
+�����JK��ܑXX�
+�O��ۜ��H��ܙ]��Y����\���^N���ܙ]��Y
+]]
+H܈��\���^H
+Y�X�H�[�X��B�
+V܋��HHV܋��H�JV��HHێ�����\�ۘ[YKΜ����X�_NJN�]\��NB�\�[���[��[ۈ�]���\�
+^Y�TЊH�]\���ۜ��]K\��܈HH]�Z]Ћ����J	ݛ�\��K��[X�
+	��ܙ]��Y��\�ۘ[YK��X�I�NY�Y\��܊^�QSHH�����QSJ]JN�[��\�J
+N��[�\���
+N�B�[�H�ۜ��K��\��\��܊NB��[��[ۈ�\���\�
+^[��\�J
+N��[�\���
+N���[��[�Z[��Y�
+Њ^�]���\�
+N���[�]X[�Y�Ћ��[��[
+	ݛ�\�\��X[I�H���X[[YN�[�H�[��K[�H]�X�B��ۊ	���ܙ\���[��\���]�[��ʉ���[XN��X�X��X�N�ݛ�\��K�]���\�B���X��ܚX�J
+NH[�H�H�QSHH��Ӌ�\��J��[�ܘY�K��]][J��W�U
+JH�N�H�]�
+J^�QSHH�N�B�[��\�J
+N��[�\���
+N��[Y[���][[Y[��RY
+	��ܙS��I�K�^�۝[�B�	�]�X�K[ۛH8�%\�HH�\X�\�HT�
+��^H
+�YH��H��[Y[��H��[��H��H�۝��K��B�B��\�[���[��[ۈ�\���J��^K��X�J^Y�P�ӑ�Q�T�Q
+^��]�X�K[ۛH�[�X��
+��]]�ۙ�Y�\�Y
+B��ۜ��[YHH
+��[Y[���][[Y[��RY
+	�]][XZ[	�O˝�[Y_	��K��[J
+H���[�ܘY�K��]][J	ۘ[ZX�XK[^[�[YI�H	��Y�[�[YJ^���[Y[���][[Y[��RY
+	�]][XZ[	�O˙���\�
+N��]\���B��ۜ��H�Y�R�^J�[YJNQSV���^WHHQSV���^W_�N�QSV���^WV��HHێ��[YKΘ��X�_N�[�\���
+N�H���[�ܘY�K��]][J��W�U��Ӌ���[��Y�JQSJJN�H�]�
+J^�B��]\��B���]]�\]Z\�Y�Y�PԑU�ԓ��^�ۜ�[�[H��[Y[���][[Y[��RY
+	�]][�[	�N[�[˜�ܛ�[�՚Y]�ؙZ]�[܎���[��	����Ή��[�\��JN��[Y[���][[Y[��RY
+	�]][XZ[	�O˙���\�
+N�]\��B��ۜ�ܙ]�YHԑU�ԓ�˚YQSV���^WHHQSV���^W_�NQSV���^WV�ܙ]�YHHێ�ԑU�ԓ�˙\�^Wۘ[YKΘ��X�_N�[�\���
+N����[Z\�X�ۜ��\��܈HH]�Z]Ћ����J	ݛ�\��B��\�\�
+�����^Kܙ]��Y�ܙ]�Y��\�ۘ[YN�ԑU�ԓ�˙\�^Wۘ[YK��X�HK��ې�ۙ�X����ܙ]��Y	�JNY�\��܊H�ۜ��K��\��\��܊NB���[��[ۈ�[�\���
+^�ۜ�^R�HԑU�ԓ��˚Y���[�ۜ���H��[Y[���][[Y[��RY
+	����N���[��\�SI���˙�ܑXX�
+O��ۜ���\�HQSV���^W_�N�ۜ��[�Hؚ�X���[Y\���\�N�ۜ�U�H�[˙�[\��O��	�����OOI�I�N�ۜ���H�[˙�[\��O��	�����OOI؉�N�ۜ��[HU��[��
+����[���ۜ�T�H�[�X]���[�
+U��[����[
+�L
+N��ۜ���H�[�LXT���ۜ�Z[�HH
+^R�	����\��^R�JH���\��^R�K����[�ۜ�SXYH�[	��U��[������[���ۜ��XYH�[	�����[���U��[���ۜ��\H\��O�\���X\
+�O��[��݋��O��[��
+K���[�	��N��ۜ�[Y��[Y[��ܙX]Q[[Y[�
+	�]��N[��\�Ә[YOI���]�X[[��[�[��\�SX�]��\��H�[�ȏ�����O�]���]��\ss="q">${p.q}</div>
       <div class="qd">${p.d}</div>
       <div class="opts">
         <div class="opt a ${mine==='a'?'mine':''} ${aLead?'lead':''}" data-poll="${p.key}" data-c="a">
@@ -860,20 +897,89 @@ function renderPolls(){
   });
 }
 
-function loadName(){ try{ const n=localStorage.getItem(NAME_KEY); if(n) document.getElementById('nm').value=n; }catch(e){} }
-function saveName(){ try{ localStorage.setItem(NAME_KEY, currentName()); }catch(e){} }
-function updateWho(){
-  const n=currentName();
-  document.getElementById('whoLabel').innerHTML = n? `Signed in as <b>${n}</b>` : 'Not signed in';
+/* ============ AUTH ============ */
+async function loadCrewRow(){
+  if(!SB || !AUTH_USER){ CREW_ROW=null; return; }
+  const { data } = await SB.from('crew').select('*').eq('id', AUTH_USER.id).maybeSingle();
+  CREW_ROW = data;
 }
-document.getElementById('nm').addEventListener('input',()=>{ updateWho(); renderPolls(); });
-document.getElementById('nm').addEventListener('change',saveName);
 
+function updateAuthUI(){
+  const si = !!AUTH_USER;
+  document.getElementById('stateSignIn').style.display    = si ? 'none' : '';
+  document.getElementById('stateLinkSent').style.display  = 'none';
+  const siDiv = document.getElementById('stateSignedIn');
+  siDiv.style.display = si ? 'flex' : 'none';
+  if(si && CREW_ROW)
+    document.getElementById('whoLabel').innerHTML = `Signed in as <b>${CREW_ROW.display_name}</b>`;
+  // Admin-only reset
+  const isAdmin = AUTH_USER?.email === 'aphilem@gmail.com';
+  document.getElementById('resetBtn').style.display = isAdmin ? '' : 'none';
+}
+
+// Auth state listener
+if(SB){
+  SB.auth.onAuthStateChange(async (_event, session)=>{
+    AUTH_USER = session?.user ?? null;
+    if(AUTH_USER){ await loadCrewRow(); if(!CREW_ROW) showOnboarding(); }
+    updateAuthUI(); renderPolls();
+  });
+}
+
+// Send magic link
+document.getElementById('sendLinkBtn')?.addEventListener('click', async ()=>{
+  const email = document.getElementById('authEmail').value.trim();
+  if(!email){ document.getElementById('authEmail').focus(); return; }
+  const { error } = await SB.auth.signInWithOtp({
+    email, options:{ emailRedirectTo: window.location.href }
+  });
+  if(!error){
+    document.getElementById('stateSignIn').style.display   = 'none';
+    document.getElementById('stateLinkSent').style.display = '';
+  } else { console.warn(error); }
+});
+document.getElementById('authEmail')?.addEventListener('keydown', e=>{
+  if(e.key==='Enter') document.getElementById('sendLinkBtn').click();
+});
+
+// Sign out
+document.getElementById('signOutBtn')?.addEventListener('click', ()=> SB.auth.signOut());
+
+// Onboarding modal
+let obRole = null;
+function showOnboarding(){
+  document.getElementById('onboardOverlay').style.display = 'flex';
+  document.getElementById('obName').value = AUTH_USER?.user_metadata?.full_name || '';
+  obRole = null;
+  document.querySelectorAll('.roleopt').forEach(r=>r.classList.remove('sel'));
+}
+document.querySelectorAll('.roleopt').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.roleopt').forEach(r=>r.classList.remove('sel'));
+    el.classList.add('sel'); obRole = el.dataset.role;
+  });
+});
+document.getElementById('obSave')?.addEventListener('click', async ()=>{
+  const name = document.getElementById('obName').value.trim();
+  if(!name){ document.getElementById('obName').focus(); return; }
+  if(!obRole){ return; }
+  const { data, error } = await SB.from('crew').upsert(
+    { id:AUTH_USER.id, email:AUTH_USER.email, display_name:name, role:obRole },
+    { onConflict:'id' }
+  ).select().maybeSingle();
+  if(!error){
+    CREW_ROW = data;
+    document.getElementById('onboardOverlay').style.display = 'none';
+    updateAuthUI(); renderPolls();
+  } else { console.warn(error); }
+});
+
+/* ---- Admin: reset all votes ---- */
 document.getElementById('resetBtn').addEventListener('click',async()=>{
   if(!confirm('Clear every vote for the whole convoy? This cannot be undone.')) return;
   MEM={}; ensure();
-  if (SB){ try{ await SB.from('votes').delete().neq('poll',''); }catch(e){ console.warn(e); } renderPolls(); }
-  else   { try{ localStorage.removeItem(VOTE_PATH); }catch(e){} renderPolls(); }
+  if(SB){ try{ await SB.from('votes').delete().neq('poll',''); }catch(e){ console.warn(e); } renderPolls(); }
+  else  { try{ localStorage.removeItem(VOTE_PATH); }catch(e){} renderPolls(); }
 });
 
 /* ============ MAP TOGGLES ============ */
@@ -909,12 +1015,10 @@ window.addEventListener('scroll',()=>{
 
 /* ============ INIT ============ */
 (function init(){
-  loadName();
-  updateWho();
-  startVotes();
+  updateAuthUI();   // set initial UI state (not signed in)
+  startVotes();     // loads, live-subscribes, and renders the polls
   observeAll();
 })();
 </script>
 </body>
 </html>
-<!-- supabase wired -->
