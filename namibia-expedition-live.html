@@ -450,6 +450,19 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
 .board-row i{font-style:normal;font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.6rem;color:var(--muted);margin-left:auto}
 .decided-banner{background:rgba(219,162,63,.1);border:1px solid rgba(219,162,63,.4);border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:.88rem;color:var(--bone-dim)}
 .decided-banner b{color:var(--ochre-bright)}
+/* planning progress */
+.prog-track{height:26px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--rust),var(--ochre-bright));border-radius:6px;
+  display:flex;align-items:center;justify-content:flex-end;padding-right:12px;min-width:40px;
+  font-family:'Oswald';font-size:.74rem;letter-spacing:.06em;color:#10100c;font-weight:600;
+  transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.todo-group{font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:.64rem;color:var(--rust-bright);margin:16px 0 4px}
+.todo-row{display:flex;gap:10px;align-items:baseline;padding:6px 0;font-size:.9rem;border-bottom:1px solid var(--line-soft)}
+.todo-row:last-child{border-bottom:none}
+.todo-row::before{content:'○';color:var(--ochre);font-size:.8rem;flex-shrink:0}
+.todo-row b{color:var(--bone);font-weight:500}
+.todo-row i{font-style:normal;font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.62rem;color:var(--muted);margin-left:auto;text-align:right}
+.todo-alldone{color:var(--green-bright);font-size:.95rem;margin-top:14px}
 </style>
 </head>
 <body>
@@ -879,6 +892,15 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
       <div class="eyebrow">Admin · Phase 7</div>
       <h2>Trip Planning HQ</h2>
       <p>Organiser-only tools: record decisions made off-app, manage the crew list and roles, and pin down every pre-arrangement — campsite availability, per-camper rates, and each cost item you can verify before wheels turn.</p>
+    </div>
+
+    <!-- 0 · PLANNING PROGRESS -->
+    <div class="plan-panel reveal in">
+      <h4>Planning Progress</h4>
+      <p class="plan-sub">Auto-tracked from the tools below — rulings decided, stays booked with confirmed rates, cost items verified, finance set up, and the crew signed in. Backup stays don't count toward progress.</p>
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:6%">0%</div></div>
+      <p class="plan-sub" style="margin:10px 0 0" id="progCount"></p>
+      <div id="todoList"></div>
     </div>
 
     <!-- 1 · DECISION LOG -->
@@ -1531,7 +1553,7 @@ document.getElementById('adminSaveBank')?.addEventListener('click', async ()=>{
 const ADMIN_EMAIL = 'aphilem@gmail.com';
 const isAdmin = () => AUTH_USER?.email === ADMIN_EMAIL;
 
-let PLAN = { crew:[], invites:[], bookings:[], items:[] };
+let PLAN = { crew:[], invites:[], bookings:[], items:[], payments:[], settings:null, account:null };
 
 // The stays named in the day guide + decision point (incl. backups & both route options)
 const ROUTE_STAYS = [
@@ -1556,7 +1578,7 @@ async function fetchDecisions(){
   if(error){ console.warn(error); return; }
   DECISIONS = data||[];
   renderDecisionBoard(); renderPolls();
-  if(isAdmin()) renderDecisionLog();
+  if(isAdmin()){ renderDecisionLog(); renderPlanProgress(); }
 }
 
 function renderDecisionBoard(){
@@ -1572,16 +1594,22 @@ async function loadPlanning(){
   if(!SB || !isAdmin()){ sec.style.display='none'; document.getElementById('gatePlanLink').style.display='none'; return; }
   sec.style.display='';
   document.getElementById('gatePlanLink').style.display='';
-  const [crew, invites, bookings, items] = await Promise.all([
+  const [crew, invites, bookings, items, payments, settings, account] = await Promise.all([
     SB.from('crew').select('id,email,display_name,role').order('created_at'),
     SB.from('invites').select('*').order('created_at'),
     SB.from('site_bookings').select('*').order('sort_order').order('created_at'),
     SB.from('cost_items').select('*').order('created_at'),
+    SB.from('payments').select('crew_id,status'),
+    SB.from('trip_settings').select('*').eq('id',1).maybeSingle(),
+    SB.from('payment_account').select('*').eq('id',1).maybeSingle(),
   ]);
   PLAN.crew     = crew.data     || [];
   PLAN.invites  = invites.data  || [];
   PLAN.bookings = bookings.data || [];
   PLAN.items    = items.data    || [];
+  PLAN.payments = payments.data || [];
+  PLAN.settings = settings.data || null;
+  PLAN.account  = account.data  || null;
   if(crew.error||invites.error||bookings.error||items.error)
     console.warn('Planning load — run supabase-phase7-planning-migration.sql if tables are missing.',
                  crew.error||invites.error||bookings.error||items.error);
@@ -1751,6 +1779,70 @@ window.delCostItem = async function(id){
   loadPlanning();
 };
 
+/* ---- 0 · planning progress ---- */
+const STATUS_LABELS = Object.fromEntries(BOOKING_STATUSES);
+function renderPlanProgress(){
+  const host = document.getElementById('todoList');
+  if(!host) return;
+  const items = [];
+  const add = (group,label,done,detail) => items.push({group,label,done,detail});
+
+  // one item per voting ruling — decided offline or not
+  POLLS.forEach(p=>{
+    const d = DECISIONS.find(x=>x.poll_key===p.key);
+    add('Decisions', p.q, !!d, d ? d.outcome : 'no call recorded yet');
+  });
+
+  // one item per (non-backup) stay — done once booked/paid with a confirmed rate
+  const stays = PLAN.bookings.filter(b=>!/backup/i.test(b.day_label||''));
+  if(!stays.length) add('Camps', 'Route stays loaded', false, 'load the route stays to start tracking');
+  stays.forEach(b=>{
+    const booked  = b.status==='booked' || b.status==='paid';
+    const hasRate = b.cost_per_camper!=null && b.cost_per_camper!=='';
+    add('Camps', b.site_name, booked && hasRate,
+        booked ? 'booked — rate not confirmed' : (STATUS_LABELS[b.status]||b.status));
+  });
+
+  // cost items must be verified
+  PLAN.items.forEach(it=>add('Costs', it.label, !!it.verified, 'not verified yet'));
+
+  // finance setup
+  const ts = PLAN.settings, pa = PLAN.account;
+  add('Finance', 'Deposit amount & deadline set', !!(ts && ts.deposit_amount && ts.collection_deadline),
+      !ts || !ts.deposit_amount ? 'set the deposit amount' : 'set the collection deadline');
+  add('Finance', 'Banking details posted', !!(pa && (pa.bank || pa.account_number)), 'add the account details');
+
+  // crew & deposits
+  const crewEmails = new Set(PLAN.crew.map(c=>(c.email||'').toLowerCase()));
+  const pending = PLAN.invites.filter(i=>!crewEmails.has(i.email.toLowerCase()));
+  if(PLAN.invites.length)
+    add('Crew', 'All invited crew signed in', pending.length===0, `${pending.length} still to sign in`);
+  if(PLAN.crew.length){
+    const verified = PLAN.payments.filter(p=>p.status==='verified').length;
+    add('Crew', 'All deposits verified', verified>=PLAN.crew.length, `${verified}/${PLAN.crew.length} verified`);
+  }
+
+  const done  = items.filter(i=>i.done).length;
+  const total = items.length;
+  const pct   = total ? Math.round(done/total*100) : 0;
+  const fill  = document.getElementById('progFill');
+  fill.style.width  = Math.max(pct,6)+'%';
+  fill.textContent  = pct+'%';
+  document.getElementById('progCount').textContent = `${done} of ${total} planning items done.`;
+
+  const out = items.filter(i=>!i.done);
+  if(!out.length){
+    host.innerHTML = '<div class="todo-alldone">✓ Nothing outstanding — the pre-arrangements are locked.</div>';
+    return;
+  }
+  let htmlStr = '', lastGroup = '';
+  out.forEach(i=>{
+    if(i.group!==lastGroup){ htmlStr += `<div class="todo-group">Outstanding · ${i.group}</div>`; lastGroup = i.group; }
+    htmlStr += `<div class="todo-row"><b>${esc(i.label)}</b><i>${esc(i.detail||'')}</i></div>`;
+  });
+  host.innerHTML = htmlStr;
+}
+
 const fmtR = n => 'R'+Math.round(n).toLocaleString('en-ZA');
 function renderPlanSummary(){
   const crewEmails = new Set(PLAN.crew.map(c=>(c.email||'').toLowerCase()));
@@ -1776,6 +1868,7 @@ function renderPlanSummary(){
   document.getElementById('psNote').textContent =
     'Estimates only — per-vehicle and shared costs are spread across the headcount, and every listed stay is counted (drop or zero the route option the convoy doesn\'t take).'
     + (unverified ? ` ${unverified} cost item${unverified>1?'s':''} still unverified.` : ' All cost items verified ✓');
+  renderPlanProgress();
 }
 
 /* ============ MAP TOGGLES ============ */
