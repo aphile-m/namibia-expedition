@@ -47,6 +47,14 @@ public site elegantly shows each campsite with its related images.
 
 ## 2. Trip viewer mode + live-trip day tracking (check-ins & photos)
 
+> **Shipped (phase 11):** viewer accounts invited by crew (read-only, RLS
+> audited), day-aware live mode with a pinned live bar and Trip Log,
+> per-day crew check-ins with geolocation and roll call, and trip photo
+> uploads (EXIF GPS → Nominatim place search / current-location fallback,
+> client-side downscale, public storage bucket, realtime updates).
+> Chose the free OSM/Nominatim search over Google Places — no API key.
+> Still open: plotting check-in/photo pins on the route map.
+
 **Goal:** while the convoy is on the road, the site becomes a live trip
 tracker. Crew members can invite "viewer" emails (family, friends at home)
 who sign in and follow along — dates, progress, and photos from the trip —

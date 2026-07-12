@@ -151,6 +151,59 @@ svg.map{width:100%;height:auto;display:block}
 .geo-nav button[data-p="left"]{grid-column:1;grid-row:2}
 .geo-nav button[data-p="down"]{grid-column:2;grid-row:2}
 .geo-nav button[data-p="right"]{grid-column:3;grid-row:2}
+/* ============================================================
+   LIVE TRIP MODE  (Phase 11)
+   ============================================================ */
+#livebar{position:fixed;top:0;left:0;right:0;z-index:64;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:9px 16px;background:rgba(15,11,8,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(192,81,43,.5);
+  font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:.7rem;color:var(--bone-dim)}
+#livebar b{color:var(--rust-bright);letter-spacing:.16em}
+.lb-pulse{width:9px;height:9px;border-radius:50%;background:var(--rust-bright);animation:lbpulse 1.6s infinite}
+@keyframes lbpulse{0%,100%{box-shadow:0 0 0 0 rgba(221,98,51,.6)}50%{box-shadow:0 0 0 7px rgba(221,98,51,0)}}
+.lb-leg{color:var(--bone)}
+.lb-count{color:var(--green-bright)}
+#lbCheckin{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.66rem;padding:6px 14px;
+  background:var(--rust);color:#fff;border:none;border-radius:20px;cursor:pointer}
+#lbCheckin:hover{background:var(--rust-bright)}
+#lbCheckin.done{background:var(--green);cursor:default}
+.lb-link{color:var(--ochre-bright);text-decoration:none;margin-left:auto}
+body.live-mode{padding-top:38px}
+/* trip log */
+#triplog{border-top:1px solid var(--line)}
+.tl-day{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:10px;
+  padding:24px 26px;margin-bottom:20px;box-shadow:var(--shadow)}
+.tl-day.today{border-color:rgba(221,98,51,.55)}
+.tl-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.tl-head b{font-family:'Oswald';text-transform:uppercase;letter-spacing:.14em;font-size:.95rem;color:var(--bone)}
+.tl-head .tl-live{font-family:'Oswald';font-size:.6rem;letter-spacing:.2em;color:var(--rust-bright);text-transform:uppercase;
+  border:1px solid rgba(221,98,51,.5);padding:3px 9px;border-radius:20px}
+.tl-head .tl-date{font-family:'Oswald';font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.tl-checkins{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.tl-checkins .cnt{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.64rem;color:var(--bone-dim);margin-right:4px}
+.tl-checkins span.chip{font-family:'Oswald';font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+  background:rgba(134,145,80,.16);border:1px solid rgba(134,145,80,.4);color:var(--green-bright);padding:3px 9px;border-radius:20px}
+.tl-photos{display:flex;gap:10px;flex-wrap:wrap}
+.tl-photo{width:150px;cursor:pointer}
+.tl-photo img{width:150px;height:110px;object-fit:cover;border-radius:6px;border:1px solid var(--line);display:block}
+.tl-photo .ph-meta{font-family:'Oswald';font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px;line-height:1.5}
+.tl-photo .ph-meta b{color:var(--bone-dim)}
+.tl-upload{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.64rem;padding:8px 16px;
+  background:transparent;border:1px dashed rgba(219,162,63,.5);color:var(--ochre-bright);border-radius:6px;cursor:pointer;margin-top:12px}
+.tl-upload:hover{border-color:var(--ochre-bright);background:rgba(219,162,63,.07)}
+.tl-upload:disabled{opacity:.5;cursor:wait}
+/* place picker */
+#placeOverlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:998;display:none;align-items:center;justify-content:center}
+#placeModal{background:var(--panel);border:1px solid var(--line);padding:30px 28px;max-width:430px;width:92%;border-radius:6px}
+#placeModal h3{font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;color:var(--bone);font-size:1.2rem;margin:0 0 6px}
+#placeModal p{color:var(--bone-dim);font-size:.86rem;margin:0 0 18px}
+#plSearch{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--bone);padding:9px 12px;font-size:.94rem;border-radius:6px;font-family:'Spectral',serif;min-width:0}
+#plSearch:focus{outline:none;border-color:var(--ochre)}
+#plResults button{display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);color:var(--bone-dim);
+  padding:9px 12px;border-radius:6px;margin-top:6px;cursor:pointer;font-size:.86rem;font-family:'Spectral',serif}
+#plResults button:hover{border-color:var(--ochre);color:var(--bone)}
+/* viewer chip in roster */
+.vinv-row{display:flex;gap:10px;align-items:center;font-size:.84rem;color:var(--bone-dim);padding:5px 0}
+.vinv-row .plan-del{margin-left:auto}
 .node{cursor:pointer}
 .node circle{transition:.3s}
 .node:hover circle.dot{r:11;fill:var(--ochre-bright)}
@@ -528,6 +581,32 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
 <div id="rail"></div>
 <a id="hqTab" href="#planning">⚙ Planning HQ <span class="pct" id="hqTabPct" style="display:none"></span></a>
 
+<!-- LIVE TRIP BAR (Phase 11) — appears during the trip window -->
+<div id="livebar" style="display:none">
+  <span class="lb-pulse"></span>
+  <b>Day <span id="lbDay">—</span> · Live</b>
+  <span class="lb-leg" id="lbLeg"></span>
+  <span class="lb-count" id="lbCount"></span>
+  <button id="lbCheckin" style="display:none">📍 Check in</button>
+  <a href="#triplog" class="lb-link">Trip log ↓</a>
+</div>
+
+<!-- place picker for photos without EXIF location -->
+<div id="placeOverlay" style="display:none">
+  <div id="placeModal">
+    <h3>Where was this taken?</h3>
+    <p>No location found in the photo — search for the place or use your current position.</p>
+    <button class="authbtn" id="plHere" style="width:100%;margin-bottom:12px">📍 Use my current location</button>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <input id="plSearch" type="text" placeholder="Search a place… e.g. Sesriem">
+      <button class="authbtn sec" id="plGo">Search</button>
+    </div>
+    <div id="plResults"></div>
+    <button class="resetbtn" id="plSkip" style="margin-top:14px">Skip — no location</button>
+  </div>
+</div>
+<input type="file" id="tlFile" accept="image/*" style="display:none">
+
 <!-- ===================== HERO ===================== -->
 <header class="hero">
   <div class="hero-sky"></div>
@@ -843,6 +922,15 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
         <div class="roster-count"><b id="rcPax">0</b>Passengers</div>
       </div>
       <div class="roster-grid reveal" id="rosterGrid"></div>
+      <!-- viewer invites (Phase 11) — full crew only -->
+      <div id="viewerInvite" style="display:none">
+        <p class="plan-sub" style="margin:32px 0 10px">Invite a follower at home — they sign in with the usual magic link and can watch the trip (dates, live log, photos) without any crew controls.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:520px">
+          <input id="vinvEmail" type="email" placeholder="follower@email.com" style="flex:1;min-width:200px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--bone);padding:10px 12px;font-size:.92rem;font-family:'Spectral',serif">
+          <button class="authbtn" id="vinvBtn">Invite viewer →</button>
+        </div>
+        <div id="vinvList" style="margin-top:12px"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1039,6 +1127,19 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
   </div>
 </section>
 
+<!-- ===================== TRIP LOG (Phase 11 · live) ===================== -->
+<section id="triplog" style="display:none">
+  <div class="wrap">
+    <div class="sec-head reveal in">
+      <div class="eyebrow">On The Road</div>
+      <h2>The Trip Log</h2>
+      <p id="tlSub">Live from the convoy — check-ins and photos as each day unfolds.</p>
+    </div>
+    <div id="tlLocked" style="display:none;padding:24px;color:var(--muted);font-size:.9rem">Sign in to follow the live trip log.</div>
+    <div id="tlDays"></div>
+  </div>
+</section>
+
 <footer>
   <div class="mark">▲ ▲ ▲</div>
   Wheels turning by 08:00 · Fuel at every opportunity · Bring it home
@@ -1064,6 +1165,7 @@ let AUTH_USER = null;   // supabase auth user (or null)
 let CREW_ROW  = null;   // crew table row (or null)
 let DECISIONS = [];     // decisions recorded off-app (Phase 7, crew-only read)
 let TRIP = null;        // public trip_settings: departure_date, route_locked (Phase 8)
+const isViewer = () => CREW_ROW?.role === 'viewer';   // follower account (Phase 11)
 const ROUTE_NAMES = { route1:'Route 1 · Coast-to-Coast', route2:'Route 2 · South Kalahari' };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = d => new Date(d+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
@@ -1363,6 +1465,7 @@ async function castVote(pollKey, choice){
     document.getElementById('authEmail')?.focus();
     return;
   }
+  if(isViewer()) return;   // followers watch, they don't vote
   const crewId = CREW_ROW.id;
   MEM[pollKey] = MEM[pollKey]||{};
   MEM[pollKey][crewId] = {n:CREW_ROW.display_name, c:choice};
@@ -1484,7 +1587,7 @@ async function handleSession(session){
     else { try { localStorage.setItem('namibia-known-name', CREW_ROW.display_name||''); } catch(e){} }
   }
   updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); }
-  fetchDecisions(); loadPlanning(); renderPolls();
+  fetchDecisions(); loadPlanning(); renderPolls(); startLive();
   if(!AUTH_USER) rememberedPrefill();
 }
 if(SB){
@@ -1533,8 +1636,21 @@ async function showOnboarding(){
   document.getElementById('obName').value = AUTH_USER?.user_metadata?.full_name || '';
   obRole = null;
   document.querySelectorAll('.roleopt').forEach(r=>r.classList.remove('sel'));
-  // Pre-fill from an admin invite, if one exists for this email
+  // reset onboarding copy (may have been switched to viewer mode before)
+  document.querySelector('.roleopts').style.display = 'flex';
+  document.querySelector('#onboardModal p').textContent = 'Quick setup — takes 30 seconds. You can update this any time.';
+  document.getElementById('obSave').textContent = 'Join the convoy →';
   if(SB && AUTH_USER?.email){
+    // invited as a viewer? no role picker — they follow, not ride
+    const { data: vdata } = await SB.from('viewer_invites').select('email').ilike('email', AUTH_USER.email);
+    if(vdata && vdata[0]){
+      obRole = 'viewer';
+      document.querySelector('.roleopts').style.display = 'none';
+      document.querySelector('#onboardModal p').textContent = 'You\'ve been invited to follow the expedition — pick a name and you\'re in.';
+      document.getElementById('obSave').textContent = 'Follow the expedition →';
+      return;
+    }
+    // pre-fill from an admin crew invite, if one exists for this email
     const { data } = await SB.from('invites').select('*').ilike('email', AUTH_USER.email);
     const inv = data && data[0];
     if(inv){
@@ -1595,6 +1711,7 @@ async function loadTripPublic(){
   renderHeroDate();
   applyRouteLock();
   renderPolls();
+  startLive();
   observeAll();
 }
 
@@ -1680,6 +1797,236 @@ function stayRequired(b){
 }
 
 /* ============================================================
+   LIVE TRIP MODE  (Phase 11)
+   ------------------------------------------------------------
+   From the departure date the site tracks the trip day: a live
+   bar pins to the top, the Trip Log section opens with per-day
+   check-ins (crew) and photos, and viewers follow along live.
+   ============================================================ */
+const LEGS = {
+  1:{ t:'Johannesburg → Kuruman' },
+  2:{ t:'Kuruman → Fish River Canyon' },
+  3:{ t:'Fish River Canyon → Lüderitz' },
+  4:{ t:'Lüderitz → Sesriem' },
+  5:{ t:'Sesriem → Gobabis' },
+  6:{ t:'Gobabis → Gaborone · The Big Crush' },
+  7:{ t:'Gaborone → Johannesburg' },
+};
+function tripDay(){
+  const o = new URLSearchParams(location.search).get('liveday');   // demo/testing override
+  if(o) return parseInt(o,10) || 0;
+  if(!TRIP?.departure_date) return 0;
+  return Math.floor((Date.now() - new Date(TRIP.departure_date+'T00:00:00').getTime()) / 86400000) + 1;
+}
+let LIVE = { checkins:[], photos:[], names:{}, crewCount:0, subscribed:false };
+
+function startLive(){
+  const d = tripDay();
+  const live = d>=1 && d<=7;
+  document.body.classList.toggle('live-mode', live);
+  document.getElementById('livebar').style.display = live ? 'flex' : 'none';
+  if(live){
+    document.getElementById('lbDay').textContent = d;
+    document.getElementById('lbLeg').textContent = LEGS[d].t;
+  }
+  const started = d>=1;                     // live now, or the archive afterwards
+  document.getElementById('triplog').style.display = started ? '' : 'none';
+  if(started){
+    document.getElementById('tlSub').textContent = live
+      ? 'Live from the convoy — check-ins and photos as each day unfolds.'
+      : 'The record of the trip — every check-in and photo, day by day.';
+    loadLive();
+  }
+  if(live && !location.hash && !window.__liveScrolled){
+    window.__liveScrolled = true;   // open on today's part of the page, once
+    setTimeout(()=>document.getElementById('triplog')?.scrollIntoView({ behavior:'smooth' }), 700);
+  }
+}
+
+async function loadLive(){
+  if(tripDay()<1) return;
+  if(!SB || !AUTH_USER){ renderLiveBar(); renderTripLog(); return; }
+  const [ci, ph, cr] = await Promise.all([
+    SB.from('check_ins').select('*'),
+    SB.from('trip_photos').select('*').order('created_at'),
+    SB.from('crew').select('id,display_name,role'),
+  ]);
+  LIVE.checkins  = ci.data || [];
+  LIVE.photos    = ph.data || [];
+  LIVE.names     = Object.fromEntries((cr.data||[]).map(c=>[c.id, c.display_name]));
+  LIVE.crewCount = (cr.data||[]).filter(c=>c.role!=='viewer').length;
+  renderLiveBar(); renderTripLog();
+  if(!LIVE.subscribed){
+    LIVE.subscribed = true;
+    SB.channel('live-stream')
+      .on('postgres_changes', { event:'*', schema:'public', table:'check_ins' },  loadLive)
+      .on('postgres_changes', { event:'*', schema:'public', table:'trip_photos' }, loadLive)
+      .subscribe();
+  }
+}
+
+function renderLiveBar(){
+  const d = tripDay(); if(d<1 || d>7) return;
+  const today = LIVE.checkins.filter(c=>c.day===d);
+  document.getElementById('lbCount').textContent =
+    AUTH_USER ? `${today.length}/${LIVE.crewCount||'—'} checked in` : '';
+  const btn = document.getElementById('lbCheckin');
+  const canCheck = !!(AUTH_USER && CREW_ROW && !isViewer());
+  btn.style.display = canCheck ? '' : 'none';
+  if(canCheck){
+    const mine = today.some(c=>c.crew_id===CREW_ROW.id);
+    btn.textContent = mine ? '✓ Checked in' : '📍 Check in';
+    btn.classList.toggle('done', mine);
+  }
+}
+
+function renderTripLog(){
+  const host = document.getElementById('tlDays');
+  const locked = document.getElementById('tlLocked');
+  if(!AUTH_USER){ locked.style.display='block'; host.innerHTML=''; return; }
+  locked.style.display='none';
+  const top = Math.min(tripDay(), 7);
+  const canPost = !!(CREW_ROW && !isViewer());
+  let html = '';
+  for(let day=top; day>=1; day--){
+    const cis = LIVE.checkins.filter(c=>c.day===day);
+    const phs = LIVE.photos.filter(p=>p.day===day);
+    const date = TRIP?.departure_date ? fmtDay(addDays(TRIP.departure_date, day-1)) : '';
+    const isToday = day===tripDay();
+    html += `<div class="tl-day ${isToday?'today':''}">
+      <div class="tl-head"><b>Day ${day} · ${LEGS[day].t}</b>${isToday?'<span class="tl-live">● live</span>':''}<span class="tl-date">${date}</span></div>
+      <div class="tl-checkins"><span class="cnt">${cis.length}/${LIVE.crewCount} checked in</span>${
+        cis.map(c=>`<span class="chip">${esc(LIVE.names[c.crew_id]||'?')}</span>`).join('') ||
+        '<span style="color:var(--muted);font-size:.8rem">no check-ins yet</span>'}</div>
+      <div class="tl-photos">${phs.map(p=>{
+        const url = `${SUPABASE_URL}/storage/v1/object/public/trip-photos/${p.storage_path}`;
+        const meta = [LIVE.names[p.crew_id], p.place_name].filter(Boolean).map(esc).join(' · ');
+        return `<div class="tl-photo" onclick="window.open('${url}','_blank')"><img src="${url}" loading="lazy" alt="Trip photo"><div class="ph-meta"><b>${meta||'—'}</b></div></div>`;
+      }).join('')}</div>
+      ${canPost?`<button class="tl-upload" onclick="tlUpload(${day})">📷 Add a photo · Day ${day}</button>`:''}
+    </div>`;
+  }
+  host.innerHTML = html;
+}
+
+/* ---- check in (crew only; location is best-effort) ---- */
+document.getElementById('lbCheckin')?.addEventListener('click', async ()=>{
+  if(!SB || !CREW_ROW || isViewer()) return;
+  const d = tripDay(); if(d<1 || d>7) return;
+  const btn = document.getElementById('lbCheckin');
+  if(btn.classList.contains('done')) return;
+  btn.textContent = '…';
+  let lat=null, lng=null;
+  try{
+    const pos = await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000,maximumAge:60000}));
+    lat = pos.coords.latitude; lng = pos.coords.longitude;
+  }catch(e){}
+  const { error } = await SB.from('check_ins').upsert({ crew_id:CREW_ROW.id, day:d, lat, lng }, { onConflict:'crew_id,day' });
+  if(error){ console.warn(error); btn.textContent='📍 Check in'; return; }
+  loadLive();
+});
+
+/* ---- trip photos: EXIF GPS → else place search / current location ---- */
+window.tlUpload = function(day){
+  const f = document.getElementById('tlFile');
+  f.dataset.day = day; f.value=''; f.click();
+};
+document.getElementById('tlFile')?.addEventListener('change', async e=>{
+  const file = e.target.files[0];
+  if(!file || !SB || !CREW_ROW || isViewer()) return;
+  const day = parseInt(e.target.dataset.day,10) || Math.min(Math.max(tripDay(),1),7);
+  const btns = document.querySelectorAll('.tl-upload'); btns.forEach(b=>b.disabled=true);
+  try{
+    // read EXIF (GPS + timestamp) from the original before downscaling strips it
+    let gps=null, taken=null;
+    try{
+      const exifr = (await import('https://esm.sh/exifr@7.1.3')).default;
+      const ex = await exifr.parse(file, { gps:true });
+      if(ex?.latitude!=null) gps = { lat:ex.latitude, lng:ex.longitude };
+      taken = ex?.DateTimeOriginal || null;
+    }catch(err){ /* EXIF unavailable — fall through to place picker */ }
+    const blob = await downscalePhoto(file, 1600);
+    const path = `day${day}/${CREW_ROW.id}-${Date.now()}.jpg`;
+    const { error } = await SB.storage.from('trip-photos').upload(path, blob, { contentType:'image/jpeg' });
+    if(error) throw error;
+    let place = null;
+    if(gps) place = await reversePlace(gps.lat, gps.lng);
+    else {
+      const picked = await askPlace();
+      if(picked){ gps = { lat:picked.lat, lng:picked.lng }; place = picked.name; }
+    }
+    const { error:e2 } = await SB.from('trip_photos').insert({
+      crew_id:CREW_ROW.id, day, storage_path:path,
+      lat:gps?.lat ?? null, lng:gps?.lng ?? null, place_name:place,
+      taken_at: taken ? new Date(taken).toISOString() : null,
+    });
+    if(e2) throw e2;
+    loadLive();
+  }catch(err){ console.warn(err); alert('Could not post the photo — try again.'); }
+  finally{ btns.forEach(b=>b.disabled=false); }
+});
+function downscalePhoto(file, max){
+  return new Promise((res,rej)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const sc = Math.min(1, max/Math.max(img.width,img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      c.toBlob(b=>b?res(b):rej(new Error('encode failed')), 'image/jpeg', .82);
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = rej;
+    img.src = URL.createObjectURL(file);
+  });
+}
+/* place picker (free OSM/Nominatim search — no API key) */
+let PL_RESOLVE = null;
+function askPlace(){
+  return new Promise(res=>{
+    PL_RESOLVE = res;
+    document.getElementById('plResults').innerHTML='';
+    document.getElementById('plSearch').value='';
+    document.getElementById('placeOverlay').style.display='flex';
+  });
+}
+function plDone(v){
+  document.getElementById('placeOverlay').style.display='none';
+  PL_RESOLVE?.(v); PL_RESOLVE=null;
+}
+document.getElementById('plSkip')?.addEventListener('click', ()=>plDone(null));
+document.getElementById('plHere')?.addEventListener('click', async ()=>{
+  try{
+    const pos = await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
+    const lat=pos.coords.latitude, lng=pos.coords.longitude;
+    plDone({ lat, lng, name: await reversePlace(lat,lng) });
+  }catch(e){ alert('Could not get your location — try the search instead.'); }
+});
+async function plSearchGo(){
+  const q = document.getElementById('plSearch').value.trim(); if(!q) return;
+  const host = document.getElementById('plResults');
+  host.innerHTML = '<div style="color:var(--muted);font-size:.82rem;padding:6px 0">Searching…</div>';
+  try{
+    const rs = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=5&q=${encodeURIComponent(q)}`).then(r=>r.json());
+    host.innerHTML = rs.length ? '' : '<div style="color:var(--muted);font-size:.82rem;padding:6px 0">Nothing found — try a nearby town.</div>';
+    rs.forEach(r=>{
+      const b = document.createElement('button');
+      b.textContent = r.display_name.split(',').slice(0,3).join(',');
+      b.addEventListener('click', ()=>plDone({ lat:+r.lat, lng:+r.lon, name:r.display_name.split(',').slice(0,2).join(', ') }));
+      host.appendChild(b);
+    });
+  }catch(e){ host.innerHTML = '<div style="color:var(--muted);font-size:.82rem;padding:6px 0">Search unavailable right now.</div>'; }
+}
+document.getElementById('plGo')?.addEventListener('click', plSearchGo);
+document.getElementById('plSearch')?.addEventListener('keydown', e=>{ if(e.key==='Enter') plSearchGo(); });
+async function reversePlace(lat,lng){
+  try{
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`).then(x=>x.json());
+    return r.display_name ? r.display_name.split(',').slice(0,2).join(', ') : null;
+  }catch(e){ return null; }
+}
+
+/* ============================================================
    GATE — registration CTA
    ============================================================ */
 function updateGate(){
@@ -1694,7 +2041,7 @@ async function loadGateStats(){
   if(!SB) return;
   const { data } = await SB.from('crew').select('role');
   if(!data) return;
-  document.getElementById('gateCrewCount').textContent  = data.length;
+  document.getElementById('gateCrewCount').textContent  = data.filter(r=>r.role!=='viewer').length;
   document.getElementById('gateDriverCount').textContent = data.filter(r=>r.role==='driver').length;
   document.getElementById('gatePaxCount').textContent    = data.filter(r=>r.role==='passenger').length;
 }
@@ -1721,15 +2068,42 @@ async function loadRoster(){
   document.getElementById('roster-content').style.display = 'block';
   const { data } = await SB.from('crew').select('display_name,role').order('created_at');
   if(!data) return;
-  document.getElementById('rcTotal').textContent   = data.length;
-  document.getElementById('rcDrivers').textContent = data.filter(r=>r.role==='driver').length;
-  document.getElementById('rcPax').textContent     = data.filter(r=>r.role==='passenger').length;
+  const full = data.filter(r=>r.role!=='viewer');
+  document.getElementById('rcTotal').textContent   = full.length;
+  document.getElementById('rcDrivers').textContent = full.filter(r=>r.role==='driver').length;
+  document.getElementById('rcPax').textContent     = full.filter(r=>r.role==='passenger').length;
   document.getElementById('rosterGrid').innerHTML  = data.map(m=>{
     const init = (m.display_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    return `<div class="roster-card"><div class="roster-avatar">${init}</div><div><div class="roster-name">${m.display_name||'Unknown'}</div><div class="roster-role">${m.role==='driver'?'🚗 Driver':'🎒 Passenger'}</div></div></div>`;
+    const role = m.role==='driver' ? '🚗 Driver' : m.role==='passenger' ? '🎒 Passenger' : '👁 Follower';
+    return `<div class="roster-card"><div class="roster-avatar">${init}</div><div><div class="roster-name">${m.display_name||'Unknown'}</div><div class="roster-role">${role}</div></div></div>`;
   }).join('');
+  renderViewerInvites();
   observeAll();
 }
+
+/* ---- viewer invites (Phase 11) — any full crew member can invite ---- */
+async function renderViewerInvites(){
+  const box = document.getElementById('viewerInvite');
+  if(!SB || !CREW_ROW || isViewer()){ box.style.display='none'; return; }
+  box.style.display='block';
+  const { data } = await SB.from('viewer_invites').select('*').order('created_at');
+  document.getElementById('vinvList').innerHTML = (data||[]).map(v=>
+    `<div class="vinv-row">👁 ${esc(v.email)}${(v.invited_by===CREW_ROW.id || AUTH_USER?.email==='aphilem@gmail.com')?` <button class="plan-del" onclick="delViewerInvite('${esc(v.email)}')">✕</button>`:''}</div>`).join('');
+}
+document.getElementById('vinvBtn')?.addEventListener('click', async ()=>{
+  const el = document.getElementById('vinvEmail');
+  const email = el.value.trim().toLowerCase();
+  if(!email || !email.includes('@')){ el.focus(); return; }
+  const { error } = await SB.from('viewer_invites').upsert({ email, invited_by:CREW_ROW.id });
+  if(error){ console.warn(error); return; }
+  el.value='';
+  renderViewerInvites();
+});
+window.delViewerInvite = async function(email){
+  if(!confirm(`Remove the viewer invite for ${email}?`)) return;
+  await SB.from('viewer_invites').delete().eq('email',email);
+  renderViewerInvites();
+};
 
 /* ============================================================
    COSTS & PAYMENTS  (Phase 6)
@@ -1737,6 +2111,13 @@ async function loadRoster(){
 let TRIP_SETTINGS = null;
 async function loadCosts(){
   if(!SB || !AUTH_USER) return;
+  if(isViewer()){   // costs, deposits and banking are crew-only
+    const lk = document.getElementById('costs-locked');
+    lk.textContent = 'Costs & deposits are crew-only.';
+    lk.style.display = 'block';
+    document.getElementById('costs-content').style.display = 'none';
+    return;
+  }
   document.getElementById('costs-locked').style.display = 'none';
   document.getElementById('costs-content').style.display = 'block';
   const isAdmin = AUTH_USER.email === 'aphilem@gmail.com';
