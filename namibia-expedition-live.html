@@ -140,7 +140,17 @@ svg.map{width:100%;height:auto;display:block}
 .leaflet-tooltip-top.geo-label::before{border-top-color:rgba(236,224,204,.22)}
 .leaflet-control-attribution{background:rgba(15,11,8,.72)!important;color:var(--muted)!important;font-size:.56rem!important}
 .leaflet-control-attribution a{color:var(--teal-bright)!important}
-.leaflet-control-zoom a{background:rgba(15,11,8,.85)!important;color:var(--bone)!important;border-color:rgba(236,224,204,.18)!important}
+.leaflet-control-zoom a{background:rgba(15,11,8,.85)!important;color:var(--bone)!important;border-color:rgba(236,224,204,.18)!important;width:34px!important;height:34px!important;line-height:34px!important;font-size:1.1rem!important}
+.leaflet-control-zoom a:hover{color:var(--ochre-bright)!important}
+.leaflet-control-zoom a.leaflet-disabled{opacity:.35}
+/* arrow pad for panning while zoomed in */
+.geo-nav{display:grid;grid-template-columns:repeat(3,32px);grid-template-rows:repeat(2,32px);gap:3px}
+.geo-nav button{background:rgba(15,11,8,.85);color:var(--bone);border:1px solid rgba(236,224,204,.18);border-radius:5px;cursor:pointer;font-size:.95rem;line-height:1;padding:0}
+.geo-nav button:hover{color:var(--ochre-bright);border-color:var(--ochre)}
+.geo-nav button[data-p="up"]{grid-column:2;grid-row:1}
+.geo-nav button[data-p="left"]{grid-column:1;grid-row:2}
+.geo-nav button[data-p="down"]{grid-column:2;grid-row:2}
+.geo-nav button[data-p="right"]{grid-column:3;grid-row:2}
 .node{cursor:pointer}
 .node circle{transition:.3s}
 .node:hover circle.dot{r:11;fill:var(--ochre-bright)}
@@ -2218,14 +2228,14 @@ function renderPlanSummary(){
 
 /* ============ REAL ROUTE MAP (Leaflet on dark OSM/CARTO tiles) ============ */
 const WAYPOINTS = {
-  joburg:  { ll:[-26.2041, 28.0473], name:'Johannesburg',      sub:'Start / Finish',        go:'day1' },
-  kuruman: { ll:[-27.4525, 23.4325], name:'Kuruman',           sub:'Day 1 · Red Sands',     go:'day1' },
-  hobas:   { ll:[-27.6206, 17.7636], name:'Fish River Canyon', sub:'Day 2 · Hobas',         go:'day2' },
-  luderitz:{ ll:[-26.6481, 15.1594], name:'Lüderitz',          sub:'Day 3 · Shark Island',  go:'day3' },
-  sesriem: { ll:[-24.4880, 15.8000], name:'Sesriem',           sub:'Day 4 · Sossusvlei',    go:'day4' },
-  swakop:  { ll:[-22.6784, 14.5258], name:'Swakopmund',        sub:'Route 1',               go:'decision', cls:'r1' },
-  gobabis: { ll:[-22.4500, 18.9667], name:'Gobabis',           sub:'Day 5 · Zelda',         go:'decision' },
-  gaborone:{ ll:[-24.6282, 25.9231], name:'Gaborone',          sub:'Day 6 · Phakalane',     go:'decision', cls:'r2' },
+  joburg:  { ll:[-26.2041, 28.0473], name:'Johannesburg',      sub:'Start / Finish',        short:'JHB', go:'day1' },
+  kuruman: { ll:[-27.4525, 23.4325], name:'Kuruman',           sub:'Day 1 · Red Sands',     short:'D1',  go:'day1' },
+  hobas:   { ll:[-27.6206, 17.7636], name:'Fish River Canyon', sub:'Day 2 · Hobas',         short:'D2',  go:'day2' },
+  luderitz:{ ll:[-26.6481, 15.1594], name:'Lüderitz',          sub:'Day 3 · Shark Island',  short:'D3',  go:'day3' },
+  sesriem: { ll:[-24.4880, 15.8000], name:'Sesriem',           sub:'Day 4 · Sossusvlei',    short:'D4',  go:'day4' },
+  swakop:  { ll:[-22.6784, 14.5258], name:'Swakopmund',        sub:'Route 1',               short:'R1',  go:'decision', cls:'r1' },
+  gobabis: { ll:[-22.4500, 18.9667], name:'Gobabis',           sub:'Day 5 · Zelda',         short:'D5',  go:'decision' },
+  gaborone:{ ll:[-24.6282, 25.9231], name:'Gaborone',          sub:'Day 6 · Phakalane',     short:'D6',  go:'decision', cls:'r2' },
 };
 let GEO = null;   // { map, r1Layer, r2Layer } once Leaflet is up
 function initGeoMap(){
@@ -2236,23 +2246,27 @@ function initGeoMap(){
     document.getElementById('geomap-fallback').style.display='block';
     return;
   }
-  // locked frame: always the full route at the fitted zoom — no zooming or
-  // panning away; waypoints stay tappable
+  // framed view: the fitted full-route view is the zoom floor; +/− buttons
+  // zoom in from there and an arrow pad pans, bounded to the route area.
+  // Drag/pinch stay off so the map never fights page scrolling.
   const map = L.map('geomap', {
-    zoomControl:false, scrollWheelZoom:false, doubleClickZoom:false,
+    zoomControl:true, scrollWheelZoom:false, doubleClickZoom:false,
     touchZoom:false, boxZoom:false, keyboard:false, dragging:false,
-    zoomSnap:0.25,
+    zoomSnap:0.25, zoomDelta:1, maxBoundsViscosity:1,
   });
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
     subdomains:'abcd', maxZoom:12,
   }).addTo(map);
   const P = k => WAYPOINTS[k].ll;
+  const MKS = [];
   const mk = (k, color) => {
     const w = WAYPOINTS[k];
-    return L.circleMarker(w.ll, { radius:7, color, weight:2, fillColor:color, fillOpacity:.55 })
-      .bindTooltip(`<b>${w.name}</b><br>${w.sub}`, { permanent:true, direction:'top', offset:[0,-9], opacity:1, className:'geo-label '+(w.cls||'') })
+    const m = L.circleMarker(w.ll, { radius:7, color, weight:2, fillColor:color, fillOpacity:.55 })
+      .bindTooltip(`<b>${w.short}</b>`, { permanent:true, direction:'top', offset:[0,-9], opacity:1, className:'geo-label '+(w.cls||'') })
       .on('click', ()=>document.getElementById(w.go)?.scrollIntoView({ behavior:'smooth', block:'center' }));
+    MKS.push({ m, w });
+    return m;
   };
   // fixed spine: Joburg → Kuruman → Fish River Canyon → Lüderitz → Sesriem
   const spine = [P('joburg'),P('kuruman'),P('hobas'),P('luderitz'),P('sesriem')];
@@ -2262,9 +2276,37 @@ function initGeoMap(){
   const r1Layer = L.layerGroup([ L.polyline([P('sesriem'),P('swakop'),P('gobabis'),P('joburg')], { color:'#74b7c0', weight:3 }), mk('swakop','#74b7c0') ]);
   const r2Layer = L.layerGroup([ L.polyline([P('sesriem'),P('gobabis'),P('gaborone'),P('joburg')], { color:'#a6b366', weight:3 }), mk('gaborone','#a6b366') ]);
   GEO = { map, r1Layer, r2Layer,
-    setFrame(keys){ GEO.bounds = L.latLngBounds(keys.map(P)); map.fitBounds(GEO.bounds, { padding:[36,36] }); } };
+    setFrame(keys){
+      GEO.frameKeys = keys;
+      GEO.bounds = L.latLngBounds(keys.map(P));
+      map.setMinZoom(0);
+      map.fitBounds(GEO.bounds, { padding:[36,36], animate:false });
+      map.setMinZoom(map.getZoom());          // fitted view = furthest out
+      map.setMaxBounds(GEO.bounds.pad(0.25)); // pan stays around the route
+      GEO.updateLabels?.();                   // re-evaluate compact vs full labels
+    } };
   GEO.setFrame(['joburg','kuruman','hobas','luderitz','sesriem','gaborone','swakop']);
-  window.addEventListener('resize', ()=>{ map.invalidateSize(); if(GEO.bounds) map.fitBounds(GEO.bounds, { padding:[36,36] }); });
+  window.addEventListener('resize', ()=>{ map.invalidateSize(); if(GEO.frameKeys) GEO.setFrame(GEO.frameKeys); });
+  // compact day badges at the base zoom (no overlap); full labels once zoomed in
+  const updateLabels = ()=>{
+    const full = map.getZoom() >= map.getMinZoom() + 0.75;
+    MKS.forEach(({m,w})=>m.setTooltipContent(full ? `<b>${w.name}</b><br>${w.sub}` : `<b>${w.short}</b>`));
+  };
+  map.on('zoomend', updateLabels);
+  GEO.updateLabels = updateLabels;
+  updateLabels();
+  // arrow pad for panning while zoomed in
+  const Nav = L.Control.extend({ options:{ position:'topright' }, onAdd(){
+    const d = L.DomUtil.create('div','geo-nav');
+    d.innerHTML = '<button data-p="up" aria-label="Pan up">↑</button><button data-p="left" aria-label="Pan left">←</button><button data-p="down" aria-label="Pan down">↓</button><button data-p="right" aria-label="Pan right">→</button>';
+    L.DomEvent.disableClickPropagation(d);
+    d.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+      const s = 140;
+      map.panBy({ up:[0,-s], down:[0,s], left:[-s,0], right:[s,0] }[b.dataset.p]);
+    }));
+    return d;
+  }});
+  map.addControl(new Nav());
   window.__GEO = GEO;
   if(TRIP?.route_locked) applyRouteLock();   // trip settings may have loaded before the map
 }
