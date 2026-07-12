@@ -413,6 +413,43 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
 .admin-save{margin-top:16px;font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.7rem;padding:9px 20px;background:var(--rust);color:#fff;border:none;cursor:pointer;border-radius:4px}
 .admin-save:hover{background:var(--rust-bright)}
 #costs-locked{padding:32px;text-align:center;color:var(--muted);font-size:.9rem}
+/* ============================================================
+   TRIP PLANNING HQ  (Phase 7 — admin only)
+   ============================================================ */
+#planning{border-top:1px solid var(--line)}
+#planning .wrap{padding-top:72px;padding-bottom:72px}
+.plan-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:28px;margin-bottom:26px}
+.plan-panel>h4{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;color:var(--rust-bright);margin-bottom:6px}
+.plan-sub{color:var(--bone-dim);font-size:.88rem;margin-bottom:20px}
+.plan-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.plan-form select{background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--bone);padding:8px 10px;font-size:.88rem;font-family:'Spectral',serif}
+.plan-form select:focus{outline:none;border-color:var(--ochre)}
+.plan-table{width:100%;border-collapse:collapse;font-size:.84rem}
+.plan-table th{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.66rem;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.plan-table td{padding:7px 8px;border-bottom:1px solid var(--line-soft);vertical-align:middle;color:var(--bone-dim)}
+.plan-table input,.plan-table select{background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--bone);padding:6px 8px;font-size:.82rem;font-family:'Spectral',serif;width:100%;min-width:60px}
+.plan-table input:focus,.plan-table select:focus{outline:none;border-color:var(--ochre)}
+.plan-table select.st-not_queried{color:var(--muted)}
+.plan-table select.st-enquiry_sent{color:var(--teal-bright)}
+.plan-table select.st-available{color:var(--ochre-bright)}
+.plan-table select.st-unavailable{color:var(--rust-bright)}
+.plan-table select.st-booked,.plan-table select.st-paid{color:var(--green-bright)}
+.plan-del{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:4px;cursor:pointer;padding:4px 9px;font-size:.72rem;line-height:1}
+.plan-del:hover{border-color:var(--rust);color:var(--rust-bright)}
+.plan-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:22px}
+.plan-tile{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:16px}
+.plan-tile b{font-family:'Oswald';font-size:1.6rem;color:var(--ochre-bright);display:block;line-height:1.1}
+.plan-tile span{font-family:'Oswald';font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+/* locked-decision surfaces (visible to all crew) */
+#decisionBoard{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid rgba(219,162,63,.35);border-radius:10px;padding:22px 26px;margin-bottom:26px}
+#decisionBoard .board-title{font-family:'Oswald';text-transform:uppercase;letter-spacing:.2em;font-size:.68rem;color:var(--ochre-bright);margin-bottom:12px}
+.board-row{display:flex;gap:14px;flex-wrap:wrap;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line-soft)}
+.board-row:last-child{border-bottom:none}
+.board-row b{font-family:'Oswald';text-transform:uppercase;letter-spacing:.05em;font-size:.85rem;color:var(--bone)}
+.board-row span{color:var(--ochre-bright);font-size:.92rem}
+.board-row i{font-style:normal;font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.6rem;color:var(--muted);margin-left:auto}
+.decided-banner{background:rgba(219,162,63,.1);border:1px solid rgba(219,162,63,.4);border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:.88rem;color:var(--bone-dim)}
+.decided-banner b{color:var(--ochre-bright)}
 </style>
 </head>
 <body>
@@ -467,6 +504,7 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
           <a href="#vote">Cast votes</a>
           <a href="#roster">Crew roster</a>
           <a href="#costs">Costs &amp; deposit</a>
+          <a href="#planning" id="gatePlanLink" style="display:none">Trip planning</a>
         </div>
       </div>
     </div>
@@ -728,6 +766,9 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
       </div>
     </div>
 
+    <!-- Locked decisions recorded off-app (visible to all signed-in crew) -->
+    <div id="decisionBoard" class="reveal in" style="display:none"></div>
+
     <div id="polls"></div>
 
     <div class="notice reveal">
@@ -827,6 +868,99 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
           <button class="admin-save" id="adminSaveBank">Save banking details</button>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRIP PLANNING HQ (ADMIN) ===================== -->
+<section id="planning" style="display:none">
+  <div class="wrap">
+    <div class="sec-head reveal in">
+      <div class="eyebrow">Admin · Phase 7</div>
+      <h2>Trip Planning HQ</h2>
+      <p>Organiser-only tools: record decisions made off-app, manage the crew list and roles, and pin down every pre-arrangement — campsite availability, per-camper rates, and each cost item you can verify before wheels turn.</p>
+    </div>
+
+    <!-- 1 · DECISION LOG -->
+    <div class="plan-panel reveal in">
+      <h4>Decision Log</h4>
+      <p class="plan-sub">Capture calls made offline — WhatsApp, phone, around the braai. Link a decision to one of the voting rulings and it shows as "decided" on that poll for the whole convoy.</p>
+      <div class="plan-form">
+        <div class="admin-field"><label>What was decided</label><input id="decTitle" type="text" placeholder="e.g. Departure date"></div>
+        <div class="admin-field"><label>The call</label><input id="decOutcome" type="text" placeholder="e.g. Sun 4 Oct — weekend arrival"></div>
+        <div class="admin-field"><label>Decided on</label><input id="decDate" type="date"></div>
+        <div class="admin-field"><label>Where / how</label><input id="decContext" type="text" placeholder="e.g. WhatsApp group"></div>
+        <div class="admin-field"><label>Applies to ruling</label><select id="decPoll"><option value="">— none —</option></select></div>
+      </div>
+      <button class="admin-save" id="decAddBtn">Record decision</button>
+      <div style="overflow-x:auto;margin-top:18px"><table class="plan-table">
+        <thead><tr><th>Decision</th><th>The Call</th><th>Date</th><th>Where</th><th>Ruling</th><th></th></tr></thead>
+        <tbody id="decTable"></tbody>
+      </table></div>
+    </div>
+
+    <!-- 2 · CREW & ROLES -->
+    <div class="plan-panel reveal in">
+      <h4>Crew &amp; Roles</h4>
+      <p class="plan-sub">Pre-register crew by email so they're on the list and in the headcount before they've signed in — they still sign in with the usual magic link, and their name &amp; role are pre-filled when they do.</p>
+      <div class="plan-form">
+        <div class="admin-field"><label>Email</label><input id="invEmail" type="email" placeholder="crew@email.com"></div>
+        <div class="admin-field"><label>Name</label><input id="invName" type="text" placeholder="e.g. Sipho"></div>
+        <div class="admin-field"><label>Role</label><select id="invRole"><option value="driver">🚗 Driver</option><option value="passenger">🎒 Passenger</option></select></div>
+      </div>
+      <button class="admin-save" id="invAddBtn">Add to convoy list</button>
+      <div style="overflow-x:auto;margin-top:18px"><table class="plan-table">
+        <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Status</th><th></th></tr></thead>
+        <tbody id="invTable"></tbody>
+      </table></div>
+      <p class="plan-sub" style="margin:28px 0 10px">Registered crew — assign roles (saves immediately)</p>
+      <div style="overflow-x:auto"><table class="plan-table">
+        <thead><tr><th>Name</th><th>Email</th><th style="min-width:140px">Role</th></tr></thead>
+        <tbody id="crewAdminTable"></tbody>
+      </table></div>
+    </div>
+
+    <!-- 3 · CAMPSITE AVAILABILITY & BOOKINGS -->
+    <div class="plan-panel reveal in">
+      <h4>Campsite Availability &amp; Bookings</h4>
+      <p class="plan-sub">Track every stay from first enquiry to paid booking, with the verified rate per camper per night. Load the route stays once, then work each row: query availability → confirm the rate → book. Edits save as you type — drop or zero the route option the convoy doesn't choose.</p>
+      <button class="admin-save" id="seedStaysBtn" style="margin-bottom:14px">Load route stays</button>
+      <div style="overflow-x:auto"><table class="plan-table">
+        <thead><tr><th style="min-width:80px">Day</th><th style="min-width:190px">Site</th><th style="width:64px">Nights</th><th style="min-width:130px">Status</th><th style="min-width:95px">R / camper / night</th><th style="min-width:140px">Contact / booking ref</th><th style="min-width:160px">Notes</th><th></th></tr></thead>
+        <tbody id="bookingRows"></tbody>
+      </table></div>
+      <div class="plan-form" style="margin-top:16px">
+        <div class="admin-field"><label>Day</label><input id="bkDay" type="text" placeholder="e.g. Day 2"></div>
+        <div class="admin-field"><label>Site</label><input id="bkSite" type="text" placeholder="Campsite / lodge name"></div>
+        <div class="admin-field"><label>Nights</label><input id="bkNights" type="number" value="1" min="1"></div>
+      </div>
+      <button class="admin-save" id="bkAddBtn">Add stay</button>
+    </div>
+
+    <!-- 4 · VERIFIED COST ITEMS -->
+    <div class="plan-panel reveal in">
+      <h4>Verified Cost Items</h4>
+      <p class="plan-sub">Everything you can price before departure — park entry &amp; conservation fees, cross-border charges, fuel estimate per vehicle, comms, the shared food kitty. Tick "verified" once you've confirmed the number with the source.</p>
+      <div class="plan-form">
+        <div class="admin-field"><label>Item</label><input id="ciLabel" type="text" placeholder="e.g. Namibia road fund (CBC)"></div>
+        <div class="admin-field"><label>Amount (R)</label><input id="ciAmount" type="number" min="0" step="0.01"></div>
+        <div class="admin-field"><label>Charged</label><select id="ciBasis"><option value="per_camper">Per camper</option><option value="per_vehicle">Per vehicle</option><option value="total">Total (shared)</option></select></div>
+        <div class="admin-field"><label>Source</label><input id="ciSource" type="text" placeholder="e.g. NWR reservations, 2026 tariff"></div>
+      </div>
+      <button class="admin-save" id="ciAddBtn">Add cost item</button>
+      <div style="overflow-x:auto;margin-top:18px"><table class="plan-table">
+        <thead><tr><th style="min-width:170px">Item</th><th style="min-width:90px">Amount (R)</th><th style="min-width:120px">Charged</th><th>Verified</th><th style="min-width:150px">Source</th><th></th></tr></thead>
+        <tbody id="costItemRows"></tbody>
+      </table></div>
+
+      <div class="plan-tiles">
+        <div class="plan-tile"><b id="psHeadcount">—</b><span>Headcount (crew + invited)</span></div>
+        <div class="plan-tile"><b id="psVehicles">—</b><span>Vehicles (drivers)</span></div>
+        <div class="plan-tile"><b id="psCamps">—</b><span>Camps · R per camper</span></div>
+        <div class="plan-tile"><b id="psItems">—</b><span>Cost items · R per camper</span></div>
+        <div class="plan-tile"><b id="psTotal">—</b><span>Estimated total · R per camper</span></div>
+      </div>
+      <p class="plan-sub" style="margin:12px 0 0" id="psNote"></p>
     </div>
   </div>
 </section>
@@ -1028,7 +1162,10 @@ const POLLS = [
 ];
 
 let MEM = {};                       // live mirror of all votes
+let DECISIONS = [];                 // decisions recorded off-app (Phase 7)
 const VOTE_PATH = 'votes';
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = d => new Date(d+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
 const safeKey = s => (s.toLowerCase().replace(/[.#$\[\]\/\s]+/g,'_').slice(0,40) || 'crew');
 function ensure(){ POLLS.forEach(p=>{ if(!MEM[p.key]) MEM[p.key]={}; }); }
 
@@ -1108,9 +1245,15 @@ function renderPolls(){
     const bLead = total && bV.length>aV.length;
     const chip = arr => arr.map(v=>`<span>${v.n}</span>`).join('');
 
+    const dec = DECISIONS.find(d=>d.poll_key===p.key);
+    const decBanner = dec
+      ? `<div class="decided-banner">⚖ Decided offline — <b>${esc(dec.outcome)}</b>${dec.decided_on?` · ${fmtDate(dec.decided_on)}`:''}${dec.context?` · ${esc(dec.context)}`:''}</div>`
+      : '';
+
     const el=document.createElement('div');
     el.className='poll reveal in';
     el.innerHTML=`
+      ${decBanner}
       <div class="qno">${p.no}</div>
       <div class="q">${p.q}</div>
       <div class="qd">${p.d}</div>
@@ -1164,7 +1307,8 @@ if(SB){
   SB.auth.onAuthStateChange(async (_event, session)=>{
     AUTH_USER = session?.user ?? null;
     if(AUTH_USER){ await loadCrewRow(); if(!CREW_ROW) showOnboarding(); }
-    updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); } renderPolls();
+    updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); }
+    fetchDecisions(); loadPlanning(); renderPolls();
   });
 }
 
@@ -1189,11 +1333,24 @@ document.getElementById('signOutBtn')?.addEventListener('click', ()=> SB.auth.si
 
 // Onboarding modal
 let obRole = null;
-function showOnboarding(){
+async function showOnboarding(){
   document.getElementById('onboardOverlay').style.display = 'flex';
   document.getElementById('obName').value = AUTH_USER?.user_metadata?.full_name || '';
   obRole = null;
   document.querySelectorAll('.roleopt').forEach(r=>r.classList.remove('sel'));
+  // Pre-fill from an admin invite, if one exists for this email
+  if(SB && AUTH_USER?.email){
+    const { data } = await SB.from('invites').select('*').ilike('email', AUTH_USER.email);
+    const inv = data && data[0];
+    if(inv){
+      if(inv.display_name && !document.getElementById('obName').value)
+        document.getElementById('obName').value = inv.display_name;
+      if(inv.role){
+        obRole = inv.role;
+        document.querySelectorAll('.roleopt').forEach(r=>r.classList.toggle('sel', r.dataset.role===inv.role));
+      }
+    }
+  }
 }
 document.querySelectorAll('.roleopt').forEach(el=>{
   el.addEventListener('click',()=>{
@@ -1212,7 +1369,8 @@ document.getElementById('obSave')?.addEventListener('click', async ()=>{
   if(!error){
     CREW_ROW = data;
     document.getElementById('onboardOverlay').style.display = 'none';
-    updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); } renderPolls();
+    updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); }
+    fetchDecisions(); loadPlanning(); renderPolls();
   } else { console.warn(error); }
 });
 
@@ -1366,6 +1524,259 @@ document.getElementById('adminSaveBank')?.addEventListener('click', async ()=>{
   btn.textContent='Saved ✓'; setTimeout(()=>btn.textContent='Save banking details',2000);
   loadCosts();
 });
+
+/* ============================================================
+   TRIP PLANNING HQ  (Phase 7 — admin only)
+   ============================================================ */
+const ADMIN_EMAIL = 'aphilem@gmail.com';
+const isAdmin = () => AUTH_USER?.email === ADMIN_EMAIL;
+
+let PLAN = { crew:[], invites:[], bookings:[], items:[] };
+
+// The stays named in the day guide + decision point (incl. backups & both route options)
+const ROUTE_STAYS = [
+  {day_label:'Day 1',          site_name:'Red Sands Country Lodge, Kuruman',            nights:1, sort_order:1},
+  {day_label:'Day 2',          site_name:'Hobas Campsite (NWR), Fish River Canyon',     nights:1, sort_order:2},
+  {day_label:'Day 2 · backup', site_name:'Canyon Roadhouse (Gondwana)',                 nights:1, sort_order:3},
+  {day_label:'Day 3',          site_name:'Shark Island Campsite (NWR), Lüderitz',       nights:1, sort_order:4},
+  {day_label:'Day 3 · backup', site_name:'Klein-Aus Vista, Aus',                        nights:1, sort_order:5},
+  {day_label:'Day 4',          site_name:'Sesriem Campsite (NWR)',                      nights:1, sort_order:6},
+  {day_label:'Day 5 · R1',     site_name:'Windpomp 14, Swakopmund (Route 1)',           nights:1, sort_order:7},
+  {day_label:'Day 5/6',        site_name:'Zelda Game Cabin, Gobabis',                   nights:1, sort_order:8},
+  {day_label:'Day 6 · R2',     site_name:'Phakalane Golf Estate, Gaborone (Route 2)',   nights:1, sort_order:9},
+];
+
+// Populate the "applies to ruling" select from the poll definitions
+document.getElementById('decPoll').innerHTML =
+  '<option value="">— none —</option>' + POLLS.map(p=>`<option value="${p.key}">${p.no} · ${p.q}</option>`).join('');
+
+async function fetchDecisions(){
+  if(!SB || !AUTH_USER){ DECISIONS=[]; renderDecisionBoard(); return; }
+  const { data, error } = await SB.from('decisions').select('*').order('created_at',{ascending:false});
+  if(error){ console.warn(error); return; }
+  DECISIONS = data||[];
+  renderDecisionBoard(); renderPolls();
+  if(isAdmin()) renderDecisionLog();
+}
+
+function renderDecisionBoard(){
+  const host = document.getElementById('decisionBoard');
+  if(!DECISIONS.length){ host.style.display='none'; return; }
+  host.style.display='';
+  host.innerHTML = '<div class="board-title">⚖ The Record — decisions locked in</div>' +
+    DECISIONS.map(d=>`<div class="board-row"><b>${esc(d.title)}</b><span>${esc(d.outcome)}</span><i>${d.decided_on?fmtDate(d.decided_on):''}${d.context?(d.decided_on?' · ':'')+esc(d.context):''}</i></div>`).join('');
+}
+
+async function loadPlanning(){
+  const sec = document.getElementById('planning');
+  if(!SB || !isAdmin()){ sec.style.display='none'; document.getElementById('gatePlanLink').style.display='none'; return; }
+  sec.style.display='';
+  document.getElementById('gatePlanLink').style.display='';
+  const [crew, invites, bookings, items] = await Promise.all([
+    SB.from('crew').select('id,email,display_name,role').order('created_at'),
+    SB.from('invites').select('*').order('created_at'),
+    SB.from('site_bookings').select('*').order('sort_order').order('created_at'),
+    SB.from('cost_items').select('*').order('created_at'),
+  ]);
+  PLAN.crew     = crew.data     || [];
+  PLAN.invites  = invites.data  || [];
+  PLAN.bookings = bookings.data || [];
+  PLAN.items    = items.data    || [];
+  if(crew.error||invites.error||bookings.error||items.error)
+    console.warn('Planning load — run supabase-phase7-planning-migration.sql if tables are missing.',
+                 crew.error||invites.error||bookings.error||items.error);
+  renderDecisionLog(); renderCrewAdmin(); renderInvites(); renderBookings(); renderCostItems(); renderPlanSummary();
+}
+
+/* ---- 1 · decision log ---- */
+function renderDecisionLog(){
+  document.getElementById('decTable').innerHTML = DECISIONS.map(d=>{
+    const poll = POLLS.find(p=>p.key===d.poll_key);
+    return `<tr><td style="color:var(--bone)">${esc(d.title)}</td><td style="color:var(--ochre-bright)">${esc(d.outcome)}</td><td>${d.decided_on?fmtDate(d.decided_on):'—'}</td><td>${esc(d.context||'—')}</td><td>${poll?esc(poll.q):'—'}</td><td><button class="plan-del" onclick="delDecision('${d.id}')">✕</button></td></tr>`;
+  }).join('') || '<tr><td colspan="6" style="color:var(--muted)">No decisions recorded yet.</td></tr>';
+}
+document.getElementById('decAddBtn')?.addEventListener('click', async ()=>{
+  const title   = document.getElementById('decTitle').value.trim();
+  const outcome = document.getElementById('decOutcome').value.trim();
+  if(!title){ document.getElementById('decTitle').focus(); return; }
+  if(!outcome){ document.getElementById('decOutcome').focus(); return; }
+  const { error } = await SB.from('decisions').insert({
+    title, outcome,
+    decided_on: document.getElementById('decDate').value || null,
+    context:    document.getElementById('decContext').value.trim() || null,
+    poll_key:   document.getElementById('decPoll').value || null,
+  });
+  if(error){ console.warn(error); return; }
+  ['decTitle','decOutcome','decDate','decContext','decPoll'].forEach(id=>document.getElementById(id).value='');
+  fetchDecisions();
+});
+window.delDecision = async function(id){
+  if(!confirm('Remove this decision from the record?')) return;
+  await SB.from('decisions').delete().eq('id',id);
+  fetchDecisions();
+};
+
+/* ---- 2 · crew & roles ---- */
+function renderCrewAdmin(){
+  document.getElementById('crewAdminTable').innerHTML = PLAN.crew.map(m=>`
+    <tr><td style="color:var(--bone)">${esc(m.display_name)}</td><td>${esc(m.email)}</td>
+    <td><select data-id="${m.id}">
+      <option value="driver" ${m.role==='driver'?'selected':''}>🚗 Driver</option>
+      <option value="passenger" ${m.role==='passenger'?'selected':''}>🎒 Passenger</option>
+    </select></td></tr>`).join('') || '<tr><td colspan="3" style="color:var(--muted)">No one has registered yet.</td></tr>';
+}
+document.getElementById('crewAdminTable')?.addEventListener('change', async e=>{
+  const t = e.target; if(!t.dataset.id) return;
+  const { error } = await SB.from('crew').update({ role:t.value }).eq('id',t.dataset.id);
+  if(error){ console.warn(error); alert('Could not update the role — make sure the Phase 7 migration has been run.'); return; }
+  const r = PLAN.crew.find(x=>x.id===t.dataset.id); if(r) r.role=t.value;
+  loadRoster(); loadGateStats(); renderPlanSummary();
+});
+
+function renderInvites(){
+  const crewEmails = new Set(PLAN.crew.map(c=>(c.email||'').toLowerCase()));
+  document.getElementById('invTable').innerHTML = PLAN.invites.map(i=>{
+    const claimed = crewEmails.has(i.email.toLowerCase());
+    return `<tr><td style="color:var(--bone)">${esc(i.email)}</td><td>${esc(i.display_name||'—')}</td><td>${i.role==='driver'?'🚗 Driver':i.role==='passenger'?'🎒 Passenger':'—'}</td><td><span class="pay-status ${claimed?'verified':'claimed'}" style="margin:0;font-size:.62rem">${claimed?'✓ Registered':'Invited'}</span></td><td><button class="plan-del" onclick="delInvite('${esc(i.email)}')">✕</button></td></tr>`;
+  }).join('') || '<tr><td colspan="5" style="color:var(--muted)">No pre-registered crew yet.</td></tr>';
+}
+document.getElementById('invAddBtn')?.addEventListener('click', async ()=>{
+  const email = document.getElementById('invEmail').value.trim().toLowerCase();
+  if(!email || !email.includes('@')){ document.getElementById('invEmail').focus(); return; }
+  const { error } = await SB.from('invites').upsert({
+    email,
+    display_name: document.getElementById('invName').value.trim() || null,
+    role:         document.getElementById('invRole').value,
+  });
+  if(error){ console.warn(error); return; }
+  document.getElementById('invEmail').value=''; document.getElementById('invName').value='';
+  loadPlanning();
+});
+window.delInvite = async function(email){
+  if(!confirm(`Remove ${email} from the convoy list?`)) return;
+  await SB.from('invites').delete().eq('email',email);
+  loadPlanning();
+};
+
+/* ---- 3 · campsite availability & bookings ---- */
+const BOOKING_STATUSES = [
+  ['not_queried','Not queried'],['enquiry_sent','Enquiry sent'],['available','Available'],
+  ['unavailable','Unavailable'],['booked','Booked'],['paid','Paid'],
+];
+const statusOpts = cur => BOOKING_STATUSES.map(([v,l])=>`<option value="${v}" ${v===cur?'selected':''}>${l}</option>`).join('');
+
+function renderBookings(){
+  document.getElementById('bookingRows').innerHTML = PLAN.bookings.map(b=>`
+    <tr>
+      <td><input data-id="${b.id}" data-field="day_label" value="${esc(b.day_label||'')}"></td>
+      <td><input data-id="${b.id}" data-field="site_name" value="${esc(b.site_name||'')}"></td>
+      <td><input data-id="${b.id}" data-field="nights" type="number" min="1" value="${b.nights??1}"></td>
+      <td><select data-id="${b.id}" data-field="status" class="st-${b.status}">${statusOpts(b.status)}</select></td>
+      <td><input data-id="${b.id}" data-field="cost_per_camper" type="number" min="0" step="0.01" value="${b.cost_per_camper??''}"></td>
+      <td><input data-id="${b.id}" data-field="contact" value="${esc(b.contact||'')}"></td>
+      <td><input data-id="${b.id}" data-field="notes" value="${esc(b.notes||'')}"></td>
+      <td><button class="plan-del" onclick="delBooking('${b.id}')">✕</button></td>
+    </tr>`).join('') || '<tr><td colspan="8" style="color:var(--muted)">No stays yet — load the route stays or add one below.</td></tr>';
+}
+async function planInlineEdit(e, table, rows){
+  const t = e.target, id = t.dataset.id, f = t.dataset.field;
+  if(!id || !f) return;
+  let v = t.type==='checkbox' ? t.checked : t.value;
+  if(t.type==='number') v = v==='' ? null : parseFloat(v);
+  if(f==='status') t.className = 'st-'+v;
+  const { error } = await SB.from(table).update({ [f]:v }).eq('id',id);
+  if(error){ console.warn(error); return; }
+  const r = rows.find(x=>x.id===id); if(r) r[f]=v;
+  renderPlanSummary();
+}
+document.getElementById('bookingRows')?.addEventListener('change', e=>planInlineEdit(e,'site_bookings',PLAN.bookings));
+document.getElementById('seedStaysBtn')?.addEventListener('click', async ()=>{
+  const have = new Set(PLAN.bookings.map(b=>b.site_name));
+  const rows = ROUTE_STAYS.filter(s=>!have.has(s.site_name));
+  if(!rows.length) return;
+  const { error } = await SB.from('site_bookings').insert(rows);
+  if(error){ console.warn(error); return; }
+  loadPlanning();
+});
+document.getElementById('bkAddBtn')?.addEventListener('click', async ()=>{
+  const site = document.getElementById('bkSite').value.trim();
+  if(!site){ document.getElementById('bkSite').focus(); return; }
+  const { error } = await SB.from('site_bookings').insert({
+    day_label: document.getElementById('bkDay').value.trim() || null,
+    site_name: site,
+    nights:    parseInt(document.getElementById('bkNights').value,10) || 1,
+    sort_order: 99,
+  });
+  if(error){ console.warn(error); return; }
+  document.getElementById('bkDay').value=''; document.getElementById('bkSite').value=''; document.getElementById('bkNights').value='1';
+  loadPlanning();
+});
+window.delBooking = async function(id){
+  if(!confirm('Remove this stay?')) return;
+  await SB.from('site_bookings').delete().eq('id',id);
+  loadPlanning();
+};
+
+/* ---- 4 · verified cost items + per-camper estimate ---- */
+function renderCostItems(){
+  const basisOpts = cur => [['per_camper','Per camper'],['per_vehicle','Per vehicle'],['total','Total (shared)']]
+    .map(([v,l])=>`<option value="${v}" ${v===cur?'selected':''}>${l}</option>`).join('');
+  document.getElementById('costItemRows').innerHTML = PLAN.items.map(it=>`
+    <tr>
+      <td><input data-id="${it.id}" data-field="label" value="${esc(it.label||'')}"></td>
+      <td><input data-id="${it.id}" data-field="amount" type="number" min="0" step="0.01" value="${it.amount??''}"></td>
+      <td><select data-id="${it.id}" data-field="basis">${basisOpts(it.basis)}</select></td>
+      <td style="text-align:center"><input data-id="${it.id}" data-field="verified" type="checkbox" ${it.verified?'checked':''} style="width:auto;min-width:0"></td>
+      <td><input data-id="${it.id}" data-field="source" value="${esc(it.source||'')}"></td>
+      <td><button class="plan-del" onclick="delCostItem('${it.id}')">✕</button></td>
+    </tr>`).join('') || '<tr><td colspan="6" style="color:var(--muted)">No cost items yet.</td></tr>';
+}
+document.getElementById('costItemRows')?.addEventListener('change', e=>planInlineEdit(e,'cost_items',PLAN.items));
+document.getElementById('ciAddBtn')?.addEventListener('click', async ()=>{
+  const label = document.getElementById('ciLabel').value.trim();
+  if(!label){ document.getElementById('ciLabel').focus(); return; }
+  const { error } = await SB.from('cost_items').insert({
+    label,
+    amount: parseFloat(document.getElementById('ciAmount').value) || 0,
+    basis:  document.getElementById('ciBasis').value,
+    source: document.getElementById('ciSource').value.trim() || null,
+  });
+  if(error){ console.warn(error); return; }
+  document.getElementById('ciLabel').value=''; document.getElementById('ciAmount').value=''; document.getElementById('ciSource').value='';
+  loadPlanning();
+});
+window.delCostItem = async function(id){
+  if(!confirm('Remove this cost item?')) return;
+  await SB.from('cost_items').delete().eq('id',id);
+  loadPlanning();
+};
+
+const fmtR = n => 'R'+Math.round(n).toLocaleString('en-ZA');
+function renderPlanSummary(){
+  const crewEmails = new Set(PLAN.crew.map(c=>(c.email||'').toLowerCase()));
+  const pending  = PLAN.invites.filter(i=>!crewEmails.has(i.email.toLowerCase()));
+  const head     = PLAN.crew.length + pending.length;
+  const vehicles = PLAN.crew.filter(c=>c.role==='driver').length + pending.filter(i=>i.role==='driver').length;
+  const camps = PLAN.bookings
+    .filter(b=>b.status!=='unavailable')
+    .reduce((s,b)=>s+(Number(b.cost_per_camper)||0)*(Number(b.nights)||1),0);
+  let items=0, unverified=0;
+  PLAN.items.forEach(it=>{
+    const amt = Number(it.amount)||0;
+    if(!it.verified) unverified++;
+    if(it.basis==='per_camper')       items += amt;
+    else if(it.basis==='per_vehicle') items += head ? amt*vehicles/head : 0;
+    else                              items += head ? amt/head : 0;
+  });
+  document.getElementById('psHeadcount').textContent = head;
+  document.getElementById('psVehicles').textContent  = vehicles;
+  document.getElementById('psCamps').textContent     = fmtR(camps);
+  document.getElementById('psItems').textContent     = fmtR(items);
+  document.getElementById('psTotal').textContent     = fmtR(camps+items);
+  document.getElementById('psNote').textContent =
+    'Estimates only — per-vehicle and shared costs are spread across the headcount, and every listed stay is counted (drop or zero the route option the convoy doesn\'t take).'
+    + (unverified ? ` ${unverified} cost item${unverified>1?'s':''} still unverified.` : ' All cost items verified ✓');
+}
 
 /* ============ MAP TOGGLES ============ */
 const tgs=document.querySelectorAll('.tg');
