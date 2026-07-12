@@ -471,6 +471,18 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
 #hqTab:hover{background:var(--rust-bright);transform:translateY(-1px)}
 #hqTab .pct{background:rgba(0,0,0,.28);padding:2px 8px;border-radius:20px;font-size:.62rem;color:var(--ochre-bright)}
 @media(max-width:600px){#hqTab{top:auto;bottom:16px;right:14px}}
+/* locked trip state — decided polls & locked route */
+.opt.closed{cursor:default}
+.opt.closed:hover{transform:none;border-color:var(--line)}
+.opt.closed.mine:hover,.opt.closed.lead:hover{border-color:inherit}
+.lock-badge{position:absolute;top:14px;right:14px;z-index:3;font-family:'Oswald',sans-serif;text-transform:uppercase;
+  letter-spacing:.14em;font-size:.6rem;padding:5px 10px;border-radius:20px;background:var(--green);color:#10100c;font-weight:600}
+.routecard.not-taken{opacity:.5;filter:saturate(.65)}
+.routecard.not-taken:hover{transform:none}
+.routecard.not-taken .lock-badge{background:rgba(0,0,0,.55);color:var(--bone-dim);border:1px solid var(--line);font-weight:400}
+.tg.dead{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+.day .date{color:var(--ochre-bright)}
+.stay .decided{color:var(--green-bright);font-size:.72rem;letter-spacing:.1em}
 </style>
 </head>
 <body>
@@ -1019,6 +1031,13 @@ const SUPABASE_ANON_KEY = "sb_publishable_o1xfAQwaiVwuPkZOWgZfFw_2AsUlCOz"; // p
 let SB = null;
 let AUTH_USER = null;   // supabase auth user (or null)
 let CREW_ROW  = null;   // crew table row (or null)
+let DECISIONS = [];     // decisions recorded off-app (Phase 7, crew-only read)
+let TRIP = null;        // public trip_settings: departure_date, route_locked (Phase 8)
+const ROUTE_NAMES = { route1:'Route 1 · Coast-to-Coast', route2:'Route 2 · South Kalahari' };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = d => new Date(d+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
+const addDays = (iso,n) => { const d = new Date(iso+'T00:00:00'); d.setDate(d.getDate()+n); return d; };
+const fmtDay  = dt => dt.toLocaleDateString('en-ZA',{weekday:'short',day:'numeric',month:'short'});
 const CONFIGURED = SUPABASE_URL.startsWith("https://");
 if (CONFIGURED) {
   try { SB = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -1127,7 +1146,9 @@ const days = [
 ];
 
 const dayCards = document.getElementById('dayCards');
-days.forEach((d,i)=>{
+function renderDayCards(instant){
+  dayCards.innerHTML='';
+  days.forEach((d,i)=>{
   const flip = i%2===1;
   const co = d.callouts.map(c=>`<div class="callout ${c[0]}"><h5>${c[1]}</h5><p>${c[2]}</p></div>`).join('');
   const bd = d.badges.map(b=>`<span class="badge ${b[1]}">${b[0]}</span>`).join('');
@@ -1137,24 +1158,37 @@ days.forEach((d,i)=>{
   const surfSeg = d.surface.map(s=>`<div class="surfseg ${cls(s[0])}" style="width:${(s[1]/totalKm*100).toFixed(1)}%"></div>`).join('');
   const surfKeys = d.surface.map(s=>`<span><i class="${cls(s[0])}"></i>${nm(s[0])} ${s[1]} km</span>`).join('');
   const surf = `<div class="surf"><div class="surflabel">Surface mix</div><div class="surfbar">${surfSeg}</div><div class="surfkeys">${surfKeys}</div></div>`;
+  // rule: departure date decided → every day shows its real calendar date
+  const dateStr = TRIP?.departure_date ? ` — <span class="date">${fmtDay(addDays(TRIP.departure_date, i))}</span>` : '';
+  // rule: Shark Island Wind decided → Day 3 stay reflects the call (crew-only, from DECISIONS)
+  let stay = d.stay, decidedMark = '';
+  if(d.id==='day3'){
+    const sh = DECISIONS.find(x=>x.poll_key==='shark');
+    if(sh){
+      if(/klein-aus/i.test(sh.outcome)) stay = 'Klein-Aus Vista, Aus';
+      decidedMark = ' <span class="decided">✓ decided</span>';
+    }
+  }
   const sceneCol = `<div class="scene"><span class="scenetag">${d.to}</span>${scene(d.scene)}<img class="scene-photo" src="${d.photo}" alt="${d.to}" loading="lazy" onerror="this.style.display='none'"><div class="scene-overlay"></div><span class="scene-credit">${d.credit}</span></div>`;
   const bodyCol = `<div class="body">
-      <div class="daynum">${d.num} · ${d.title}</div>
+      <div class="daynum">${d.num} · ${d.title}${dateStr}</div>
       <h3>${d.from} → ${d.to}</h3>
       <div class="leg">${d.route}</div>
       <div class="stats"><div><b>${d.dist}<span style="font-size:.8rem"> km</span></b><span>Distance</span></div><div><b>${d.time}</b><span>Drive Time</span></div></div>
       <div class="badges">${bd}</div>
       ${surf}
-      <div class="stay">${d.stay}</div>
+      <div class="stay">${stay}${decidedMark}</div>
       <p>${d.body}</p>
       ${co}
     </div>`;
   const el = document.createElement('div');
-  el.className='day reveal';
+  el.className = 'day reveal' + (instant ? ' in' : '');
   el.id=d.id;
   el.innerHTML = flip ? bodyCol+sceneCol : sceneCol+bodyCol;
   dayCards.appendChild(el);
-});
+  });
+}
+renderDayCards(false);
 
 /* ============ VOTING ENGINE ============ */
 const POLLS = [
@@ -1177,10 +1211,7 @@ const POLLS = [
 ];
 
 let MEM = {};                       // live mirror of all votes
-let DECISIONS = [];                 // decisions recorded off-app (Phase 7)
 const VOTE_PATH = 'votes';
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtDate = d => new Date(d+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
 const safeKey = s => (s.toLowerCase().replace(/[.#$\[\]\/\s]+/g,'_').slice(0,40) || 'crew');
 function ensure(){ POLLS.forEach(p=>{ if(!MEM[p.key]) MEM[p.key]={}; }); }
 
@@ -1260,20 +1291,21 @@ function renderPolls(){
     const bLead = total && bV.length>aV.length;
     const chip = arr => arr.map(v=>`<span>${v.n}</span>`).join('');
 
-    const dec = DECISIONS.find(d=>d.poll_key===p.key);
+    const dec = pollDecision(p);
     const decBanner = dec
-      ? `<div class="decided-banner">⚖ Decided offline — <b>${esc(dec.outcome)}</b>${dec.decided_on?` · ${fmtDate(dec.decided_on)}`:''}${dec.context?` · ${esc(dec.context)}`:''}</div>`
+      ? `<div class="decided-banner">⚖ Decided — <b>${esc(dec.outcome)}</b>${dec.meta?` · ${dec.meta}`:''} · voting closed</div>`
       : '';
 
     const el=document.createElement('div');
     el.className='poll reveal in';
+    if(dec) el.dataset.closed='1';
     el.innerHTML=`
       ${decBanner}
       <div class="qno">${p.no}</div>
       <div class="q">${p.q}</div>
       <div class="qd">${p.d}</div>
       <div class="opts">
-        <div class="opt a ${mine==='a'?'mine':''} ${aLead?'lead':''}" data-poll="${p.key}" data-c="a">
+        <div class="opt a ${dec?'closed':''} ${mine==='a'?'mine':''} ${aLead?'lead':''}" data-poll="${p.key}" data-c="a">
           <div class="fill" style="width:${aPct}%"></div>
           <div class="pct">${total?aPct+'%':''}</div>
           <div class="ot">${p.a.t}</div>
@@ -1281,7 +1313,7 @@ function renderPolls(){
           <div class="count">${aV.length} vote${aV.length!==1?'s':''}</div>
           <div class="voters">${chip(aV)}</div>
         </div>
-        <div class="opt b ${mine==='b'?'mine':''} ${bLead?'lead':''}" data-poll="${p.key}" data-c="b">
+        <div class="opt b ${dec?'closed':''} ${mine==='b'?'mine':''} ${bLead?'lead':''}" data-poll="${p.key}" data-c="b">
           <div class="fill" style="width:${bPct}%"></div>
           <div class="pct">${total?bPct+'%':''}</div>
           <div class="ot">${p.b.t}</div>
@@ -1293,8 +1325,25 @@ function renderPolls(){
     host.appendChild(el);
   });
   host.querySelectorAll('.opt').forEach(o=>{
-    o.addEventListener('click',()=>castVote(o.dataset.poll,o.dataset.c));
+    o.addEventListener('click',()=>{
+      if(o.classList.contains('closed')) return;   // ruling decided — voting closed
+      castVote(o.dataset.poll,o.dataset.c);
+    });
   });
+}
+
+/* A ruling counts as decided from an explicit decision row (crew-only),
+   or derived from the public trip settings: the departure date decides
+   Ruling 00, and a locked route decides both homeward rulings. */
+function pollDecision(p){
+  const d = DECISIONS.find(x=>x.poll_key===p.key);
+  if(d) return { outcome:d.outcome,
+                 meta:[d.decided_on?fmtDate(d.decided_on):'', d.context?esc(d.context):''].filter(Boolean).join(' · ') };
+  if(p.key==='departure_date' && TRIP?.departure_date)
+    return { outcome:'Departing '+fmtDate(TRIP.departure_date), meta:'' };
+  if((p.key==='driving'||p.key==='coast') && TRIP?.route_locked)
+    return { outcome:ROUTE_NAMES[TRIP.route_locked]+' locked', meta:'' };
+  return null;
 }
 
 /* ============ AUTH ============ */
@@ -1397,6 +1446,80 @@ document.getElementById('resetBtn').addEventListener('click',async()=>{
   else  { try{ localStorage.removeItem(VOTE_PATH); }catch(e){} renderPolls(); }
 });
 
+
+/* ============================================================
+   LOCKED TRIP STATE  (Phase 8)
+   ------------------------------------------------------------
+   trip_settings is publicly readable, so the decided departure
+   date and locked route render for everyone. The decisions table
+   stays crew-only; DECISIONS-driven visuals appear after sign-in.
+   ============================================================ */
+async function loadTripPublic(){
+  if(!SB) return;
+  const { data } = await SB.from('trip_settings').select('departure_date,route_locked').eq('id',1).maybeSingle();
+  if(!data) return;
+  TRIP = data;
+  renderDayCards(true);
+  renderHeroDate();
+  applyRouteLock();
+  renderPolls();
+  observeAll();
+}
+
+function renderHeroDate(){
+  if(!TRIP?.departure_date) return;
+  let el = document.getElementById('heroDep');
+  if(!el){
+    el = document.createElement('div'); el.id='heroDep';
+    document.querySelector('.hero-meta').appendChild(el);
+  }
+  const dep = new Date(TRIP.departure_date+'T00:00:00');
+  el.innerHTML = `<b>${fmtDay(dep)}</b><span>Departure ${dep.getFullYear()}</span>`;
+}
+
+function applyRouteLock(){
+  if(!TRIP?.route_locked) return;
+  const r = TRIP.route_locked==='route1' ? '1' : '2';
+  const o = r==='1' ? '2' : '1';
+  // map: the locked route draws by default; the other toggle goes dead
+  document.getElementById('pR'+r).classList.add('show');
+  document.querySelectorAll('.nr'+r).forEach(n=>n.style.opacity=1);
+  const tgR = document.querySelector(`.tg[data-r="${r}"]`);
+  const tgO = document.querySelector(`.tg[data-r="${o}"]`);
+  tgR.classList.add('act');
+  if(!tgR.textContent.includes('✓')) tgR.textContent += ' · ✓ locked';
+  tgO.classList.add('dead'); tgO.disabled = true;
+  document.querySelector('.tg[data-r="0"]').classList.remove('act');
+  // decision cards: winner gets the ribbon, the other dims
+  const win  = document.querySelector('.routecard.r'+r);
+  const lose = document.querySelector('.routecard.r'+o);
+  if(win && !win.querySelector('.lock-badge')){
+    const b=document.createElement('div'); b.className='lock-badge'; b.textContent='✓ Route locked';
+    win.querySelector('.rc-top').appendChild(b);
+  }
+  if(lose && !lose.querySelector('.lock-badge')){
+    lose.classList.add('not-taken');
+    const b=document.createElement('div'); b.className='lock-badge'; b.textContent='Not taken';
+    lose.querySelector('.rc-top').appendChild(b);
+  }
+}
+
+/* Which stays actually count, given the locked route, the Shark Island
+   call, and backup rows. Used by planning progress + cost estimate. */
+function stayRequired(b){
+  const label = (b.day_label||'')+' '+(b.site_name||'');
+  if(TRIP?.route_locked){
+    if((/\bR1\b|Route 1/i).test(label) && TRIP.route_locked!=='route1') return false;
+    if((/\bR2\b|Route 2/i).test(label) && TRIP.route_locked!=='route2') return false;
+  }
+  const sh = DECISIONS.find(x=>x.poll_key==='shark');
+  if(sh){
+    const choseKA = /klein-aus/i.test(sh.outcome);
+    if(/shark island/i.test(b.site_name||'')) return !choseKA;
+    if(/klein-aus/i.test(b.site_name||''))    return choseKA;
+  }
+  return !/backup/i.test(b.day_label||'');
+}
 
 /* ============================================================
    GATE — registration CTA
@@ -1571,6 +1694,7 @@ async function fetchDecisions(){
   if(error){ console.warn(error); return; }
   DECISIONS = data||[];
   renderDecisionBoard(); renderPolls();
+  renderDayCards(true); observeAll();   // Day 3 stay may reflect the Shark Island call
   if(isAdmin()){ renderDecisionLog(); renderPlanProgress(); }
 }
 
@@ -1786,14 +1910,14 @@ function renderPlanProgress(){
   const items = [];
   const add = (group,label,done,detail) => items.push({group,label,done,detail});
 
-  // one item per voting ruling — decided offline or not
+  // one item per voting ruling — decided directly or via the locked date/route
   POLLS.forEach(p=>{
-    const d = DECISIONS.find(x=>x.poll_key===p.key);
+    const d = pollDecision(p);
     add('Decisions', p.q, !!d, d ? d.outcome : 'no call recorded yet');
   });
 
-  // one item per (non-backup) stay — done once booked/paid with a confirmed rate
-  const stays = PLAN.bookings.filter(b=>!/backup/i.test(b.day_label||''));
+  // one item per required stay (route lock, Shark Island call and backups applied)
+  const stays = PLAN.bookings.filter(stayRequired);
   if(!stays.length) add('Camps', 'Route stays loaded', false, 'load the route stays to start tracking');
   stays.forEach(b=>{
     const booked  = b.status==='booked' || b.status==='paid';
@@ -1852,7 +1976,7 @@ function renderPlanSummary(){
   const head     = PLAN.crew.length + pending.length;
   const vehicles = PLAN.crew.filter(c=>c.role==='driver').length + pending.filter(i=>i.role==='driver').length;
   const camps = PLAN.bookings
-    .filter(b=>b.status!=='unavailable')
+    .filter(b=>stayRequired(b) && b.status!=='unavailable')
     .reduce((s,b)=>s+(Number(b.cost_per_camper)||0)*(Number(b.nights)||1),0);
   let items=0, unverified=0;
   PLAN.items.forEach(it=>{
@@ -1868,7 +1992,10 @@ function renderPlanSummary(){
   document.getElementById('psItems').textContent     = fmtR(items);
   document.getElementById('psTotal').textContent     = fmtR(camps+items);
   document.getElementById('psNote').textContent =
-    'Estimates only — per-vehicle and shared costs are spread across the headcount, and every listed stay is counted (drop or zero the route option the convoy doesn\'t take).'
+    'Estimates only — per-vehicle and shared costs are spread across the headcount.'
+    + (TRIP?.route_locked
+        ? ` ${ROUTE_NAMES[TRIP.route_locked]} is locked — the other route's stays are excluded.`
+        : ' Every listed stay is counted (drop or zero the route option the convoy doesn\'t take).')
     + (unverified ? ` ${unverified} cost item${unverified>1?'s':''} still unverified.` : ' All cost items verified ✓');
   renderPlanProgress();
 }
@@ -1909,6 +2036,7 @@ window.addEventListener('scroll',()=>{
   updateAuthUI();   // set initial UI state (not signed in)
   updateGate();     // sync registration gate
   startVotes();     // loads, live-subscribes, and renders the polls
+  loadTripPublic(); // decided departure date + locked route (public)
   observeAll();
 })();
 </script>
