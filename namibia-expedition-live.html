@@ -463,11 +463,20 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
 .todo-row b{color:var(--bone);font-weight:500}
 .todo-row i{font-style:normal;font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.62rem;color:var(--muted);margin-left:auto;text-align:right}
 .todo-alldone{color:var(--green-bright);font-size:.95rem;margin-top:14px}
+/* fixed admin tab — visible anywhere on the page when the admin is signed in */
+#hqTab{position:fixed;top:14px;right:18px;z-index:70;display:none;align-items:center;gap:8px;
+  font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;
+  color:#fff;background:var(--rust);padding:9px 16px;border-radius:30px;text-decoration:none;
+  border:1px solid rgba(236,224,204,.25);box-shadow:0 8px 24px -8px rgba(0,0,0,.7);transition:.25s}
+#hqTab:hover{background:var(--rust-bright);transform:translateY(-1px)}
+#hqTab .pct{background:rgba(0,0,0,.28);padding:2px 8px;border-radius:20px;font-size:.62rem;color:var(--ochre-bright)}
+@media(max-width:600px){#hqTab{top:auto;bottom:16px;right:14px}}
 </style>
 </head>
 <body>
 <div class="topo"></div>
 <div id="rail"></div>
+<a id="hqTab" href="#planning">⚙ Planning HQ <span class="pct" id="hqTabPct" style="display:none"></span></a>
 
 <!-- ===================== HERO ===================== -->
 <header class="hero">
@@ -1575,9 +1584,15 @@ function renderDecisionBoard(){
 
 async function loadPlanning(){
   const sec = document.getElementById('planning');
-  if(!SB || !isAdmin()){ sec.style.display='none'; document.getElementById('gatePlanLink').style.display='none'; return; }
+  if(!SB || !isAdmin()){
+    sec.style.display='none';
+    document.getElementById('gatePlanLink').style.display='none';
+    document.getElementById('hqTab').style.display='none';
+    return;
+  }
   sec.style.display='';
   document.getElementById('gatePlanLink').style.display='';
+  document.getElementById('hqTab').style.display='inline-flex';
   const [crew, invites, bookings, items, payments, settings, account] = await Promise.all([
     SB.from('crew').select('id,email,display_name,role').order('created_at'),
     SB.from('invites').select('*').order('created_at'),
@@ -1813,6 +1828,9 @@ function renderPlanProgress(){
   fill.style.width  = Math.max(pct,6)+'%';
   fill.textContent  = pct+'%';
   document.getElementById('progCount').textContent = `${done} of ${total} planning items done.`;
+  const tabPct = document.getElementById('hqTabPct');
+  tabPct.style.display = '';
+  tabPct.textContent = pct+'%';
 
   const out = items.filter(i=>!i.done);
   if(!out.length){
