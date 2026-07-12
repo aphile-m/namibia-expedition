@@ -483,6 +483,17 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
 .tg.dead{opacity:.35;cursor:not-allowed;text-decoration:line-through}
 .day .date{color:var(--ochre-bright)}
 .stay .decided{color:var(--green-bright);font-size:.72rem;letter-spacing:.1em}
+/* swipeable day galleries */
+.gal-img{opacity:0;transition:opacity .45s ease}
+.gal-img.cur{opacity:1}
+.gal-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:36px;height:36px;border-radius:50%;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(3px);border:1px solid rgba(255,255,255,.25);color:#fff;
+  font-size:1.25rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.25s}
+.gal-arrow:hover{background:rgba(0,0,0,.7);border-color:var(--ochre)}
+.gal-prev{left:12px}.gal-next{right:12px}
+.gal-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:4;display:flex;gap:6px}
+.gal-dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);transition:.25s}
+.gal-dots i.on{background:var(--ochre-bright)}
 </style>
 </head>
 <body>
@@ -1128,24 +1139,34 @@ function scene(type){
 /* ============ DAY DATA ============ */
 const days = [
   {id:'day1',num:'Day 01',title:'The Launch',from:'Johannesburg',to:'Kuruman',dist:'530',time:'~6 hrs',scene:'grassland',
-   photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Kgalagadi%20Transfrontier%20Park%20Gate%2C%20Red%20Dune%20Route%2C%20Northern%20Cape%2C%20South%20Africa%20(19917615043).jpg?width=1000',
-   credit:'Kalahari Red Dune Route · Wikimedia (CC BY-SA)',
+   photos:[
+     {f:'Kgalagadi Transfrontier Park Gate, Red Dune Route, Northern Cape, South Africa (19917615043).jpg', t:'Kuruman · Kalahari Gate', c:'Kalahari Red Dune Route · Wikimedia (CC BY-SA)'},
+     {f:'The Eye of Kuruman, a natural spring, Northern Cape (6252715385).jpg', t:'The Eye of Kuruman', c:'Eye of Kuruman · Wikimedia (CC BY)'},
+     {f:'Kalahari Trails, Red Dune Route, Northern Cape, South Africa (20541582945).jpg', t:'Red Dune Country', c:'Kalahari Trails · Wikimedia (CC BY-SA)'},
+   ],
    surface:[['tar',530]],
    badges:[['100% Asphalt','b-asphalt']],route:'N14 via Ventersdorp & Vryburg',
    stay:'Red Sands Country Lodge',
    body:'Pristine, manicured grass stands, private luxury stone ablution blocks, and an exceptional on-site restaurant for the first night out.',
    callouts:[['gold','Objective','An easy, clear daylight run to settle the vehicles and crew into the convoy format.']]},
   {id:'day2',num:'Day 02',title:'The Frontier',from:'Kuruman',to:'Fish River Canyon',dist:'670',time:'~7.5 hrs',scene:'canyon',
-   photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Fish%20River%20Canyon%2C%20Namibia.jpg?width=1000',
-   credit:'Fish River Canyon · Wikimedia (CC BY-SA)',
+   photos:[
+     {f:'Fish River Canyon, Namibia.jpg', t:'Fish River Canyon', c:'Fish River Canyon · Wikimedia (CC BY-SA)'},
+     {f:'Gravel road along Fish River Canyon, Namibia (2017).jpg', t:'The Approach to Hobas', c:'Fish River Canyon road · Wikimedia (CC BY-SA)'},
+     {f:'Fish River Canyon - Dwyka Riples.jpg', t:'Canyon Rock Detail', c:'Fish River Canyon · Wikimedia (CC BY-SA)'},
+   ],
    surface:[['tar',540],['gravel',130]],
    badges:[['Asphalt → Gravel','b-gravel'],['Nakop Border','b-asphalt']],route:'N14 to Upington → Nakop → B1 & C12 gravel corridors',
    stay:'Hobas Campsite (NWR)',
    body:'Sitting directly inside the national park gates — unrestricted access to the canyon rim for sunset and sunrise with no gate-closure worries. Clean central ablutions, power, and massive shade trees.',
    callouts:[['','Scenic Backup · Canyon Roadhouse (Gondwana)','Vote here for premium private stands over park proximity — flawless facilities and cold craft draught beer.']]},
   {id:'day3',num:'Day 03',title:'The Atlantic Coast',from:'Fish River Canyon',to:'Lüderitz',dist:'420',time:'~4.5 hrs',scene:'coast',
-   photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Aerial%20view%20of%20L%C3%BCderitz%20(2017).jpg?width=1000',
-   credit:'Lüderitz · Wikimedia (CC BY-SA)',
+   photos:[
+     {f:'Aerial view of Lüderitz (2017).jpg', t:'Lüderitz from Above', c:'Lüderitz · Wikimedia (CC BY-SA)'},
+     {f:'Shark Island 03.jpg', t:'The Camp · Shark Island', c:'Shark Island, Lüderitz · Wikimedia (CC BY-SA)'},
+     {f:'Lüderitzbucht aerial.jpg', t:'The Bay & Shark Island', c:'Lüderitzbucht · Wikimedia (CC BY-SA)'},
+     {f:'Belt of Venus, Harbour Lüderitz (Namibia).jpg', t:'Harbour at Dusk', c:'Lüderitz harbour · Wikimedia (CC BY-SA)'},
+   ],
    surface:[['tar',270],['gravel',150]],
    badges:[['Deep Gravel','b-gravel'],['Paved B4','b-asphalt']],route:'Gravel climbing to the B4 — watch for desert horses near Aus',
    stay:'Shark Island Campsite (NWR)',
@@ -1153,8 +1174,12 @@ const days = [
    callouts:[['warn','The Reality · Wind','It will be intensely windy and cold. Rooftop tents will shake and setting up camp requires full teamwork. A raw coastal experience.'],
              ['','Quiet Backup · Klein-Aus Vista','Pivot 120 km inland to the calm granite valleys if the crew prefers peace and quiet.']]},
   {id:'day4',num:'Day 04',title:'The Dune Corridor',from:'Lüderitz',to:'Sesriem',dist:'466',time:'~6 hrs',scene:'dunes',
-   photo:'https://commons.wikimedia.org/wiki/Special:FilePath/006%20Dune%2045%20in%20Sossusvlei%20at%20sunrise%20Photo%20by%20Giles%20Laurent.jpg?width=1000',
-   credit:'Dune 45, Sossusvlei · Giles Laurent / Wikimedia (CC BY-SA)',
+   photos:[
+     {f:'006 Dune 45 in Sossusvlei at sunrise Photo by Giles Laurent.jpg', t:'Dune 45 at Sunrise', c:'Giles Laurent / Wikimedia (CC BY-SA)'},
+     {f:'Dead Vlei Sossusvlei Namib Desert Namibia Luca Galuzzi 2004.JPG', t:'Deadvlei', c:'Luca Galuzzi / Wikimedia (CC BY-SA)'},
+     {f:'Sossusvlei Dune Namib Desert Namibia Luca Galuzzi 2004.JPG', t:'The Big Dunes', c:'Luca Galuzzi / Wikimedia (CC BY-SA)'},
+     {f:'Lone tree in front of Dune 45 Sossusvlei Namibia.jpg', t:'Dune 45 · The Lone Tree', c:'Wikimedia (CC BY-SA)'},
+   ],
    surface:[['tar',125],['corr',341]],
    badges:[['Corrugated Gravel','b-corr'],['C13 & C27','b-gravel']],route:'High-impact tracks slicing through the NamibRand Nature Reserve',
    stay:'Sesriem Campsite (NWR)',
@@ -1186,7 +1211,14 @@ function renderDayCards(instant){
       decidedMark = ' <span class="decided">✓ decided</span>';
     }
   }
-  const sceneCol = `<div class="scene"><span class="scenetag">${d.to}</span>${scene(d.scene)}<img class="scene-photo" src="${d.photo}" alt="${d.to}" loading="lazy" onerror="this.style.display='none'"><div class="scene-overlay"></div><span class="scene-credit">${d.credit}</span></div>`;
+  // swipeable gallery: multiple destination + campsite photos per day
+  const pics = d.photos||[];
+  const imgUrl = f => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(f)}?width=1000`;
+  const galImgs = pics.map((p,k)=>`<img class="scene-photo gal-img ${k===0?'cur':''}" src="${imgUrl(p.f)}" alt="${esc(p.t)}" data-tag="${esc(p.t)}" data-credit="${esc(p.c)}" loading="lazy" onerror="galDrop(this)">`).join('');
+  const galCtl = pics.length>1
+    ? `<button class="gal-arrow gal-prev" aria-label="Previous photo">‹</button><button class="gal-arrow gal-next" aria-label="Next photo">›</button><div class="gal-dots">${pics.map((_,k)=>`<i class="${k===0?'on':''}"></i>`).join('')}</div>`
+    : '';
+  const sceneCol = `<div class="scene gal"><span class="scenetag">${esc(pics[0]?.t||d.to)}</span>${scene(d.scene)}${galImgs}<div class="scene-overlay"></div><span class="scene-credit">${esc(pics[0]?.c||'')}</span>${galCtl}</div>`;
   const bodyCol = `<div class="body">
       <div class="daynum">${d.num} · ${d.title}${dateStr}</div>
       <h3>${d.from} → ${d.to}</h3>
@@ -1204,7 +1236,54 @@ function renderDayCards(instant){
   el.innerHTML = flip ? bodyCol+sceneCol : sceneCol+bodyCol;
   dayCards.appendChild(el);
   });
+  initGalleries();
 }
+
+/* ---- swipeable photo galleries (arrows, dots, touch swipe) ---- */
+function initGalleries(){
+  document.querySelectorAll('.scene.gal').forEach(sc=>{
+    if(sc.dataset.galInit) return;
+    sc.dataset.galInit='1';
+    const imgs = ()=>[...sc.querySelectorAll('.gal-img')];
+    const show = delta=>{
+      const a = imgs(); if(a.length<2) return;
+      let cur = a.findIndex(im=>im.classList.contains('cur')); if(cur<0) cur=0;
+      const n = (cur+delta+a.length)%a.length;
+      a.forEach((im,k)=>im.classList.toggle('cur',k===n));
+      sc.querySelectorAll('.gal-dots i').forEach((dot,k)=>dot.classList.toggle('on',k===n));
+      sc.querySelector('.scenetag').textContent    = a[n].dataset.tag||'';
+      sc.querySelector('.scene-credit').textContent = a[n].dataset.credit||'';
+    };
+    sc.querySelector('.gal-next')?.addEventListener('click',e=>{ e.stopPropagation(); show(1); });
+    sc.querySelector('.gal-prev')?.addEventListener('click',e=>{ e.stopPropagation(); show(-1); });
+    let x0=null, y0=null;
+    sc.addEventListener('touchstart',e=>{ x0=e.touches[0].clientX; y0=e.touches[0].clientY; },{passive:true});
+    sc.addEventListener('touchend',e=>{
+      if(x0===null) return;
+      const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+      if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)) show(dx<0?1:-1);
+      x0=null;
+    },{passive:true});
+  });
+}
+
+// a photo that fails to load drops out of its gallery cleanly
+window.galDrop = function(img){
+  const sc = img.closest('.scene'); if(!sc) return;
+  const a = [...sc.querySelectorAll('.gal-img')];
+  const idx = a.indexOf(img);
+  sc.querySelectorAll('.gal-dots i')[idx]?.remove();
+  const wasCur = img.classList.contains('cur');
+  img.remove();
+  const rest = [...sc.querySelectorAll('.gal-img')];
+  if(rest.length<2) sc.querySelectorAll('.gal-arrow,.gal-dots').forEach(x=>x.style.display='none');
+  if(wasCur && rest.length){
+    rest[0].classList.add('cur');
+    sc.querySelectorAll('.gal-dots i').forEach((dot,k)=>dot.classList.toggle('on',k===0));
+    sc.querySelector('.scenetag').textContent     = rest[0].dataset.tag||'';
+    sc.querySelector('.scene-credit').textContent = rest[0].dataset.credit||'';
+  }
+};
 renderDayCards(false);
 
 /* ============ VOTING ENGINE ============ */
