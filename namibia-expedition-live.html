@@ -1005,10 +1005,11 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
         <div class="admin-field"><label>Amount (R)</label><input id="ciAmount" type="number" min="0" step="0.01"></div>
         <div class="admin-field"><label>Charged</label><select id="ciBasis"><option value="per_camper">Per camper</option><option value="per_vehicle">Per vehicle</option><option value="total">Total (shared)</option></select></div>
         <div class="admin-field"><label>Source</label><input id="ciSource" type="text" placeholder="e.g. NWR reservations, 2026 tariff"></div>
+        <div class="admin-field"><label>Verification website</label><input id="ciWebsite" type="url" placeholder="https://…"></div>
       </div>
       <button class="admin-save" id="ciAddBtn">Add cost item</button>
       <div style="overflow-x:auto;margin-top:18px"><table class="plan-table">
-        <thead><tr><th style="min-width:170px">Item</th><th style="min-width:90px">Amount (R)</th><th style="min-width:120px">Charged</th><th>Verified</th><th style="min-width:150px">Source</th><th></th></tr></thead>
+        <thead><tr><th style="min-width:170px">Item</th><th style="min-width:90px">Amount (R)</th><th style="min-width:120px">Charged</th><th>Verified</th><th style="min-width:150px">Source</th><th style="min-width:170px">Verification website</th><th></th></tr></thead>
         <tbody id="costItemRows"></tbody>
       </table></div>
 
@@ -1530,26 +1531,51 @@ function applyRouteLock(){
   if(!TRIP?.route_locked) return;
   const r = TRIP.route_locked==='route1' ? '1' : '2';
   const o = r==='1' ? '2' : '1';
-  // map: the locked route draws by default; the other toggle goes dead
+  const name  = ROUTE_NAMES[TRIP.route_locked];
+  const other = o==='1' ? 'Route 1' : 'Route 2';
+  // map: the locked route draws by default; the other route disappears
   document.getElementById('pR'+r).classList.add('show');
   document.querySelectorAll('.nr'+r).forEach(n=>n.style.opacity=1);
+  document.querySelectorAll('.nr'+o).forEach(n=>n.style.display='none');
   const tgR = document.querySelector(`.tg[data-r="${r}"]`);
   const tgO = document.querySelector(`.tg[data-r="${o}"]`);
   tgR.classList.add('act');
   if(!tgR.textContent.includes('✓')) tgR.textContent += ' · ✓ locked';
-  tgO.classList.add('dead'); tgO.disabled = true;
+  tgO.style.display = 'none';
   document.querySelector('.tg[data-r="0"]').classList.remove('act');
-  // decision cards: winner gets the ribbon, the other dims
+  const mapP = document.querySelector('#map .sec-head p');
+  if(mapP) mapP.textContent = `The call is made — Days 1–5 form the fixed spine out to the dunes, then the convoy comes home on ${name}. Tap any waypoint to jump to its day.`;
+  document.querySelectorAll('.maplegend span').forEach(s=>{ if(s.textContent.includes(other)) s.style.display='none'; });
+  document.querySelectorAll('svg.map text.sub').forEach(t=>{ if(t.textContent.includes('SPLIT')) t.textContent='DAY 4'; });
+  // surface profile: drop the other route's row
+  document.querySelectorAll('.surfpanel .surfrow').forEach(rw=>{
+    if((rw.querySelector('.rlabel b')?.textContent||'').includes(other)) rw.style.display='none';
+  });
+  // decision section reads as the locked plan, not a choice
+  const dh = document.querySelector('#decision .sec-head');
+  if(dh){
+    dh.querySelector('.eyebrow').textContent = 'Day 5 · 11:00 AM Departure · Locked';
+    dh.querySelector('h2').textContent = 'The Road Home';
+    dh.querySelector('p').textContent = `The call is made: ${name}. No more trade-offs — these are the final legs of the circuit, finishing on 100% paved highway.`;
+  }
   const win  = document.querySelector('.routecard.r'+r);
   const lose = document.querySelector('.routecard.r'+o);
   if(win && !win.querySelector('.lock-badge')){
     const b=document.createElement('div'); b.className='lock-badge'; b.textContent='✓ Route locked';
     win.querySelector('.rc-top').appendChild(b);
   }
-  if(lose && !lose.querySelector('.lock-badge')){
-    lose.classList.add('not-taken');
-    const b=document.createElement('div'); b.className='lock-badge'; b.textContent='Not taken';
-    lose.querySelector('.rc-top').appendChild(b);
+  if(lose) lose.style.display = 'none';
+  document.querySelector('#decision .split')?.style.setProperty('grid-template-columns','1fr');
+  // comparison matrix is moot once there's nothing to compare
+  const mx = document.querySelector('#decision .matrix'); if(mx) mx.style.display='none';
+  // intensity chart keeps only the locked route's bars
+  document.querySelectorAll('#decision .bargrp').forEach(g=>{
+    if((g.querySelector('.barlabel span')?.textContent||'').includes(other)) g.style.display='none';
+  });
+  const ch = document.querySelector('#decision .chart');
+  if(ch){
+    ch.querySelector('h4').textContent = 'The Driving Ahead';
+    ch.querySelector('.csub').textContent = 'Hours behind the wheel on the final legs home.';
   }
 }
 
@@ -1693,7 +1719,7 @@ async function renderCrewEstimate(){
       ? (firm ? ['verified', b.status==='paid'?'Paid':b.status==='booked'?'Booked':'Rate confirmed']
               : ['claimed','Estimate — unverified'])
       : ['unpaid','Rate TBC'];
-    rows.push({ label:`${b.day_label?b.day_label+' · ':''}${b.site_name}`,
+    rows.push({ label:`${b.day_label?b.day_label+' · ':''}${b.site_name}`, website:b.website,
                 basis:`${n} night${n>1?'s':''} × R${rate.toLocaleString('en-ZA')}`, amt, chip });
   });
   items.forEach(it=>{
@@ -1702,12 +1728,12 @@ async function renderCrewEstimate(){
     if(it.basis==='per_vehicle'){ share = amt*vehicles/head; basis = `R${amt.toLocaleString('en-ZA')} per vehicle`; }
     else if(it.basis==='total'){  share = amt/head;          basis = `R${amt.toLocaleString('en-ZA')} shared`; }
     total += share; vAll++; if(it.verified) vOK++;
-    rows.push({ label:it.label, basis, amt:share,
+    rows.push({ label:it.label, website:it.website, basis, amt:share,
                 chip: it.verified ? ['verified','Verified'] : ['claimed','Estimate — unverified'] });
   });
 
   document.getElementById('estRows').innerHTML = rows.map(r=>
-    `<tr><td style="color:var(--bone)">${esc(r.label)}</td><td>${esc(r.basis)}</td>
+    `<tr><td style="color:var(--bone)">${r.website?`<a href="${esc(r.website)}" target="_blank" rel="noopener" style="color:var(--bone);text-decoration:underline dotted var(--teal-bright)">${esc(r.label)}</a> <span style="color:var(--teal-bright)">↗</span>`:esc(r.label)}</td><td>${esc(r.basis)}</td>
      <td style="color:var(--ochre-bright);white-space:nowrap">R${Math.round(r.amt).toLocaleString('en-ZA')}</td>
      <td><span class="pay-status ${r.chip[0]}" style="margin:0;font-size:.6rem">${r.chip[1]}</span></td></tr>`).join('');
   document.getElementById('estTotal').textContent    = 'R'+Math.round(total).toLocaleString('en-ZA');
@@ -1994,6 +2020,7 @@ function renderCostItems(){
       <td><select data-id="${it.id}" data-field="basis">${basisOpts(it.basis)}</select></td>
       <td style="text-align:center"><input data-id="${it.id}" data-field="verified" type="checkbox" ${it.verified?'checked':''} style="width:auto;min-width:0"></td>
       <td><input data-id="${it.id}" data-field="source" value="${esc(it.source||'')}"></td>
+      <td><div style="display:flex;gap:5px;align-items:center"><input data-id="${it.id}" data-field="website" value="${esc(it.website||'')}" placeholder="https://…">${it.website?`<a href="${esc(it.website)}" target="_blank" rel="noopener" style="color:var(--teal-bright);text-decoration:none;font-size:1rem;flex-shrink:0" title="Open verification site">↗</a>`:''}</div></td>
       <td><button class="plan-del" onclick="delCostItem('${it.id}')">✕</button></td>
     </tr>`).join('') || '<tr><td colspan="6" style="color:var(--muted)">No cost items yet.</td></tr>';
 }
@@ -2006,9 +2033,10 @@ document.getElementById('ciAddBtn')?.addEventListener('click', async ()=>{
     amount: parseFloat(document.getElementById('ciAmount').value) || 0,
     basis:  document.getElementById('ciBasis').value,
     source: document.getElementById('ciSource').value.trim() || null,
+    website: document.getElementById('ciWebsite').value.trim() || null,
   });
   if(error){ console.warn(error); return; }
-  document.getElementById('ciLabel').value=''; document.getElementById('ciAmount').value=''; document.getElementById('ciSource').value='';
+  document.getElementById('ciLabel').value=''; document.getElementById('ciAmount').value=''; document.getElementById('ciSource').value=''; document.getElementById('ciWebsite').value='';
   loadPlanning();
 });
 window.delCostItem = async function(id){
