@@ -5,6 +5,12 @@ Feature ideas agreed for a future phase. Ship one per phase, with its own
 
 ## 1. Campsite photos — Planning HQ upload + front-end gallery
 
+> **Partially shipped:** the day cards now have swipeable multi-photo
+> galleries (destination + campsite shots curated from Wikimedia
+> Commons, touch swipe / arrows / dots). Still open from this item:
+> admin-uploaded photos via Supabase Storage and the `site_photos`
+> table, and a full-screen lightbox.
+
 **Goal:** the admin attaches real photos to each stay in Planning HQ, and the
 public site elegantly shows each campsite with its related images.
 
