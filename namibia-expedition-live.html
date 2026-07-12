@@ -1608,6 +1608,8 @@ function applyRouteLock(){
   // map: the locked route is always drawn; the other route disappears and
   // the toggles become status chips rather than controls
   geoShowRoute(r, true);
+  // reframe tightly around the locked circuit (drop the unused route's waypoint)
+  if(GEO) GEO.setFrame(['joburg','kuruman','hobas','luderitz','sesriem', r==='2'?'gaborone':'swakop']);
   const tgR = document.querySelector(`.tg[data-r="${r}"]`);
   const tgO = document.querySelector(`.tg[data-r="${o}"]`);
   tgR.classList.add('act');
@@ -2234,7 +2236,13 @@ function initGeoMap(){
     document.getElementById('geomap-fallback').style.display='block';
     return;
   }
-  const map = L.map('geomap', { scrollWheelZoom:false });
+  // locked frame: always the full route at the fitted zoom — no zooming or
+  // panning away; waypoints stay tappable
+  const map = L.map('geomap', {
+    zoomControl:false, scrollWheelZoom:false, doubleClickZoom:false,
+    touchZoom:false, boxZoom:false, keyboard:false, dragging:false,
+    zoomSnap:0.25,
+  });
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
     subdomains:'abcd', maxZoom:12,
@@ -2253,8 +2261,10 @@ function initGeoMap(){
   mk('gobabis','#cdbf9f').addTo(map);   // on both homeward options
   const r1Layer = L.layerGroup([ L.polyline([P('sesriem'),P('swakop'),P('gobabis'),P('joburg')], { color:'#74b7c0', weight:3 }), mk('swakop','#74b7c0') ]);
   const r2Layer = L.layerGroup([ L.polyline([P('sesriem'),P('gobabis'),P('gaborone'),P('joburg')], { color:'#a6b366', weight:3 }), mk('gaborone','#a6b366') ]);
-  map.fitBounds(L.latLngBounds(spine.concat([P('gaborone'),P('swakop')])), { padding:[36,36] });
-  GEO = { map, r1Layer, r2Layer };
+  GEO = { map, r1Layer, r2Layer,
+    setFrame(keys){ GEO.bounds = L.latLngBounds(keys.map(P)); map.fitBounds(GEO.bounds, { padding:[36,36] }); } };
+  GEO.setFrame(['joburg','kuruman','hobas','luderitz','sesriem','gaborone','swakop']);
+  window.addEventListener('resize', ()=>{ map.invalidateSize(); if(GEO.bounds) map.fitBounds(GEO.bounds, { padding:[36,36] }); });
   window.__GEO = GEO;
   if(TRIP?.route_locked) applyRouteLock();   // trip settings may have loaded before the map
 }
