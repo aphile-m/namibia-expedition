@@ -1382,14 +1382,46 @@ function updateAuthUI(){
   document.getElementById('resetBtn').style.display = isAdmin ? '' : 'none';
 }
 
-// Auth state listener
+/* ---- session handling: remember this device ----
+   The Supabase session lives in localStorage (persistSession) and its
+   refresh token keeps it valid indefinitely, so one magic link per
+   browser is the goal. We restore it explicitly on load (no signed-out
+   flash), and even if the browser evicts storage we still remember WHO
+   this device belongs to and offer a one-tap re-send of the link. */
+let AUTH_HANDLED;   // last user id processed — dedupes INITIAL_SESSION vs manual restore
+async function handleSession(session){
+  const uid = session?.user?.id ?? null;
+  if(uid === AUTH_HANDLED) return;   // TOKEN_REFRESHED / duplicate events — nothing to redo
+  AUTH_HANDLED = uid;
+  AUTH_USER = session?.user ?? null;
+  if(AUTH_USER){
+    try { localStorage.setItem('namibia-known-email', AUTH_USER.email||''); } catch(e){}
+    await loadCrewRow();
+    if(!CREW_ROW) showOnboarding();
+    else { try { localStorage.setItem('namibia-known-name', CREW_ROW.display_name||''); } catch(e){} }
+  }
+  updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); }
+  fetchDecisions(); loadPlanning(); renderPolls();
+  if(!AUTH_USER) rememberedPrefill();
+}
 if(SB){
-  SB.auth.onAuthStateChange(async (_event, session)=>{
-    AUTH_USER = session?.user ?? null;
-    if(AUTH_USER){ await loadCrewRow(); if(!CREW_ROW) showOnboarding(); }
-    updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); }
-    fetchDecisions(); loadPlanning(); renderPolls();
-  });
+  SB.auth.onAuthStateChange((_event, session)=>{ handleSession(session); });
+  // belt & braces: restore the stored session immediately on load
+  SB.auth.getSession().then(({data})=>{ if(data?.session) handleSession(data.session); });
+}
+
+// Signed out but this device knows you: pre-fill the email everywhere and
+// turn the gate into a one-tap "send my link" for the remembered member.
+function rememberedPrefill(){
+  if(AUTH_USER) return;
+  let email='', name='';
+  try { email = localStorage.getItem('namibia-known-email')||''; name = localStorage.getItem('namibia-known-name')||''; } catch(e){}
+  if(!email) return;
+  const ge = document.getElementById('gateEmail'); if(ge && !ge.value) ge.value = email;
+  const ae = document.getElementById('authEmail'); if(ae && !ae.value) ae.value = email;
+  const sub = document.querySelector('.gate-sub');
+  if(sub) sub.innerHTML = `Welcome back${name?', <b style="color:var(--ochre-bright)">'+esc(name)+'</b>':''} — this device is remembered. One tap below and a fresh sign-in link lands in your inbox.`;
+  const btn = document.getElementById('gateSendBtn'); if(btn) btn.textContent = 'Send my sign-in link →';
 }
 
 // Send magic link
@@ -1448,6 +1480,7 @@ document.getElementById('obSave')?.addEventListener('click', async ()=>{
   ).select().maybeSingle();
   if(!error){
     CREW_ROW = data;
+    try { localStorage.setItem('namibia-known-name', CREW_ROW?.display_name||''); } catch(e){}
     document.getElementById('onboardOverlay').style.display = 'none';
     updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); }
     fetchDecisions(); loadPlanning(); renderPolls();
@@ -2115,10 +2148,11 @@ window.addEventListener('scroll',()=>{
 
 /* ============ INIT ============ */
 (function init(){
-  updateAuthUI();   // set initial UI state (not signed in)
-  updateGate();     // sync registration gate
-  startVotes();     // loads, live-subscribes, and renders the polls
-  loadTripPublic(); // decided departure date + locked route (public)
+  updateAuthUI();      // set initial UI state (not signed in)
+  updateGate();        // sync registration gate
+  rememberedPrefill(); // this device knows you — pre-fill email + one-tap re-send
+  startVotes();        // loads, live-subscribes, and renders the polls
+  loadTripPublic();    // decided departure date + locked route (public)
   observeAll();
 })();
 </script>
