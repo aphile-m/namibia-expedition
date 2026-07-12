@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Southern Namibia & Kalahari Expedition</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap');
 
@@ -124,6 +126,21 @@ section{padding:90px 0;position:relative}
 .tg.act[data-r="2"]{background:rgba(134,145,80,.16);border-color:var(--green);color:var(--green-bright)}
 .tg.act[data-r="0"]{background:rgba(219,162,63,.14);border-color:var(--ochre);color:var(--ochre-bright)}
 svg.map{width:100%;height:auto;display:block}
+/* real geographic map (Leaflet) */
+#geomap{height:540px;border-radius:8px;overflow:hidden;background:#0f0b08;z-index:1}
+@media(max-width:700px){#geomap{height:420px}}
+#geomap .leaflet-tile-pane{filter:saturate(.8) brightness(.92)}
+.leaflet-container{background:#0f0b08;font-family:'Spectral',serif}
+.geo-label{background:rgba(15,11,8,.88);border:1px solid rgba(236,224,204,.22);color:var(--bone);
+  font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:.64rem;
+  padding:3px 9px;border-radius:4px;box-shadow:0 4px 14px rgba(0,0,0,.5);white-space:nowrap}
+.geo-label b{color:var(--ochre-bright)}
+.geo-label.r1 b{color:var(--teal-bright)}
+.geo-label.r2 b{color:var(--green-bright)}
+.leaflet-tooltip-top.geo-label::before{border-top-color:rgba(236,224,204,.22)}
+.leaflet-control-attribution{background:rgba(15,11,8,.72)!important;color:var(--muted)!important;font-size:.56rem!important}
+.leaflet-control-attribution a{color:var(--teal-bright)!important}
+.leaflet-control-zoom a{background:rgba(15,11,8,.85)!important;color:var(--bone)!important;border-color:rgba(236,224,204,.18)!important}
 .node{cursor:pointer}
 .node circle{transition:.3s}
 .node:hover circle.dot{r:11;fill:var(--ochre-bright)}
@@ -597,32 +614,8 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
         <button class="tg" data-r="1">Route 1 · Coast-to-Coast</button>
         <button class="tg" data-r="2">Route 2 · South Kalahari</button>
       </div>
-      <svg class="map" viewBox="0 0 1000 560">
-        <!-- abstract coastline -->
-        <path d="M120,90 C150,180 95,260 130,340 C155,410 110,470 140,540" fill="none" stroke="rgba(91,151,160,.25)" stroke-width="2"/>
-        <text x="60" y="300" transform="rotate(-90 60 300)" fill="rgba(91,151,160,.35)" font-family="Oswald" font-size="12" letter-spacing="6">SOUTH ATLANTIC</text>
-        <!-- faint land masses -->
-        <path d="M170,120 C420,80 760,90 880,150 C940,200 930,420 840,470 C600,520 320,520 200,460 C150,360 150,220 170,120 Z" fill="rgba(236,224,204,.022)" stroke="rgba(236,224,204,.06)"/>
-        <text x="430" y="250" fill="rgba(236,224,204,.10)" font-family="Oswald" font-size="42" letter-spacing="14">NAMIBIA</text>
-        <text x="700" y="330" fill="rgba(134,145,80,.16)" font-family="Oswald" font-size="26" letter-spacing="10">BOTSWANA</text>
-
-        <!-- FIXED path: Joburg->Kuruman->FRC->Luderitz->Sesriem -->
-        <polyline class="path-fixed draw" id="pFixed" points="840,360 660,430 360,500 180,470 300,330"/>
-        <!-- Route1: Sesriem->Swakop->Gobabis->Joburg -->
-        <polyline class="path-r path-r1" id="pR1" points="300,330 250,230 560,300 840,360"/>
-        <!-- Route2: Sesriem->Gobabis->Gaborone->Joburg -->
-        <polyline class="path-r path-r2" id="pR2" points="300,330 560,300 760,220 840,360"/>
-
-        <!-- nodes -->
-        <g class="node" data-go="day1"><circle class="dot" cx="840" cy="360" r="8" fill="#dba23f"/><circle cx="840" cy="360" r="14" fill="none" stroke="#dba23f" stroke-opacity=".35"/><text x="840" y="392" text-anchor="middle">Joburg</text><text class="sub" x="840" y="406" text-anchor="middle">START / FINISH</text></g>
-        <g class="node" data-go="day1"><circle class="dot" cx="660" cy="430" r="7" fill="#dba23f"/><text x="660" y="458" text-anchor="middle">Kuruman</text><text class="sub" x="660" y="471" text-anchor="middle">DAY 1</text></g>
-        <g class="node" data-go="day2"><circle class="dot" cx="360" cy="500" r="7" fill="#dba23f"/><text x="360" y="528" text-anchor="middle">Fish River Canyon</text><text class="sub" x="360" y="541" text-anchor="middle">DAY 2</text></g>
-        <g class="node" data-go="day3"><circle class="dot" cx="180" cy="470" r="7" fill="#dba23f"/><text x="180" y="498" text-anchor="middle">Lüderitz</text><text class="sub" x="180" y="511" text-anchor="middle">DAY 3</text></g>
-        <g class="node" data-go="day4"><circle class="dot" cx="300" cy="330" r="7" fill="#dba23f"/><text x="300" y="316" text-anchor="middle">Sesriem</text><text class="sub" x="300" y="303" text-anchor="middle">DAY 4 · SPLIT</text></g>
-        <g class="node nr1" data-go="decision" style="opacity:.35"><circle class="dot" cx="250" cy="230" r="6" fill="#74b7c0"/><text x="250" y="216" text-anchor="middle" fill="#74b7c0">Swakopmund</text><text class="sub" x="250" y="203" text-anchor="middle">ROUTE 1</text></g>
-        <g class="node" data-go="decision"><circle class="dot" cx="560" cy="300" r="6" fill="#cdbf9f"/><text x="560" y="288" text-anchor="middle">Gobabis</text></g>
-        <g class="node nr2" data-go="decision" style="opacity:.35"><circle class="dot" cx="760" cy="220" r="6" fill="#a6b366"/><text x="760" y="206" text-anchor="middle" fill="#a6b366">Gaborone</text><text class="sub" x="760" y="193" text-anchor="middle">ROUTE 2</text></g>
-      </svg>
+      <div id="geomap"></div>
+      <div id="geomap-fallback" style="display:none;padding:60px 20px;text-align:center;color:var(--muted);font-family:'Oswald';text-transform:uppercase;letter-spacing:.14em;font-size:.72rem">Live map unavailable — check your connection and reload.</div>
       <div class="maplegend">
         <span><i style="border-color:var(--ochre)"></i>Fixed Spine</span>
         <span><i style="border-color:var(--teal-bright)"></i>Route 1 · Coast-to-Coast</span>
@@ -1612,20 +1605,19 @@ function applyRouteLock(){
   const o = r==='1' ? '2' : '1';
   const name  = ROUTE_NAMES[TRIP.route_locked];
   const other = o==='1' ? 'Route 1' : 'Route 2';
-  // map: the locked route draws by default; the other route disappears
-  document.getElementById('pR'+r).classList.add('show');
-  document.querySelectorAll('.nr'+r).forEach(n=>n.style.opacity=1);
-  document.querySelectorAll('.nr'+o).forEach(n=>n.style.display='none');
+  // map: the locked route is always drawn; the other route disappears and
+  // the toggles become status chips rather than controls
+  geoShowRoute(r, true);
   const tgR = document.querySelector(`.tg[data-r="${r}"]`);
   const tgO = document.querySelector(`.tg[data-r="${o}"]`);
   tgR.classList.add('act');
   if(!tgR.textContent.includes('✓')) tgR.textContent += ' · ✓ locked';
   tgO.style.display = 'none';
-  document.querySelector('.tg[data-r="0"]').classList.remove('act');
+  document.querySelector('.tg[data-r="0"]').classList.add('act');
+  document.querySelectorAll('.tg').forEach(t=>t.style.pointerEvents='none');
   const mapP = document.querySelector('#map .sec-head p');
   if(mapP) mapP.textContent = `The call is made — Days 1–5 form the fixed spine out to the dunes, then the convoy comes home on ${name}. Tap any waypoint to jump to its day.`;
   document.querySelectorAll('.maplegend span').forEach(s=>{ if(s.textContent.includes(other)) s.style.display='none'; });
-  document.querySelectorAll('svg.map text.sub').forEach(t=>{ if(t.textContent.includes('SPLIT')) t.textContent='DAY 4'; });
   // surface profile: drop the other route's row
   document.querySelectorAll('.surfpanel .surfrow').forEach(rw=>{
     if((rw.querySelector('.rlabel b')?.textContent||'').includes(other)) rw.style.display='none';
@@ -2222,27 +2214,71 @@ function renderPlanSummary(){
   renderPlanProgress();
 }
 
-/* ============ MAP TOGGLES ============ */
+/* ============ REAL ROUTE MAP (Leaflet on dark OSM/CARTO tiles) ============ */
+const WAYPOINTS = {
+  joburg:  { ll:[-26.2041, 28.0473], name:'Johannesburg',      sub:'Start / Finish',        go:'day1' },
+  kuruman: { ll:[-27.4525, 23.4325], name:'Kuruman',           sub:'Day 1 · Red Sands',     go:'day1' },
+  hobas:   { ll:[-27.6206, 17.7636], name:'Fish River Canyon', sub:'Day 2 · Hobas',         go:'day2' },
+  luderitz:{ ll:[-26.6481, 15.1594], name:'Lüderitz',          sub:'Day 3 · Shark Island',  go:'day3' },
+  sesriem: { ll:[-24.4880, 15.8000], name:'Sesriem',           sub:'Day 4 · Sossusvlei',    go:'day4' },
+  swakop:  { ll:[-22.6784, 14.5258], name:'Swakopmund',        sub:'Route 1',               go:'decision', cls:'r1' },
+  gobabis: { ll:[-22.4500, 18.9667], name:'Gobabis',           sub:'Day 5 · Zelda',         go:'decision' },
+  gaborone:{ ll:[-24.6282, 25.9231], name:'Gaborone',          sub:'Day 6 · Phakalane',     go:'decision', cls:'r2' },
+};
+let GEO = null;   // { map, r1Layer, r2Layer } once Leaflet is up
+function initGeoMap(){
+  const el = document.getElementById('geomap');
+  if(!el) return;
+  if(typeof L === 'undefined'){   // CDN unreachable — degrade gracefully
+    el.style.display='none';
+    document.getElementById('geomap-fallback').style.display='block';
+    return;
+  }
+  const map = L.map('geomap', { scrollWheelZoom:false });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains:'abcd', maxZoom:12,
+  }).addTo(map);
+  const P = k => WAYPOINTS[k].ll;
+  const mk = (k, color) => {
+    const w = WAYPOINTS[k];
+    return L.circleMarker(w.ll, { radius:7, color, weight:2, fillColor:color, fillOpacity:.55 })
+      .bindTooltip(`<b>${w.name}</b><br>${w.sub}`, { permanent:true, direction:'top', offset:[0,-9], opacity:1, className:'geo-label '+(w.cls||'') })
+      .on('click', ()=>document.getElementById(w.go)?.scrollIntoView({ behavior:'smooth', block:'center' }));
+  };
+  // fixed spine: Joburg → Kuruman → Fish River Canyon → Lüderitz → Sesriem
+  const spine = [P('joburg'),P('kuruman'),P('hobas'),P('luderitz'),P('sesriem')];
+  L.polyline(spine, { color:'#dba23f', weight:3, dashArray:'8 7' }).addTo(map);
+  ['joburg','kuruman','hobas','luderitz','sesriem'].forEach(k=>mk(k,'#dba23f').addTo(map));
+  mk('gobabis','#cdbf9f').addTo(map);   // on both homeward options
+  const r1Layer = L.layerGroup([ L.polyline([P('sesriem'),P('swakop'),P('gobabis'),P('joburg')], { color:'#74b7c0', weight:3 }), mk('swakop','#74b7c0') ]);
+  const r2Layer = L.layerGroup([ L.polyline([P('sesriem'),P('gobabis'),P('gaborone'),P('joburg')], { color:'#a6b366', weight:3 }), mk('gaborone','#a6b366') ]);
+  map.fitBounds(L.latLngBounds(spine.concat([P('gaborone'),P('swakop')])), { padding:[36,36] });
+  GEO = { map, r1Layer, r2Layer };
+  window.__GEO = GEO;
+  if(TRIP?.route_locked) applyRouteLock();   // trip settings may have loaded before the map
+}
+function geoShowRoute(r, show){
+  if(!GEO) return;
+  const layer = r==='1' ? GEO.r1Layer : GEO.r2Layer;
+  if(show) layer.addTo(GEO.map); else GEO.map.removeLayer(layer);
+}
 const tgs=document.querySelectorAll('.tg');
-const pR1=document.getElementById('pR1'), pR2=document.getElementById('pR2');
-const nr1=document.querySelectorAll('.nr1'), nr2=document.querySelectorAll('.nr2');
 tgs.forEach(t=>t.addEventListener('click',()=>{
   const r=t.dataset.r;
-  if(r==='0'){ tgs.forEach(x=>x.classList.toggle('act',x.dataset.r==='0')); pR1.classList.remove('show');pR2.classList.remove('show');
-    nr1.forEach(n=>n.style.opacity=.35); nr2.forEach(n=>n.style.opacity=.35); return; }
+  if(r==='0'){
+    tgs.forEach(x=>x.classList.toggle('act', x.dataset.r==='0'));
+    geoShowRoute('1',false); geoShowRoute('2',false);
+    return;
+  }
   t.classList.toggle('act');
-  if(r==='1'){ pR1.classList.toggle('show'); nr1.forEach(n=>n.style.opacity=pR1.classList.contains('show')?1:.35); }
-  if(r==='2'){ pR2.classList.toggle('show'); nr2.forEach(n=>n.style.opacity=pR2.classList.contains('show')?1:.35); }
+  geoShowRoute(r, t.classList.contains('act'));
   document.querySelector('.tg[data-r="0"]').classList.remove('act');
 }));
-document.querySelectorAll('.node').forEach(n=>{
-  n.addEventListener('click',()=>{ const t=document.getElementById(n.dataset.go); if(t) t.scrollIntoView({behavior:'smooth',block:'center'}); });
-});
 
 /* ============ SCROLL REVEAL + RAIL + ANIM ============ */
 const io=new IntersectionObserver(es=>{
   es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);
-    if(e.target.id==='map') document.getElementById('pFixed').classList.add('go');
     if(e.target.querySelectorAll){ e.target.querySelectorAll('.barfill').forEach(b=>b.style.width=b.dataset.w+'%'); }
   }});
 },{threshold:.15});
@@ -2258,6 +2294,7 @@ window.addEventListener('scroll',()=>{
   updateAuthUI();      // set initial UI state (not signed in)
   updateGate();        // sync registration gate
   rememberedPrefill(); // this device knows you — pre-fill email + one-tap re-send
+  initGeoMap();        // real geographic route map (Leaflet)
   startVotes();        // loads, live-subscribes, and renders the polls
   loadTripPublic();    // decided departure date + locked route (public)
   observeAll();
