@@ -873,6 +873,22 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
           <p id="bankPlaceholder" style="color:var(--muted);font-size:.84rem;margin-top:8px;display:none">Banking details will be posted here by the admin before the deadline.</p>
         </div>
       </div>
+
+      <!-- Trip cost estimate — visible to all signed-in crew (Phase 9) -->
+      <div class="cost-panel reveal" id="estimatePanel" style="margin-top:24px;display:none">
+        <h4>Trip Cost Estimate — Per Camper</h4>
+        <p class="plan-sub" id="estBasis"></p>
+        <div style="overflow-x:auto"><table class="plan-table">
+          <thead><tr><th style="min-width:200px">Item</th><th style="min-width:130px">Basis</th><th>R / camper</th><th style="min-width:130px">Verification</th></tr></thead>
+          <tbody id="estRows"></tbody>
+        </table></div>
+        <div class="plan-tiles">
+          <div class="plan-tile"><b id="estTotal">—</b><span>Estimated total · R per camper</span></div>
+          <div class="plan-tile"><b id="estVerified">—</b><span>Numbers verified</span></div>
+        </div>
+        <p class="plan-sub" id="estNote" style="margin:12px 0 0">Lines marked "estimate" are indicative until confirmed with the venue — they firm up here as bookings are verified in Planning HQ. The deposit above is separate and comes off your final share.</p>
+      </div>
+
       <div class="admin-section" id="adminSection">
         <h4>Admin Controls</h4>
         <div class="reveal">
@@ -969,7 +985,7 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
       <p class="plan-sub">Track every stay from first enquiry to paid booking, with the verified rate per camper per night. Load the route stays once, then work each row: query availability → confirm the rate → book. Edits save as you type — drop or zero the route option the convoy doesn't choose.</p>
       <button class="admin-save" id="seedStaysBtn" style="margin-bottom:14px">Load route stays</button>
       <div style="overflow-x:auto"><table class="plan-table">
-        <thead><tr><th style="min-width:80px">Day</th><th style="min-width:190px">Site</th><th style="width:64px">Nights</th><th style="min-width:130px">Status</th><th style="min-width:95px">R / camper / night</th><th style="min-width:140px">Contact / booking ref</th><th style="min-width:160px">Notes</th><th></th></tr></thead>
+        <thead><tr><th style="min-width:80px">Day</th><th style="min-width:190px">Site</th><th style="width:64px">Nights</th><th style="min-width:130px">Status</th><th style="min-width:95px">R / camper / night</th><th style="min-width:160px">Contact</th><th style="min-width:170px">Booking website</th><th style="min-width:150px">Notes</th><th></th></tr></thead>
         <tbody id="bookingRows"></tbody>
       </table></div>
       <div class="plan-form" style="margin-top:16px">
@@ -1608,8 +1624,64 @@ async function loadCosts(){
 
   const { data: myPay } = await SB.from('payments').select('*').eq('crew_id',AUTH_USER.id).maybeSingle();
   renderMyPayment(myPay);
+  renderCrewEstimate();
   if(isAdmin) loadAdminPayments();
   observeAll();
+}
+
+/* ---- Trip cost estimate for the crew (Phase 9) ----
+   Reflects the locked decisions via stayRequired(); every line carries
+   its verification status so the crew can see what's firm vs estimated. */
+async function renderCrewEstimate(){
+  if(!SB || !AUTH_USER) return;
+  const [bk, ci, cr, inv] = await Promise.all([
+    SB.from('site_bookings').select('*').order('sort_order'),
+    SB.from('cost_items').select('*').order('created_at'),
+    SB.from('crew').select('email,role'),
+    SB.from('invites').select('email,role'),
+  ]);
+  const bookings = bk.data||[], items = ci.data||[], crewRows = cr.data||[], invites = inv.data||[];
+  const panel = document.getElementById('estimatePanel');
+  if(!bookings.length && !items.length){ panel.style.display='none'; return; }
+  panel.style.display='';
+
+  const crewEmails = new Set(crewRows.map(c=>(c.email||'').toLowerCase()));
+  const pending  = invites.filter(i=>!crewEmails.has((i.email||'').toLowerCase()));
+  const head     = (crewRows.length + pending.length) || 1;
+  const vehicles = (crewRows.filter(c=>c.role==='driver').length + pending.filter(i=>i.role==='driver').length) || 1;
+
+  const rows = []; let total = 0, vOK = 0, vAll = 0;
+  bookings.filter(b=>stayRequired(b) && b.status!=='unavailable').forEach(b=>{
+    const rate = Number(b.cost_per_camper)||0, n = Number(b.nights)||1, amt = rate*n;
+    total += amt; vAll++;
+    const firm = rate>0 && ['available','booked','paid'].includes(b.status);
+    if(firm) vOK++;
+    const chip = rate>0
+      ? (firm ? ['verified', b.status==='paid'?'Paid':b.status==='booked'?'Booked':'Rate confirmed']
+              : ['claimed','Estimate — unverified'])
+      : ['unpaid','Rate TBC'];
+    rows.push({ label:`${b.day_label?b.day_label+' · ':''}${b.site_name}`,
+                basis:`${n} night${n>1?'s':''} × R${rate.toLocaleString('en-ZA')}`, amt, chip });
+  });
+  items.forEach(it=>{
+    const amt = Number(it.amount)||0;
+    let share = amt, basis = 'per camper';
+    if(it.basis==='per_vehicle'){ share = amt*vehicles/head; basis = `R${amt.toLocaleString('en-ZA')} per vehicle`; }
+    else if(it.basis==='total'){  share = amt/head;          basis = `R${amt.toLocaleString('en-ZA')} shared`; }
+    total += share; vAll++; if(it.verified) vOK++;
+    rows.push({ label:it.label, basis, amt:share,
+                chip: it.verified ? ['verified','Verified'] : ['claimed','Estimate — unverified'] });
+  });
+
+  document.getElementById('estRows').innerHTML = rows.map(r=>
+    `<tr><td style="color:var(--bone)">${esc(r.label)}</td><td>${esc(r.basis)}</td>
+     <td style="color:var(--ochre-bright);white-space:nowrap">R${Math.round(r.amt).toLocaleString('en-ZA')}</td>
+     <td><span class="pay-status ${r.chip[0]}" style="margin:0;font-size:.6rem">${r.chip[1]}</span></td></tr>`).join('');
+  document.getElementById('estTotal').textContent    = 'R'+Math.round(total).toLocaleString('en-ZA');
+  document.getElementById('estVerified').textContent = `${vOK}/${vAll}`;
+  document.getElementById('estBasis').textContent =
+    `Based on the locked decisions — departing ${TRIP?.departure_date?fmtDate(TRIP.departure_date):'TBC'}, `+
+    `${TRIP?.route_locked?ROUTE_NAMES[TRIP.route_locked]:'route TBC'} — split across ${head} camper${head>1?'s':''} in ${vehicles} vehicle${vehicles>1?'s':''}.`;
 }
 function renderMyPayment(pay){
   const s = pay?.status||'unpaid';
@@ -1671,17 +1743,26 @@ const isAdmin = () => AUTH_USER?.email === ADMIN_EMAIL;
 
 let PLAN = { crew:[], invites:[], bookings:[], items:[], payments:[], settings:null, account:null };
 
-// The stays named in the day guide + decision point (incl. backups & both route options)
+// The stays named in the day guide + decision point (incl. backups & both route options),
+// with reservation contacts + booking sites so availability and rates are one tap away.
 const ROUTE_STAYS = [
-  {day_label:'Day 1',          site_name:'Red Sands Country Lodge, Kuruman',            nights:1, sort_order:1},
-  {day_label:'Day 2',          site_name:'Hobas Campsite (NWR), Fish River Canyon',     nights:1, sort_order:2},
-  {day_label:'Day 2 · backup', site_name:'Canyon Roadhouse (Gondwana)',                 nights:1, sort_order:3},
-  {day_label:'Day 3',          site_name:'Shark Island Campsite (NWR), Lüderitz',       nights:1, sort_order:4},
-  {day_label:'Day 3 · backup', site_name:'Klein-Aus Vista, Aus',                        nights:1, sort_order:5},
-  {day_label:'Day 4',          site_name:'Sesriem Campsite (NWR)',                      nights:1, sort_order:6},
+  {day_label:'Day 1',          site_name:'Red Sands Country Lodge, Kuruman',            nights:1, sort_order:1,
+   contact:'+27 53 712 0033', website:'https://www.redsands.co.za/online-bookings'},
+  {day_label:'Day 2',          site_name:'Hobas Campsite (NWR), Fish River Canyon',     nights:1, sort_order:2,
+   contact:'reservations@nwr.com.na · +264 61 285 7200', website:'https://www.nwr.com.na/resorts/hobas-campsite/'},
+  {day_label:'Day 2 · backup', site_name:'Canyon Roadhouse (Gondwana)',                 nights:1, sort_order:3,
+   contact:'bookings@gondwana-collection.com · +264 61 427 200', website:'https://gondwana-collection.com/accommodation/canyon-road-campsite'},
+  {day_label:'Day 3',          site_name:'Shark Island Campsite (NWR), Lüderitz',       nights:1, sort_order:4,
+   contact:'reservations@nwr.com.na · +264 61 285 7200', website:'https://www.nwr.com.na/resorts/shark-island-campsite/'},
+  {day_label:'Day 3 · backup', site_name:'Klein-Aus Vista, Aus',                        nights:1, sort_order:5,
+   contact:'reservations@klein-aus-vista.com · +264 63 258 116', website:'https://gondwana-collection.com/accommodation/klein-aus-vista-campsite'},
+  {day_label:'Day 4',          site_name:'Sesriem Campsite (NWR)',                      nights:1, sort_order:6,
+   contact:'reservations@nwr.com.na · +264 61 285 7200', website:'https://www.nwr.com.na/resorts/sesriem-campsite/'},
   {day_label:'Day 5 · R1',     site_name:'Windpomp 14, Swakopmund (Route 1)',           nights:1, sort_order:7},
-  {day_label:'Day 5/6',        site_name:'Zelda Game Cabin, Gobabis',                   nights:1, sort_order:8},
-  {day_label:'Day 6 · R2',     site_name:'Phakalane Golf Estate, Gaborone (Route 2)',   nights:1, sort_order:9},
+  {day_label:'Day 5',          site_name:'Zelda Game Cabin, Gobabis',                   nights:1, sort_order:8,
+   contact:'Reservations in writing — see listing', website:'https://www.info-namibia.com/accommodation/omaheke/zelda-game-and-guestfarm'},
+  {day_label:'Day 6 · R2',     site_name:'Phakalane Golf Estate, Gaborone (Route 2)',   nights:1, sort_order:9,
+   contact:'reservations@phakalane.co.bw · +267 393 0000', website:'https://phakalanehotel.com/'},
 ];
 
 // Populate the "applies to ruling" select from the poll definitions
@@ -1825,6 +1906,7 @@ function renderBookings(){
       <td><select data-id="${b.id}" data-field="status" class="st-${b.status}">${statusOpts(b.status)}</select></td>
       <td><input data-id="${b.id}" data-field="cost_per_camper" type="number" min="0" step="0.01" value="${b.cost_per_camper??''}"></td>
       <td><input data-id="${b.id}" data-field="contact" value="${esc(b.contact||'')}"></td>
+      <td><div style="display:flex;gap:5px;align-items:center"><input data-id="${b.id}" data-field="website" value="${esc(b.website||'')}" placeholder="https://…">${b.website?`<a href="${esc(b.website)}" target="_blank" rel="noopener" style="color:var(--teal-bright);text-decoration:none;font-size:1rem;flex-shrink:0" title="Open booking site">↗</a>`:''}</div></td>
       <td><input data-id="${b.id}" data-field="notes" value="${esc(b.notes||'')}"></td>
       <td><button class="plan-del" onclick="delBooking('${b.id}')">✕</button></td>
     </tr>`).join('') || '<tr><td colspan="8" style="color:var(--muted)">No stays yet — load the route stays or add one below.</td></tr>';
