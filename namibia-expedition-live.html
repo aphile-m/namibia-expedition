@@ -499,7 +499,30 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
 #planning{border-top:1px solid var(--line)}
 #planning .wrap{padding-top:72px;padding-bottom:72px}
 .plan-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:28px;margin-bottom:26px}
-.plan-panel>h4{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;color:var(--rust-bright);margin-bottom:6px}
+.plan-panel>h4{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;color:var(--rust-bright);margin-bottom:6px;
+  cursor:pointer;display:flex;align-items:center;gap:12px;user-select:none}
+.plan-panel>h4::after{content:'−';margin-left:auto;font-size:1.15rem;line-height:1;color:var(--muted);transition:.2s}
+.plan-panel>h4:hover::after{color:var(--ochre-bright)}
+.plan-panel.closed>h4{margin-bottom:0}
+.plan-panel.closed>h4::after{content:'+'}
+.plan-panel.closed{padding-top:20px;padding-bottom:20px}
+.plan-panel.closed .plan-body{display:none}
+/* bookings table — read mode */
+.bk-link{color:var(--teal-bright);text-decoration:underline dotted rgba(116,183,192,.5);text-underline-offset:3px}
+.bk-link:hover{color:var(--bone)}
+.bk-status{font-family:'Oswald';font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid var(--line);white-space:nowrap}
+.bk-status.st-not_queried{color:var(--muted)}
+.bk-status.st-enquiry_sent{color:var(--teal-bright);border-color:rgba(91,151,160,.5)}
+.bk-status.st-available{color:var(--ochre-bright);border-color:rgba(219,162,63,.5)}
+.bk-status.st-unavailable{color:var(--rust-bright);border-color:rgba(221,98,51,.5)}
+.bk-status.st-booked,.bk-status.st-paid{color:var(--green-bright);border-color:rgba(134,145,80,.55)}
+.bk-edit{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.62rem;padding:4px 11px;
+  background:transparent;border:1px solid rgba(219,162,63,.5);color:var(--ochre-bright);border-radius:4px;cursor:pointer;white-space:nowrap}
+.bk-edit:hover{border-color:var(--ochre-bright);background:rgba(219,162,63,.08)}
+.bk-done{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.62rem;padding:4px 11px;
+  background:var(--green);border:none;color:#10100c;border-radius:4px;cursor:pointer;white-space:nowrap;font-weight:600}
+.bk-done:hover{background:var(--green-bright)}
+tr.bk-editing{background:rgba(219,162,63,.05)}
 .plan-sub{color:var(--bone-dim);font-size:.88rem;margin-bottom:20px}
 .plan-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
 .plan-form select{background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--bone);padding:8px 10px;font-size:.88rem;font-family:'Spectral',serif}
@@ -1036,15 +1059,18 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
     <!-- 0 · PLANNING PROGRESS -->
     <div class="plan-panel reveal in">
       <h4>Planning Progress</h4>
+      <div class="plan-body">
       <p class="plan-sub">Auto-tracked from the tools below — rulings decided, stays booked with confirmed rates, cost items verified, finance set up, and the crew signed in. Backup stays don't count toward progress.</p>
       <div class="prog-track"><div class="prog-fill" id="progFill" style="width:6%">0%</div></div>
       <p class="plan-sub" style="margin:10px 0 0" id="progCount"></p>
       <div id="todoList"></div>
-    </div>
+          </div>
+</div>
 
     <!-- 1 · DECISION LOG -->
     <div class="plan-panel reveal in">
       <h4>Decision Log</h4>
+      <div class="plan-body">
       <p class="plan-sub">Capture calls made offline — WhatsApp, phone, around the braai. Link a decision to one of the voting rulings and it shows as "decided" on that poll for the whole convoy.</p>
       <div class="plan-form">
         <div class="admin-field"><label>What was decided</label><input id="decTitle" type="text" placeholder="e.g. Departure date"></div>
@@ -1058,11 +1084,13 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
         <thead><tr><th>Decision</th><th>The Call</th><th>Date</th><th>Where</th><th>Ruling</th><th></th></tr></thead>
         <tbody id="decTable"></tbody>
       </table></div>
-    </div>
+          </div>
+</div>
 
     <!-- 2 · CREW & ROLES -->
     <div class="plan-panel reveal in">
       <h4>Crew &amp; Roles</h4>
+      <div class="plan-body">
       <p class="plan-sub">Pre-register crew by email so they're on the list and in the headcount before they've signed in — they still sign in with the usual magic link, and their name &amp; role are pre-filled when they do.</p>
       <div class="plan-form">
         <div class="admin-field"><label>Email</label><input id="invEmail" type="email" placeholder="crew@email.com"></div>
@@ -1079,15 +1107,17 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
         <thead><tr><th>Name</th><th>Email</th><th style="min-width:140px">Role</th></tr></thead>
         <tbody id="crewAdminTable"></tbody>
       </table></div>
-    </div>
+          </div>
+</div>
 
     <!-- 3 · CAMPSITE AVAILABILITY & BOOKINGS -->
     <div class="plan-panel reveal in">
       <h4>Campsite Availability &amp; Bookings</h4>
-      <p class="plan-sub">Track every stay from first enquiry to paid booking, with the verified rate per camper per night. Load the route stays once, then work each row: query availability → confirm the rate → book. Edits save as you type — drop or zero the route option the convoy doesn't choose.</p>
+      <div class="plan-body">
+      <p class="plan-sub">Track every stay from first enquiry to paid booking. Tap the contact to email, the number to call, or Book to open their site — the dates column shows exactly which nights to ask for. Hit ✎ Edit on a row to change anything; edits save as you type.</p>
       <button class="admin-save" id="seedStaysBtn" style="margin-bottom:14px">Load route stays</button>
       <div style="overflow-x:auto"><table class="plan-table">
-        <thead><tr><th style="min-width:80px">Day</th><th style="min-width:190px">Site</th><th style="width:64px">Nights</th><th style="min-width:130px">Status</th><th style="min-width:95px">R / camper / night</th><th style="min-width:160px">Contact</th><th style="min-width:170px">Booking website</th><th style="min-width:150px">Notes</th><th></th></tr></thead>
+        <thead><tr><th style="min-width:80px">Day</th><th style="min-width:180px">Site</th><th style="min-width:120px">Dates to ask for</th><th style="width:60px">Nights</th><th style="min-width:120px">Status</th><th style="min-width:90px">R / camper</th><th style="min-width:150px">Contact</th><th style="min-width:130px">Phone</th><th style="min-width:120px">Booking site</th><th style="min-width:130px">Notes</th><th style="min-width:110px"></th></tr></thead>
         <tbody id="bookingRows"></tbody>
       </table></div>
       <div class="plan-form" style="margin-top:16px">
@@ -1096,11 +1126,13 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
         <div class="admin-field"><label>Nights</label><input id="bkNights" type="number" value="1" min="1"></div>
       </div>
       <button class="admin-save" id="bkAddBtn">Add stay</button>
-    </div>
+          </div>
+</div>
 
     <!-- 4 · VERIFIED COST ITEMS -->
     <div class="plan-panel reveal in">
       <h4>Verified Cost Items</h4>
+      <div class="plan-body">
       <p class="plan-sub">Everything you can price before departure — park entry &amp; conservation fees, cross-border charges, fuel estimate per vehicle, comms, the shared food kitty. Tick "verified" once you've confirmed the number with the source.</p>
       <div class="plan-form">
         <div class="admin-field"><label>Item</label><input id="ciLabel" type="text" placeholder="e.g. Namibia road fund (CBC)"></div>
@@ -1123,7 +1155,8 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
         <div class="plan-tile"><b id="psTotal">—</b><span>Estimated total · R per camper</span></div>
       </div>
       <p class="plan-sub" style="margin:12px 0 0" id="psNote"></p>
-    </div>
+          </div>
+</div>
   </div>
 </section>
 
@@ -2270,23 +2303,44 @@ let PLAN = { crew:[], invites:[], bookings:[], items:[], payments:[], settings:n
 // with reservation contacts + booking sites so availability and rates are one tap away.
 const ROUTE_STAYS = [
   {day_label:'Day 1',          site_name:'Red Sands Country Lodge, Kuruman',            nights:1, sort_order:1,
-   contact:'+27 53 712 0033', website:'https://www.redsands.co.za/online-bookings'},
+   contact:'Online booking form', phone:'+27 53 712 0033', website:'https://www.redsands.co.za/online-bookings'},
   {day_label:'Day 2',          site_name:'Hobas Campsite (NWR), Fish River Canyon',     nights:1, sort_order:2,
-   contact:'reservations@nwr.com.na · +264 61 285 7200', website:'https://www.nwr.com.na/resorts/hobas-campsite/'},
+   contact:'reservations@nwr.com.na', phone:'+264 61 285 7200', website:'https://www.nwr.com.na/resorts/hobas-campsite/'},
   {day_label:'Day 2 · backup', site_name:'Canyon Roadhouse (Gondwana)',                 nights:1, sort_order:3,
-   contact:'bookings@gondwana-collection.com · +264 61 427 200', website:'https://gondwana-collection.com/accommodation/canyon-road-campsite'},
+   contact:'bookings@gondwana-collection.com', phone:'+264 61 427 200', website:'https://gondwana-collection.com/accommodation/canyon-road-campsite'},
   {day_label:'Day 3',          site_name:'Shark Island Campsite (NWR), Lüderitz',       nights:1, sort_order:4,
-   contact:'reservations@nwr.com.na · +264 61 285 7200', website:'https://www.nwr.com.na/resorts/shark-island-campsite/'},
+   contact:'reservations@nwr.com.na', phone:'+264 61 285 7200', website:'https://www.nwr.com.na/resorts/shark-island-campsite/'},
   {day_label:'Day 3 · backup', site_name:'Klein-Aus Vista, Aus',                        nights:1, sort_order:5,
-   contact:'reservations@klein-aus-vista.com · +264 63 258 116', website:'https://gondwana-collection.com/accommodation/klein-aus-vista-campsite'},
+   contact:'reservations@klein-aus-vista.com', phone:'+264 63 258 116', website:'https://gondwana-collection.com/accommodation/klein-aus-vista-campsite'},
   {day_label:'Day 4',          site_name:'Sesriem Campsite (NWR)',                      nights:1, sort_order:6,
-   contact:'reservations@nwr.com.na · +264 61 285 7200', website:'https://www.nwr.com.na/resorts/sesriem-campsite/'},
+   contact:'reservations@nwr.com.na', phone:'+264 61 285 7200', website:'https://www.nwr.com.na/resorts/sesriem-campsite/'},
   {day_label:'Day 5 · R1',     site_name:'Windpomp 14, Swakopmund (Route 1)',           nights:1, sort_order:7},
   {day_label:'Day 5',          site_name:'Zelda Game Cabin, Gobabis',                   nights:1, sort_order:8,
    contact:'Reservations in writing — see listing', website:'https://www.info-namibia.com/accommodation/omaheke/zelda-game-and-guestfarm'},
   {day_label:'Day 6 · R2',     site_name:'Phakalane Golf Estate, Gaborone (Route 2)',   nights:1, sort_order:9,
-   contact:'reservations@phakalane.co.bw · +267 393 0000', website:'https://phakalanehotel.com/'},
+   contact:'reservations@phakalane.co.bw', phone:'+267 393 0000', website:'https://phakalanehotel.com/'},
 ];
+
+/* ---- concertina: collapse/expand each Planning HQ panel ----
+   State persists per device so the sections you work in stay open. */
+function initPlanAccordion(){
+  let closed = [];
+  try { closed = JSON.parse(localStorage.getItem('namibia-plan-closed')||'[]'); } catch(e){}
+  document.querySelectorAll('#planning .plan-panel').forEach((p,i)=>{
+    if(p.dataset.acc) return;
+    p.dataset.acc = '1';
+    const key = p.querySelector('h4')?.textContent.trim() || String(i);
+    if(closed.includes(key)) p.classList.add('closed');
+    p.querySelector('h4')?.addEventListener('click', ()=>{
+      p.classList.toggle('closed');
+      let list = [];
+      try { list = JSON.parse(localStorage.getItem('namibia-plan-closed')||'[]'); } catch(e){}
+      const on = p.classList.contains('closed');
+      list = list.filter(k=>k!==key); if(on) list.push(key);
+      try { localStorage.setItem('namibia-plan-closed', JSON.stringify(list)); } catch(e){}
+    });
+  });
+}
 
 // Populate the "applies to ruling" select from the poll definitions
 document.getElementById('decPoll').innerHTML =
@@ -2341,6 +2395,7 @@ async function loadPlanning(){
     console.warn('Planning load — run supabase-phase7-planning-migration.sql if tables are missing.',
                  crew.error||invites.error||bookings.error||items.error);
   renderDecisionLog(); renderCrewAdmin(); renderInvites(); renderBookings(); renderCostItems(); renderPlanSummary();
+  initPlanAccordion();
 }
 
 /* ---- 1 · decision log ---- */
@@ -2418,22 +2473,69 @@ const BOOKING_STATUSES = [
   ['not_queried','Not queried'],['enquiry_sent','Enquiry sent'],['available','Available'],
   ['unavailable','Unavailable'],['booked','Booked'],['paid','Paid'],
 ];
+const STATUS_LABELS = Object.fromEntries(BOOKING_STATUSES);
 const statusOpts = cur => BOOKING_STATUSES.map(([v,l])=>`<option value="${v}" ${v===cur?'selected':''}>${l}</option>`).join('');
 
+/* Which trip nights a stay covers, from the day label + departure date.
+   "Day 2" on a 25 Sep departure → check in Sat 26 Sep, out Sun 27 Sep. */
+function stayDates(b){
+  if(!TRIP?.departure_date) return null;
+  const m = /day\s*(\d+)/i.exec(b.day_label||'');
+  if(!m) return null;
+  const n = Math.max(1, Number(b.nights)||1);
+  const inD  = addDays(TRIP.departure_date, parseInt(m[1],10)-1);
+  const outD = new Date(inD); outD.setDate(outD.getDate()+n);
+  const f = d => d.toLocaleDateString('en-ZA',{day:'numeric',month:'short'});
+  return `${f(inD)} → ${f(outD)}`;
+}
+
+let BK_EDIT = null;   // id of the row currently in edit mode
 function renderBookings(){
-  document.getElementById('bookingRows').innerHTML = PLAN.bookings.map(b=>`
-    <tr>
+  const host = document.getElementById('bookingRows');
+  if(!PLAN.bookings.length){
+    host.innerHTML = '<tr><td colspan="11" style="color:var(--muted)">No stays yet — load the route stays or add one below.</td></tr>';
+    return;
+  }
+  host.innerHTML = PLAN.bookings.map(b=>{
+    const dates = stayDates(b) || '—';
+    if(BK_EDIT === b.id) return `
+    <tr class="bk-editing">
       <td><input data-id="${b.id}" data-field="day_label" value="${esc(b.day_label||'')}"></td>
       <td><input data-id="${b.id}" data-field="site_name" value="${esc(b.site_name||'')}"></td>
+      <td style="color:var(--muted);font-size:.78rem">${esc(dates)}</td>
       <td><input data-id="${b.id}" data-field="nights" type="number" min="1" value="${b.nights??1}"></td>
       <td><select data-id="${b.id}" data-field="status" class="st-${b.status}">${statusOpts(b.status)}</select></td>
       <td><input data-id="${b.id}" data-field="cost_per_camper" type="number" min="0" step="0.01" value="${b.cost_per_camper??''}"></td>
       <td><input data-id="${b.id}" data-field="contact" value="${esc(b.contact||'')}"></td>
-      <td><div style="display:flex;gap:5px;align-items:center"><input data-id="${b.id}" data-field="website" value="${esc(b.website||'')}" placeholder="https://…">${b.website?`<a href="${esc(b.website)}" target="_blank" rel="noopener" style="color:var(--teal-bright);text-decoration:none;font-size:1rem;flex-shrink:0" title="Open booking site">↗</a>`:''}</div></td>
+      <td><input data-id="${b.id}" data-field="phone" value="${esc(b.phone||'')}"></td>
+      <td><input data-id="${b.id}" data-field="website" value="${esc(b.website||'')}" placeholder="https://…"></td>
       <td><input data-id="${b.id}" data-field="notes" value="${esc(b.notes||'')}"></td>
-      <td><button class="plan-del" onclick="delBooking('${b.id}')">✕</button></td>
-    </tr>`).join('') || '<tr><td colspan="8" style="color:var(--muted)">No stays yet — load the route stays or add one below.</td></tr>';
+      <td style="white-space:nowrap"><button class="bk-done" onclick="bkEdit(null)">Done</button> <button class="plan-del" onclick="delBooking('${b.id}')">✕</button></td>
+    </tr>`;
+    const mail = (b.contact||'').includes('@')
+      ? `<a class="bk-link" href="mailto:${esc(b.contact.trim())}?subject=${encodeURIComponent('Booking enquiry — '+(b.site_name||''))}">${esc(b.contact)}</a>`
+      : esc(b.contact||'—');
+    const tel = b.phone
+      ? `<a class="bk-link" href="tel:${esc(b.phone.replace(/[^\d+]/g,''))}">${esc(b.phone)}</a>` : '—';
+    const site = b.website
+      ? `<a class="bk-link" href="${esc(b.website)}" target="_blank" rel="noopener">Book ↗</a>` : '—';
+    return `
+    <tr>
+      <td style="color:var(--bone)">${esc(b.day_label||'—')}</td>
+      <td style="color:var(--bone)">${esc(b.site_name||'')}</td>
+      <td style="color:var(--ochre-bright);white-space:nowrap">${esc(dates)}</td>
+      <td>${b.nights??1}</td>
+      <td><span class="bk-status st-${b.status}">${esc(STATUS_LABELS[b.status]||b.status)}</span></td>
+      <td style="white-space:nowrap">${b.cost_per_camper!=null&&b.cost_per_camper!=='' ? 'R'+Number(b.cost_per_camper).toLocaleString('en-ZA') : '—'}</td>
+      <td>${mail}</td>
+      <td style="white-space:nowrap">${tel}</td>
+      <td>${site}</td>
+      <td>${esc(b.notes||'—')}</td>
+      <td><button class="bk-edit" onclick="bkEdit('${b.id}')">✎ Edit</button></td>
+    </tr>`;
+  }).join('');
 }
+window.bkEdit = function(id){ BK_EDIT = id; renderBookings(); };
 async function planInlineEdit(e, table, rows){
   const t = e.target, id = t.dataset.id, f = t.dataset.field;
   if(!id || !f) return;
@@ -2443,6 +2545,7 @@ async function planInlineEdit(e, table, rows){
   const { error } = await SB.from(table).update({ [f]:v }).eq('id',id);
   if(error){ console.warn(error); return; }
   const r = rows.find(x=>x.id===id); if(r) r[f]=v;
+  if(table==='site_bookings' && (f==='nights' || f==='day_label')) renderBookings();  // dates column follows
   renderPlanSummary();
 }
 document.getElementById('bookingRows')?.addEventListener('change', e=>planInlineEdit(e,'site_bookings',PLAN.bookings));
@@ -2510,7 +2613,6 @@ window.delCostItem = async function(id){
 };
 
 /* ---- 0 · planning progress ---- */
-const STATUS_LABELS = Object.fromEntries(BOOKING_STATUSES);
 function renderPlanProgress(){
   const host = document.getElementById('todoList');
   if(!host) return;
