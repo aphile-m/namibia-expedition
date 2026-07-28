@@ -523,6 +523,29 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
   background:var(--green);border:none;color:#10100c;border-radius:4px;cursor:pointer;white-space:nowrap;font-weight:600}
 .bk-done:hover{background:var(--green-bright)}
 tr.bk-editing{background:rgba(219,162,63,.05)}
+/* fallback alternatives */
+.bk-alt{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.6rem;padding:3px 9px;
+  background:transparent;border:1px solid rgba(116,183,192,.45);color:var(--teal-bright);border-radius:20px;cursor:pointer;white-space:nowrap}
+.bk-alt:hover{border-color:var(--teal-bright);background:rgba(91,151,160,.1)}
+tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
+.alt-wrap{padding:14px 10px 16px}
+.alt-title{font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:.6rem;color:var(--teal-bright);margin-bottom:10px}
+.alt-card{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;padding:11px 13px;margin-bottom:8px;
+  background:var(--bg2);border:1px solid var(--line);border-radius:6px}
+.alt-card:last-child{margin-bottom:0}
+.alt-main{flex:1;min-width:220px}
+.alt-main b{font-family:'Oswald';text-transform:uppercase;letter-spacing:.04em;font-size:.86rem;color:var(--bone);display:block}
+.alt-main p{font-size:.82rem;color:var(--bone-dim);margin:3px 0 0}
+.alt-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:7px;font-family:'Oswald';text-transform:uppercase;
+  letter-spacing:.08em;font-size:.6rem;color:var(--muted)}
+.alt-meta b{color:var(--ochre-bright);font-family:'Oswald';display:inline;font-size:.6rem}
+.alt-act{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.alt-lock{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.62rem;padding:6px 12px;
+  background:var(--green);border:none;color:#10100c;border-radius:4px;cursor:pointer;font-weight:600;white-space:nowrap}
+.alt-lock:hover{background:var(--green-bright)}
+.alt-link{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.62rem;padding:6px 12px;
+  border:1px solid var(--line);color:var(--teal-bright);border-radius:4px;text-decoration:none;text-align:center;white-space:nowrap}
+.alt-link:hover{border-color:var(--teal-bright)}
 .plan-sub{color:var(--bone-dim);font-size:.88rem;margin-bottom:20px}
 .plan-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
 .plan-form select{background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--bone);padding:8px 10px;font-size:.88rem;font-family:'Spectral',serif}
@@ -1219,6 +1242,7 @@ let SB = null;
 let AUTH_USER = null;   // supabase auth user (or null)
 let CREW_ROW  = null;   // crew table row (or null)
 let TRIP = null;        // public trip_settings: departure_date, route_locked (Phase 8)
+let STAYS = {};         // trip day → the camp currently locked in (public view)
 const isViewer = () => CREW_ROW?.role === 'viewer';   // follower account (Phase 11)
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = d => new Date(d+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
@@ -1398,6 +1422,12 @@ const days = [
 ];
 
 const dayCards = document.getElementById('dayCards');
+// the camp for a given trip day — live from the planning table when available
+function stayLabel(dayNo, fallback){
+  const s = STAYS[dayNo];
+  if(!s) return fallback;
+  return s.of > 1 ? `${s.name} · night ${s.night} of ${s.of}` : s.name;
+}
 function renderDayCards(instant){
   dayCards.innerHTML='';
   days.forEach((d,i)=>{
@@ -1433,7 +1463,7 @@ function renderDayCards(instant){
       ${stats}
       <div class="badges">${bd}</div>
       ${surf}
-      <div class="stay">${d.stay}</div>
+      <div class="stay">${stayLabel(i+1, d.stay)}</div>
       <p>${d.body}</p>
       ${co}
     </div>`;
@@ -1643,6 +1673,16 @@ async function loadTripPublic(){
   const { data } = await SB.from('trip_settings').select('departure_date,route_locked').eq('id',1).maybeSingle();
   if(!data) return;
   TRIP = data;
+  // whichever camp is currently locked in for each day
+  const { data: stays } = await SB.from('public_stays').select('*');
+  STAYS = {};
+  (stays||[]).forEach(s=>{
+    if(/backup/i.test(s.day_label||'')) return;
+    const m = /day\s*(\d+)/i.exec(s.day_label||'');
+    if(!m) return;
+    const start = parseInt(m[1],10), n = Math.max(1, Number(s.nights)||1);
+    for(let k=0;k<n;k++) STAYS[start+k] = { name:s.site_name, night:k+1, of:n };
+  });
   renderDayCards(true);
   renderHeroDate();
   applyRouteLock();
@@ -2152,7 +2192,7 @@ document.getElementById('adminSaveBank')?.addEventListener('click', async ()=>{
 const ADMIN_EMAIL = 'aphilem@gmail.com';
 const isAdmin = () => AUTH_USER?.email === ADMIN_EMAIL;
 
-let PLAN = { crew:[], invites:[], bookings:[], items:[], payments:[], settings:null, account:null };
+let PLAN = { crew:[], invites:[], bookings:[], alts:[], items:[], payments:[], settings:null, account:null };
 
 // The stays named in the day guide + decision point (incl. backups & both route options),
 // with reservation contacts + booking sites so availability and rates are one tap away.
@@ -2226,10 +2266,11 @@ async function loadPlanning(){
   sec.style.display='';
   document.getElementById('gatePlanLink').style.display='';
   document.getElementById('hqTab').style.display='inline-flex';
-  const [crew, invites, bookings, items, payments, settings, account] = await Promise.all([
+  const [crew, invites, bookings, alts, items, payments, settings, account] = await Promise.all([
     SB.from('crew').select('id,email,display_name,role').order('created_at'),
     SB.from('invites').select('*').order('created_at'),
     SB.from('site_bookings').select('*').order('sort_order').order('created_at'),
+    SB.from('site_alternatives').select('*').order('sort_order'),
     SB.from('cost_items').select('*').order('created_at'),
     SB.from('payments').select('crew_id,status'),
     SB.from('trip_settings').select('*').eq('id',1).maybeSingle(),
@@ -2238,6 +2279,7 @@ async function loadPlanning(){
   PLAN.crew     = crew.data     || [];
   PLAN.invites  = invites.data  || [];
   PLAN.bookings = bookings.data || [];
+  PLAN.alts     = alts.data     || [];
   PLAN.items    = items.data    || [];
   PLAN.payments = payments.data || [];
   PLAN.settings = settings.data || null;
@@ -2342,6 +2384,33 @@ function renderBookings(){
       ? `<a class="bk-link" href="tel:${esc(b.phone.replace(/[^\d+]/g,''))}">${esc(b.phone)}</a>` : '—';
     const site = b.website
       ? `<a class="bk-link" href="${esc(b.website)}" target="_blank" rel="noopener">Book ↗</a>` : '—';
+    // fallbacks matter while a stay is unconfirmed or has fallen through
+    const settled = b.status==='booked' || b.status==='paid';
+    const mine = PLAN.alts.filter(a=>a.booking_id===b.id);
+    const open = ALT_OPEN === b.id;
+    const altBtn = (!settled && mine.length)
+      ? ` <button class="bk-alt" onclick="altToggle('${b.id}')">${open?'−':'+'} ${mine.length} alt${mine.length>1?'s':''}</button>` : '';
+    const altPanel = (open && mine.length) ? `
+      <tr class="alt-row"><td colspan="11"><div class="alt-wrap">
+        <div class="alt-title">If ${esc(b.site_name)} can't take us — closest alternatives</div>
+        ${mine.map(a=>`<div class="alt-card">
+          <div class="alt-main">
+            <b>${esc(a.name)}</b>
+            <p>${esc(a.blurb||'')}</p>
+            <div class="alt-meta">
+              ${a.km_from_site!=null?`<span><b>${Number(a.km_from_site)} km</b> detour from ${esc((b.site_name||'').split(',')[0])}</span>`:''}
+              ${a.km_from_prior!=null?`<span><b>${Number(a.km_from_prior)} km</b> from the previous stop</span>`:''}
+              ${a.cost_per_camper!=null?`<span><b>R${Number(a.cost_per_camper).toLocaleString('en-ZA')}</b> per camper</span>`:''}
+              ${a.phone?`<span><a class="bk-link" href="tel:${esc(String(a.phone).replace(/[^\d+]/g,''))}">${esc(a.phone)}</a></span>`:''}
+              ${a.contact&&a.contact.includes('@')?`<span><a class="bk-link" href="mailto:${esc(a.contact)}">${esc(a.contact)}</a></span>`:''}
+            </div>
+          </div>
+          <div class="alt-act">
+            ${a.website?`<a class="alt-link" href="${esc(a.website)}" target="_blank" rel="noopener">Booking site ↗</a>`:''}
+            <button class="alt-lock" onclick="altPromote('${a.id}','${b.id}')">Make this the stop</button>
+          </div>
+        </div>`).join('')}
+      </div></td></tr>` : '';
     return `
     <tr>
       <td style="color:var(--bone)">${esc(b.day_label||'—')}</td>
@@ -2354,11 +2423,39 @@ function renderBookings(){
       <td style="white-space:nowrap">${tel}</td>
       <td>${site}</td>
       <td>${esc(b.notes||'—')}</td>
-      <td><button class="bk-edit" onclick="bkEdit('${b.id}')">✎ Edit</button></td>
-    </tr>`;
+      <td style="white-space:nowrap"><button class="bk-edit" onclick="bkEdit('${b.id}')">✎ Edit</button>${altBtn}</td>
+    </tr>${altPanel}`;
   }).join('');
 }
 window.bkEdit = function(id){ BK_EDIT = id; renderBookings(); };
+
+let ALT_OPEN = null;   // booking id whose alternatives are expanded
+window.altToggle = function(id){ ALT_OPEN = (ALT_OPEN===id ? null : id); renderBookings(); };
+
+/* Promote an alternative to be the stop: the old camp becomes an
+   alternative in its place, so nothing is lost and it can be swapped back. */
+window.altPromote = async function(altId, bookingId){
+  const a = PLAN.alts.find(x=>x.id===altId);
+  const b = PLAN.bookings.find(x=>x.id===bookingId);
+  if(!a || !b) return;
+  if(!confirm(`Make ${a.name} the Day ${(b.day_label||'').replace(/\D+/g,'')} stop?\n\n${b.site_name} moves to the alternatives list.`)) return;
+
+  const oldSite = { name:b.site_name, blurb:b.notes||null, cost:b.cost_per_camper,
+                    contact:b.contact, phone:b.phone, website:b.website };
+  const upd = { site_name:a.name, cost_per_camper:a.cost_per_camper, contact:a.contact,
+                phone:a.phone, website:a.website, status:'not_queried',
+                notes:a.blurb||null, updated_at:new Date().toISOString() };
+  const { error } = await SB.from('site_bookings').update(upd).eq('id',bookingId);
+  if(error){ console.warn(error); alert('Could not swap the stop — try again.'); return; }
+  // the promoted row becomes the old camp; distances stay a useful reference
+  await SB.from('site_alternatives').update({
+    name:oldSite.name, blurb:oldSite.blurb, cost_per_camper:oldSite.cost,
+    contact:oldSite.contact, phone:oldSite.phone, website:oldSite.website,
+  }).eq('id',altId);
+  ALT_OPEN = null;
+  loadPlanning();
+  loadTripPublic();   // day cards follow the new camp
+};
 async function planInlineEdit(e, table, rows){
   const t = e.target, id = t.dataset.id, f = t.dataset.field;
   if(!id || !f) return;
