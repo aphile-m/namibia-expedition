@@ -88,6 +88,15 @@ h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:600;line-height:1.05;tex
 .hero h1 .ln:nth-child(2) span{animation-delay:.55s;color:var(--ochre-bright)}
 @keyframes up{from{transform:translateY(110%)}to{transform:translateY(0)}}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.hero-depart{margin-top:30px;animation:fade 1s .75s both}
+.hero-depart .hd-label{display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.36em;
+  font-size:.66rem;color:var(--ochre-bright);margin-bottom:8px}
+.hero-depart b{display:block;font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;
+  font-size:clamp(1.5rem,4.4vw,2.9rem);letter-spacing:.03em;color:var(--bone);
+  text-shadow:0 4px 26px rgba(0,0,0,.6);line-height:1.05}
+.hero-depart .hd-count{display:inline-block;margin-top:10px;font-family:'Oswald',sans-serif;text-transform:uppercase;
+  letter-spacing:.2em;font-size:.68rem;color:#fff;background:rgba(192,81,43,.85);
+  border:1px solid rgba(236,224,204,.28);padding:5px 14px;border-radius:20px}
 .hero-meta{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;margin-top:26px;animation:fade 1s .9s both}
 .hero-meta div{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.16em;font-size:.82rem}
 .hero-meta b{display:block;font-size:1.5rem;color:var(--bone);letter-spacing:.04em;font-weight:600}
@@ -289,7 +298,7 @@ body.live-mode{padding-top:38px}
 .callout.warn h5{color:var(--rust-bright)}
 .callout p{font-size:.92rem;margin:0;color:var(--bone-dim)}
 
-/* ---------- decision split ---------- */
+/* ---------- road home cards ---------- */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .routecard{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);
   border-radius:10px;overflow:hidden;box-shadow:var(--shadow);transition:.4s}
@@ -543,16 +552,6 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
 .plan-tile{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:16px}
 .plan-tile b{font-family:'Oswald';font-size:1.6rem;color:var(--ochre-bright);display:block;line-height:1.1}
 .plan-tile span{font-family:'Oswald';font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-/* locked-decision surfaces (visible to all crew) */
-#decisionBoard{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid rgba(219,162,63,.35);border-radius:10px;padding:22px 26px;margin-bottom:26px}
-#decisionBoard .board-title{font-family:'Oswald';text-transform:uppercase;letter-spacing:.2em;font-size:.68rem;color:var(--ochre-bright);margin-bottom:12px}
-.board-row{display:flex;gap:14px;flex-wrap:wrap;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line-soft)}
-.board-row:last-child{border-bottom:none}
-.board-row b{font-family:'Oswald';text-transform:uppercase;letter-spacing:.05em;font-size:.85rem;color:var(--bone)}
-.board-row span{color:var(--ochre-bright);font-size:.92rem}
-.board-row i{font-style:normal;font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.6rem;color:var(--muted);margin-left:auto}
-.decided-banner{background:rgba(219,162,63,.1);border:1px solid rgba(219,162,63,.4);border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:.88rem;color:var(--bone-dim)}
-.decided-banner b{color:var(--ochre-bright)}
 /* planning progress */
 .prog-track{height:26px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--rust),var(--ochre-bright));border-radius:6px;
@@ -585,7 +584,6 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
 .routecard.not-taken .lock-badge{background:rgba(0,0,0,.55);color:var(--bone-dim);border:1px solid var(--line);font-weight:400}
 .tg.dead{opacity:.35;cursor:not-allowed;text-decoration:line-through}
 .day .date{color:var(--ochre-bright)}
-.stay .decided{color:var(--green-bright);font-size:.72rem;letter-spacing:.1em}
 /* swipeable day galleries */
 .gal-img{opacity:0;transition:opacity .45s ease}
 .gal-img.cur{opacity:1}
@@ -645,6 +643,11 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
       <span class="ln"><span>Southern Namibia</span></span>
       <span class="ln"><span>&amp; The Kalahari</span></span>
     </h1>
+    <div class="hero-depart" id="heroDepart">
+      <span class="hd-label">Wheels turning</span>
+      <b id="heroDepartDate">Thursday, 24 September 2026</b>
+      <span class="hd-count" id="heroCountdown"></span>
+    </div>
     <div class="hero-meta">
       <div><b>8</b><span>Days</span></div>
       <div><b>2</b><span>Rest Days</span></div>
@@ -660,9 +663,9 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
   <div class="wrap">
     <div class="reveal">
       <div class="gate-headline">Join the Expedition</div>
-      <p class="gate-sub">Register once with your email — no password. A magic link lands in your inbox and you're in.</p>
+      <p class="gate-sub">The trip is locked in. Register once with your email — no password. A magic link lands in your inbox and you're in.</p>
       <ul class="gate-benefits">
-        <li><b>Cast your votes</b> — lock the date, route, and daily calls</li>
+        <li><b>See the full itinerary</b> — eight days, dates and camps</li>
         <li><b>See the crew roster</b> — who's registered and their role</li>
         <li><b>Track costs &amp; your deposit</b> — per-person amount and payment status</li>
         <li><b>Carpool coordination</b> — claim a seat or register your vehicle (coming next)</li>
@@ -675,8 +678,7 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
       <div class="gate-signed" id="gateSigned">
         <div class="gate-welcome">Welcome back, <span id="gateWhoName">—</span></div>
         <div class="gate-quicklinks">
-          <a href="#vote">Cast votes</a>
-          <a href="#roster">Crew roster</a>
+                    <a href="#roster">Crew roster</a>
           <a href="#costs">Costs &amp; deposit</a>
           <a href="#planning" id="gatePlanLink" style="display:none">Trip planning</a>
         </div>
@@ -721,17 +723,135 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
       <p>Out through the Kalahari to the canyon, up the desert corridor past Aus to the dunes, then east across Botswana for home. Tap any waypoint to jump to its day.</p>
     </div>
     <div class="mapbox reveal">
-      <div class="maptoggle">
-        <button class="tg act" data-r="0">Fixed Spine · Days 1–5</button>
-        <button class="tg" data-r="1">Route 1 · Coast-to-Coast</button>
-        <button class="tg" data-r="2">Route 2 · South Kalahari</button>
+<div id="rail"></div>
+<a id="hqTab" href="#planning">⚙ Planning HQ <span class="pct" id="hqTabPct" style="display:none"></span></a>
+
+<!-- LIVE TRIP BAR (Phase 11) — appears during the trip window -->
+<div id="livebar" style="display:none">
+  <span class="lb-pulse"></span>
+  <b>Day <span id="lbDay">—</span> · Live</b>
+  <span class="lb-leg" id="lbLeg"></span>
+  <span class="lb-count" id="lbCount"></span>
+  <button id="lbCheckin" style="display:none">📍 Check in</button>
+  <a href="#triplog" class="lb-link">Trip log ↓</a>
+</div>
+
+<!-- place picker for photos without EXIF location -->
+<div id="placeOverlay" style="display:none">
+  <div id="placeModal">
+    <h3>Where was this taken?</h3>
+    <p>No location found in the photo — search for the place or use your current position.</p>
+    <button class="authbtn" id="plHere" style="width:100%;margin-bottom:12px">📍 Use my current location</button>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <input id="plSearch" type="text" placeholder="Search a place… e.g. Sesriem">
+      <button class="authbtn sec" id="plGo">Search</button>
+    </div>
+    <div id="plResults"></div>
+    <button class="resetbtn" id="plSkip" style="margin-top:14px">Skip — no location</button>
+  </div>
+</div>
+<input type="file" id="tlFile" accept="image/*" style="display:none">
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+  <div class="hero-sky"></div>
+  <div class="hero-sun"></div>
+  <svg class="hero-dunes" viewBox="0 0 1440 320" preserveAspectRatio="none" style="height:42vh">
+    <path d="M0,200 C240,120 480,260 720,180 C960,110 1200,240 1440,170 L1440,320 L0,320 Z" fill="#3a1d11" opacity="0.85"/>
+    <path d="M0,250 C300,190 560,300 840,230 C1100,170 1280,280 1440,240 L1440,320 L0,320 Z" fill="#26130b"/>
+    <path d="M0,300 C360,260 700,320 1040,290 C1240,272 1340,300 1440,295 L1440,320 L0,320 Z" fill="#16100a"/>
+  </svg>
+  <div class="wrap hero-content">
+    <div class="eyebrow">Self-Sufficient 4&times;4 Overlanding &bull; Field Dossier</div>
+    <h1>
+      <span class="ln"><span>Southern Namibia</span></span>
+      <span class="ln"><span>&amp; The Kalahari</span></span>
+    </h1>
+    <div class="hero-depart" id="heroDepart">
+      <span class="hd-label">Wheels turning</span>
+      <b id="heroDepartDate">Thursday, 24 September 2026</b>
+      <span class="hd-count" id="heroCountdown"></span>
+    </div>
+    <div class="hero-meta">
+      <div><b>8</b><span>Days</span></div>
+      <div><b>2</b><span>Rest Days</span></div>
+      <div><b>4&times;4</b><span>Convoy Only</span></div>
+      <div><b>~3,490 km</b><span>Full Circuit</span></div>
+    </div>
+  </div>
+  <div class="scrollcue">Scroll to deploy ↓</div>
+</header>
+
+<!-- ===================== GATE ===================== -->
+<section id="gate">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="gate-headline">Join the Expedition</div>
+      <p class="gate-sub">The trip is locked in. Register once with your email — no password. A magic link lands in your inbox and you're in.</p>
+      <ul class="gate-benefits">
+        <li><b>See the full itinerary</b> — eight days, dates and camps</li>
+        <li><b>See the crew roster</b> — who's registered and their role</li>
+        <li><b>Track costs &amp; your deposit</b> — per-person amount and payment status</li>
+        <li><b>Carpool coordination</b> — claim a seat or register your vehicle (coming next)</li>
+      </ul>
+      <div class="gate-form" id="gateFormWrap">
+        <input type="email" id="gateEmail" placeholder="Your email address" autocomplete="email">
+        <button class="authbtn" id="gateSendBtn">Join the convoy →</button>
+        <div id="gateLinkSent" style="display:none;font-size:.84rem;color:var(--ochre-bright)">✓ Check your email — tap the magic link to sign in.</div>
       </div>
+      <div class="gate-signed" id="gateSigned">
+        <div class="gate-welcome">Welcome back, <span id="gateWhoName">—</span></div>
+        <div class="gate-quicklinks">
+                    <a href="#roster">Crew roster</a>
+          <a href="#costs">Costs &amp; deposit</a>
+          <a href="#planning" id="gatePlanLink" style="display:none">Trip planning</a>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" id="gateStatsPanel">
+      <div class="gate-card">
+        <div class="gate-stat" id="gateCrewCount">—</div>
+        <div class="gate-stat-label">Crew registered</div>
+        <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:18px;display:flex;gap:24px">
+          <div><div class="gate-stat" id="gateDriverCount" style="font-size:1.5rem">—</div><div class="gate-stat-label">Drivers</div></div>
+          <div><div class="gate-stat" id="gatePaxCount" style="font-size:1.5rem">—</div><div class="gate-stat-label">Passengers</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LAWS ===================== -->
+<section id="laws">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The Non-Negotiables</div>
+      <h2>The Core Expedition Laws</h2>
+      <p>Four fixed rules keep the convoy safe, tight, and moving — no fatigue, no night driving, no compromise on the camps.</p>
+    </div>
+    <div class="laws reveal">
+      <div class="law"><div class="no">01</div><h4>Wheels Turning by 08:00</h4><p>Maximum daylight utilisation, every single day.</p></div>
+      <div class="law"><div class="no">02</div><h4>Strict 8-Hour Limit</h4><p>No driver fatigue. No driving in the dark.</p></div>
+      <div class="law"><div class="no">03</div><h4>No Trailing Placeholders</h4><p>High-standard private ablutions or verified inner-park camps only.</p></div>
+      <div class="law"><div class="no">04</div><h4>Tyre &amp; Fuel Rigor</h4><p>Deflate for corrugations. Fuel up at every opportunity.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MAP ===================== -->
+<section id="map">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The Circuit</div>
+      <h2>The Route Map</h2>
+      <p>Out through the Kalahari to the canyon, up the desert corridor past Aus to the dunes, then east across Botswana for home. Tap any waypoint to jump to its day.</p>
+    </div>
+    <div class="mapbox reveal">
       <div id="geomap"></div>
       <div id="geomap-fallback" style="display:none;padding:60px 20px;text-align:center;color:var(--muted);font-family:'Oswald';text-transform:uppercase;letter-spacing:.14em;font-size:.72rem">Live map unavailable — check your connection and reload.</div>
       <div class="maplegend">
-        <span><i style="border-color:var(--ochre)"></i>Fixed Spine</span>
-        <span><i style="border-color:var(--teal-bright)"></i>Route 1 · Coast-to-Coast</span>
-        <span><i style="border-color:var(--green-bright)"></i>Route 2 · South Kalahari</span>
+        <span><i style="border-color:var(--ochre)"></i>Days 1–5 · out to the dunes</span>
+        <span><i style="border-color:var(--green-bright)"></i>Days 6–8 · the run home</span>
       </div>
     </div>
 
@@ -788,10 +908,10 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
 </section>
 
 <!-- ===================== THE ROAD HOME ===================== -->
-<section id="decision">
+<section id="roadhome">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">Days 6–8 · Locked</div>
+      <div class="eyebrow">Days 6–8</div>
       <h2>The Road Home</h2>
       <p>From Sesriem the convoy turns east: one gravel-to-tar transit, one long Kalahari push, and a short hop home. All on paved highway from Gobabis onward.</p>
     </div>
@@ -800,10 +920,10 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
         <div class="rc-top">
           <img class="rc-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Quiver-Tree-Forest-2015.JPG?width=1100" alt="Quiver tree forest" loading="lazy" onerror="this.style.display='none'">
           <div class="tag">The Return</div>
-          <h3>South Kalahari</h3>
+          <h3>Across the Kalahari</h3>
           <div class="sub">Sesriem → Gobabis → Gaborone → home</div>
         </div>
-        <div class="rc-pitch">The direct Botswana loop — maximum wild bush transit, and a short final morning so the last day is a lunch arrival, not a slog.</div>
+        <div class="rc-pitch">Straight across Botswana — maximum wild bush transit, and a short final morning so the last day is a lunch arrival, not a slog.</div>
         <div class="leglist">
           <div class="legrow"><div class="d">Day 6</div><div class="info"><b>&rarr; Gobabis</b><span>Diagonally across the central plateau, the last Namibian gravel then paved highway east. Zelda Game Cabin.</span></div><div class="km"><b>560 km</b><span>~6.5 hrs</span></div></div>
           <div class="legrow"><div class="d">Day 7</div><div class="info"><b>&rarr; Gaborone (The Big Crush)</b><span>Sunrise-to-sunset across the width of Botswana on the Trans-Kalahari — wheels at 06:30 to clear Buitepos. Rotate drivers.</span></div><div class="km hard"><b>882 km</b><span>~10.5 hrs</span></div></div>
@@ -829,66 +949,45 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
   </div>
 </section>
 
-<!-- ===================== VOTE ===================== -->
-<section id="vote">
+<!-- ===================== CREW ACCESS ===================== -->
+<section id="crew" style="padding-bottom:0">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="eyebrow">The Commander's Checklist</div>
-      <h2>The Call — Cast Your Vote</h2>
-      <p>Four definitive rulings decide the trip. Enter your name once, then tap your pick on each. Tallies update live for the whole convoy.</p>
-    </div>
-
-    <!-- AUTH PANEL -->
     <div class="namebar reveal" id="authPanel">
-      <!-- Not signed in -->
       <div id="stateSignIn">
         <label class="namebar" style="margin-bottom:6px;display:block">Crew Member</label>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <input id="authEmail" type="email" placeholder="Enter your email to vote…" autocomplete="email"
+          <input id="authEmail" type="email" placeholder="Enter your email to sign in…" autocomplete="email"
             style="flex:1;min-width:200px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--bone);padding:9px 12px;font-size:.95rem">
           <button class="authbtn" id="sendLinkBtn">Send magic link →</button>
         </div>
       </div>
-      <!-- Link sent -->
       <div id="stateLinkSent" style="display:none">
         <span class="authnote">✓ Check your email — tap the link to sign in</span>
       </div>
-      <!-- Signed in -->
       <div id="stateSignedIn" style="display:none;align-items:center;gap:14px;flex-wrap:wrap">
         <label class="namebar" style="margin:0">Crew Member</label>
         <span class="namebar who" id="whoLabel" style="flex:1">—</span>
         <button class="authbtn sec" id="signOutBtn">Sign out</button>
       </div>
     </div>
-
-    <!-- ONBOARDING MODAL (first login) -->
-    <div id="onboardOverlay">
-      <div id="onboardModal">
-        <h3>Welcome to the Convoy</h3>
-        <p>Quick setup — takes 30 seconds. You can update this any time.</p>
-        <span class="oblabel">Your name on the convoy</span>
-        <input id="obName" type="text" placeholder="e.g. Aphile" maxlength="22" autocomplete="off">
-        <span class="oblabel">Your role</span>
-        <div class="roleopts">
-          <div class="roleopt" data-role="driver">🚗 Driver</div>
-          <div class="roleopt" data-role="passenger">🎒 Passenger</div>
-        </div>
-        <button id="obSave">Join the convoy →</button>
-      </div>
-    </div>
-
-    <!-- Locked decisions recorded off-app (visible to all signed-in crew) -->
-    <div id="decisionBoard" class="reveal in" style="display:none"></div>
-
-    <div id="polls"></div>
-
-    <div class="notice reveal">
-      <span id="storeNote">Votes sync across the convoy.</span>
-      <button class="resetbtn" id="resetBtn">Reset all votes</button>
-    </div>
   </div>
 </section>
 
+<!-- ONBOARDING MODAL (first login) -->
+<div id="onboardOverlay">
+  <div id="onboardModal">
+    <h3>Welcome to the Convoy</h3>
+    <p>Quick setup — takes 30 seconds. You can update this any time.</p>
+    <span class="oblabel">Your name on the convoy</span>
+    <input id="obName" type="text" placeholder="e.g. Aphile" maxlength="22" autocomplete="off">
+    <span class="oblabel">Your role</span>
+    <div class="roleopts">
+      <div class="roleopt" data-role="driver">🚗 Driver</div>
+      <div class="roleopt" data-role="passenger">🎒 Passenger</div>
+    </div>
+    <button id="obSave">Join the convoy →</button>
+  </div>
+</div>
 
 <!-- ===================== ROSTER ===================== -->
 <section id="roster">
@@ -1014,37 +1113,18 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
     <div class="sec-head reveal in">
       <div class="eyebrow">Admin · Phase 7</div>
       <h2>Trip Planning HQ</h2>
-      <p>Organiser-only tools: record decisions made off-app, manage the crew list and roles, and pin down every pre-arrangement — campsite availability, per-camper rates, and each cost item you can verify before wheels turn.</p>
+      <p>Organiser-only tools: manage the crew list and roles, and pin down every pre-arrangement — campsite availability, per-camper rates, and each cost item you can verify before wheels turn.</p>
+      <button class="admin-save" id="planCollapseAll" style="margin-top:14px">Collapse all</button>
     </div>
 
     <!-- 0 · PLANNING PROGRESS -->
     <div class="plan-panel reveal in">
       <h4>Planning Progress</h4>
       <div class="plan-body">
-      <p class="plan-sub">Auto-tracked from the tools below — rulings decided, stays booked with confirmed rates, cost items verified, finance set up, and the crew signed in. Backup stays don't count toward progress.</p>
+      <p class="plan-sub">Auto-tracked from the tools below — stays booked with confirmed rates, cost items verified, finance set up, and the crew signed in. Backup stays don't count toward progress.</p>
       <div class="prog-track"><div class="prog-fill" id="progFill" style="width:6%">0%</div></div>
       <p class="plan-sub" style="margin:10px 0 0" id="progCount"></p>
       <div id="todoList"></div>
-          </div>
-</div>
-
-    <!-- 1 · DECISION LOG -->
-    <div class="plan-panel reveal in">
-      <h4>Decision Log</h4>
-      <div class="plan-body">
-      <p class="plan-sub">Capture calls made offline — WhatsApp, phone, around the braai. Link a decision to one of the voting rulings and it shows as "decided" on that poll for the whole convoy.</p>
-      <div class="plan-form">
-        <div class="admin-field"><label>What was decided</label><input id="decTitle" type="text" placeholder="e.g. Departure date"></div>
-        <div class="admin-field"><label>The call</label><input id="decOutcome" type="text" placeholder="e.g. Sun 4 Oct — weekend arrival"></div>
-        <div class="admin-field"><label>Decided on</label><input id="decDate" type="date"></div>
-        <div class="admin-field"><label>Where / how</label><input id="decContext" type="text" placeholder="e.g. WhatsApp group"></div>
-        <div class="admin-field"><label>Applies to ruling</label><select id="decPoll"><option value="">— none —</option></select></div>
-      </div>
-      <button class="admin-save" id="decAddBtn">Record decision</button>
-      <div style="overflow-x:auto;margin-top:18px"><table class="plan-table">
-        <thead><tr><th>Decision</th><th>The Call</th><th>Date</th><th>Where</th><th>Ruling</th><th></th></tr></thead>
-        <tbody id="decTable"></tbody>
-      </table></div>
           </div>
 </div>
 
@@ -1157,10 +1237,8 @@ const SUPABASE_ANON_KEY = "sb_publishable_o1xfAQwaiVwuPkZOWgZfFw_2AsUlCOz"; // p
 let SB = null;
 let AUTH_USER = null;   // supabase auth user (or null)
 let CREW_ROW  = null;   // crew table row (or null)
-let DECISIONS = [];     // decisions recorded off-app (Phase 7, crew-only read)
 let TRIP = null;        // public trip_settings: departure_date, route_locked (Phase 8)
 const isViewer = () => CREW_ROW?.role === 'viewer';   // follower account (Phase 11)
-const ROUTE_NAMES = { route1:'Route 1 · Coast-to-Coast', route2:'Route 2 · South Kalahari' };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = d => new Date(d+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
 const addDays = (iso,n) => { const d = new Date(iso+'T00:00:00'); d.setDate(d.getDate()+n); return d; };
@@ -1335,7 +1413,7 @@ const days = [
    badges:[['100% Asphalt','b-asphalt'],['Tlokweng Border','b-gravel']],route:'N4 via Tlokweng/Kopfontein — back on the highveld by lunch',
    stay:'Home',
    body:'A short, easy hop to close the circuit. Back in Joburg early enough to wash the dust off the rigs and still have the afternoon.',
-   callouts:[['gold','Bring It Home','Eight days, seven nights, roughly 3,610 km — and only five of them with real driving in.']]},
+   callouts:[['gold','Bring It Home','Eight days, seven nights, roughly 3,490 km — and only five of them with real driving in.']]},
 ];
 
 const dayCards = document.getElementById('dayCards');
@@ -1359,7 +1437,6 @@ function renderDayCards(instant){
     : `<div class="stats"><div><b>${d.dist}<span style="font-size:.8rem"> km</span></b><span>Distance</span></div><div><b>${d.time}</b><span>Drive Time</span></div></div>`;
   // rule: departure date decided → every day shows its real calendar date
   const dateStr = TRIP?.departure_date ? ` — <span class="date">${fmtDay(addDays(TRIP.departure_date, i))}</span>` : '';
-  const stay = d.stay, decidedMark = '';
   // swipeable gallery: multiple destination + campsite photos per day
   const pics = d.photos||[];
   const imgUrl = f => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(f)}?width=1000`;
@@ -1375,7 +1452,7 @@ function renderDayCards(instant){
       ${stats}
       <div class="badges">${bd}</div>
       ${surf}
-      <div class="stay">${stay}${decidedMark}</div>
+      <div class="stay">${d.stay}</div>
       <p>${d.body}</p>
       ${co}
     </div>`;
@@ -1435,163 +1512,6 @@ window.galDrop = function(img){
 };
 renderDayCards(false);
 
-/* ============ VOTING ENGINE ============ */
-const POLLS = [
-  {key:'departure_date', no:'Ruling 00', q:'The Departure Date',
-   d:'Anchored on finishing in Gaborone on a weekend — which only pays off if we also pick Route 2 (South Kalahari). Which window works?',
-   a:{t:'Sun 4 Oct — Weekend Arrival',s:'Reach Gaborone Fri 9 Oct, home Sat 10 Oct. Full Friday-night + Saturday window for the Gabs weekend scene.'},
-   b:{t:'Thu 8 Oct — Midweek',s:'Reach Gaborone Tue 13 Oct, home Wed 14 Oct. Quieter, midweek pricing, but no weekend in Gabs.'}},
-  {key:'shark', no:'Ruling 01', q:'Shark Island Wind',
-   d:'A blustery, classic coastal night exposed on the Lüderitz peninsula — or the quiet granite valleys inland?',
-   a:{t:'Shark Island',s:'Embrace the raw, windy Atlantic peninsula — pelicans, flamingos and shaking tents.'},
-   b:{t:'Klein-Aus Vista',s:'Pivot 120 km inland to calm, sheltered granite valleys for a peaceful night.'}},
-  {key:'driving', no:'Ruling 02', q:'The Day 6 / Day 7 Trade-off',
-   d:'A massive 10.5-hour Saturday push to Gaborone so Sunday is a breeze — or balanced 5-to-7 hour days?',
-   a:{t:'The Big Saturday Crush',s:'10.5 hrs to Gabs, then a relaxed 4.5 hr lunch arrival home (Route 2).'},
-   b:{t:'Balanced Days',s:'Comfortable 6.5 & 8 hr legs via the coast — a longer but easier Sunday (Route 1).'}},
-  {key:'coast', no:'Ruling 03', q:'The Coastal Add-on',
-   d:'Cold draughts and fresh Atlantic seafood at Windpomp 14 in Swakopmund — or keep the loop tight in the south?',
-   a:{t:'Add the Coast',s:'Swakopmund seafood, beachside windbreaks, no camp cooking (Route 1).'},
-   b:{t:'Tight Southern Loop',s:'Skip the north, maximise Kalahari bush transit, fast home (Route 2).'}},
-];
-
-let MEM = {};                       // live mirror of all votes
-const VOTE_PATH = 'votes';
-const safeKey = s => (s.toLowerCase().replace(/[.#$\[\]\/\s]+/g,'_').slice(0,40) || 'crew');
-function ensure(){ POLLS.forEach(p=>{ if(!MEM[p.key]) MEM[p.key]={}; }); }
-
-/* ---- load + live subscribe ---- */
-function rowsToMEM(rows){
-  const m = {};
-  (rows||[]).forEach(r=>{
-    const k = r.crew_id || r.voter_key;   // crew_id (auth) or voter_key (legacy fallback)
-    (m[r.poll] = m[r.poll] || {})[k] = {n:r.voter_name, c:r.choice};
-  });
-  return m;
-}
-async function fetchVotes(){
-  if(!SB) return;
-  const { data, error } = await SB.from('votes').select('poll,crew_id,voter_name,choice');
-  if(!error){ MEM = rowsToMEM(data); ensure(); renderPolls(); }
-  else console.warn(error);
-}
-function startVotes(){
-  ensure(); renderPolls();                          // instant paint
-  if (SB){
-    fetchVotes();                                   // initial load
-    SB.channel('votes-stream')                      // realtime: any change, any device
-      .on('postgres_changes', { event:'*', schema:'public', table:'votes' }, fetchVotes)
-      .subscribe();
-  } else {
-    try { MEM = JSON.parse(localStorage.getItem(VOTE_PATH)) || {}; } catch(e){ MEM = {}; }
-    ensure(); renderPolls();
-    document.getElementById('storeNote').textContent =
-      'Device-only — paste a Supabase URL + key (see code comments) to sync the whole convoy.';
-  }
-}
-
-async function castVote(pollKey, choice){
-  if(!CONFIGURED){
-    // Device-only fallback (no auth configured)
-    const name = (document.getElementById('authEmail')?.value||'').trim() ||
-                 localStorage.getItem('namibia-myname') || '';
-    if(!name){ document.getElementById('authEmail')?.focus(); return; }
-    const k = safeKey(name);
-    MEM[pollKey] = MEM[pollKey]||{}; MEM[pollKey][k] = {n:name, c:choice};
-    renderPolls();
-    try { localStorage.setItem(VOTE_PATH, JSON.stringify(MEM)); } catch(e){}
-    return;
-  }
-  // Auth required
-  if(!CREW_ROW){
-    const panel = document.getElementById('authPanel');
-    panel?.scrollIntoView({behavior:'smooth', block:'center'});
-    document.getElementById('authEmail')?.focus();
-    return;
-  }
-  if(isViewer()) return;   // followers watch, they don't vote
-  const crewId = CREW_ROW.id;
-  MEM[pollKey] = MEM[pollKey]||{};
-  MEM[pollKey][crewId] = {n:CREW_ROW.display_name, c:choice};
-  renderPolls();    // optimistic
-  const { error } = await SB.from('votes')
-    .upsert({ poll:pollKey, crew_id:crewId, voter_name:CREW_ROW.display_name, choice },
-            { onConflict:'poll,crew_id' });
-  if(error) console.warn(error);
-}
-
-function renderPolls(){
-  const myK = CREW_ROW?.id ?? null;
-  const host = document.getElementById('polls');
-  host.innerHTML='';
-  POLLS.forEach(p=>{
-    const votes = MEM[p.key]||{};
-    const vals  = Object.values(votes);
-    const aV = vals.filter(v=>v && v.c==='a');
-    const bV = vals.filter(v=>v && v.c==='b');
-    const total = aV.length + bV.length;
-    const aPct = total? Math.round(aV.length/total*100):0;
-    const bPct = total? 100-aPct:0;
-    const mine = (myK && votes[myK]) ? votes[myK].c : null;
-    const aLead = total && aV.length>bV.length;
-    const bLead = total && bV.length>aV.length;
-    const chip = arr => arr.map(v=>`<span>${v.n}</span>`).join('');
-
-    const dec = pollDecision(p);
-    const decBanner = dec
-      ? `<div class="decided-banner">⚖ Decided — <b>${esc(dec.outcome)}</b>${dec.meta?` · ${dec.meta}`:''} · voting closed</div>`
-      : '';
-
-    const el=document.createElement('div');
-    el.className='poll reveal in';
-    if(dec) el.dataset.closed='1';
-    el.innerHTML=`
-      ${decBanner}
-      <div class="qno">${p.no}</div>
-      <div class="q">${p.q}</div>
-      <div class="qd">${p.d}</div>
-      <div class="opts">
-        <div class="opt a ${dec?'closed':''} ${mine==='a'?'mine':''} ${aLead?'lead':''}" data-poll="${p.key}" data-c="a">
-          <div class="fill" style="width:${aPct}%"></div>
-          <div class="pct">${total?aPct+'%':''}</div>
-          <div class="ot">${p.a.t}</div>
-          <div class="od">${p.a.s}</div>
-          <div class="count">${aV.length} vote${aV.length!==1?'s':''}</div>
-          <div class="voters">${chip(aV)}</div>
-        </div>
-        <div class="opt b ${dec?'closed':''} ${mine==='b'?'mine':''} ${bLead?'lead':''}" data-poll="${p.key}" data-c="b">
-          <div class="fill" style="width:${bPct}%"></div>
-          <div class="pct">${total?bPct+'%':''}</div>
-          <div class="ot">${p.b.t}</div>
-          <div class="od">${p.b.s}</div>
-          <div class="count">${bV.length} vote${bV.length!==1?'s':''}</div>
-          <div class="voters">${chip(bV)}</div>
-        </div>
-      </div>`;
-    host.appendChild(el);
-  });
-  host.querySelectorAll('.opt').forEach(o=>{
-    o.addEventListener('click',()=>{
-      if(o.classList.contains('closed')) return;   // ruling decided — voting closed
-      castVote(o.dataset.poll,o.dataset.c);
-    });
-  });
-}
-
-/* A ruling counts as decided from an explicit decision row (crew-only),
-   or derived from the public trip settings: the departure date decides
-   Ruling 00, and a locked route decides both homeward rulings. */
-function pollDecision(p){
-  const d = DECISIONS.find(x=>x.poll_key===p.key);
-  if(d) return { outcome:d.outcome,
-                 meta:[d.decided_on?fmtDate(d.decided_on):'', d.context?esc(d.context):''].filter(Boolean).join(' · ') };
-  if(p.key==='departure_date' && TRIP?.departure_date)
-    return { outcome:'Departing '+fmtDate(TRIP.departure_date), meta:'' };
-  if((p.key==='driving'||p.key==='coast') && TRIP?.route_locked)
-    return { outcome:ROUTE_NAMES[TRIP.route_locked]+' locked', meta:'' };
-  return null;
-}
-
 /* ============ AUTH ============ */
 async function loadCrewRow(){
   if(!SB || !AUTH_USER){ CREW_ROW=null; return; }
@@ -1609,7 +1529,6 @@ function updateAuthUI(){
     document.getElementById('whoLabel').innerHTML = `Signed in as <b>${CREW_ROW.display_name}</b>`;
   // Admin-only reset
   const isAdmin = AUTH_USER?.email === 'aphilem@gmail.com';
-  document.getElementById('resetBtn').style.display = isAdmin ? '' : 'none';
 }
 
 /* ---- session handling: remember this device ----
@@ -1631,7 +1550,7 @@ async function handleSession(session){
     else { try { localStorage.setItem('namibia-known-name', CREW_ROW.display_name||''); } catch(e){} }
   }
   updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); }
-  fetchDecisions(); loadPlanning(); renderPolls(); startLive();
+  loadPlanning(); startLive();
   if(!AUTH_USER) rememberedPrefill();
 }
 if(SB){
@@ -1726,25 +1645,17 @@ document.getElementById('obSave')?.addEventListener('click', async ()=>{
     try { localStorage.setItem('namibia-known-name', CREW_ROW?.display_name||''); } catch(e){}
     document.getElementById('onboardOverlay').style.display = 'none';
     updateAuthUI(); updateGate(); if(AUTH_USER && CREW_ROW){ loadRoster(); loadCosts(); }
-    fetchDecisions(); loadPlanning(); renderPolls();
+    loadPlanning();
   } else { console.warn(error); }
 });
 
-/* ---- Admin: reset all votes ---- */
-document.getElementById('resetBtn').addEventListener('click',async()=>{
-  if(!confirm('Clear every vote for the whole convoy? This cannot be undone.')) return;
-  MEM={}; ensure();
-  if(SB){ try{ await SB.from('votes').delete().neq('poll',''); }catch(e){ console.warn(e); } renderPolls(); }
-  else  { try{ localStorage.removeItem(VOTE_PATH); }catch(e){} renderPolls(); }
-});
 
 
 /* ============================================================
    LOCKED TRIP STATE  (Phase 8)
    ------------------------------------------------------------
    trip_settings is publicly readable, so the decided departure
-   date and locked route render for everyone. The decisions table
-   stays crew-only; DECISIONS-driven visuals appear after sign-in.
+   date and the route render for everyone.
    ============================================================ */
 async function loadTripPublic(){
   if(!SB) return;
@@ -1754,41 +1665,29 @@ async function loadTripPublic(){
   renderDayCards(true);
   renderHeroDate();
   applyRouteLock();
-  renderPolls();
   startLive();
   observeAll();
 }
 
 function renderHeroDate(){
   if(!TRIP?.departure_date) return;
-  let el = document.getElementById('heroDep');
-  if(!el){
-    el = document.createElement('div'); el.id='heroDep';
-    document.querySelector('.hero-meta').appendChild(el);
-  }
   const dep = new Date(TRIP.departure_date+'T00:00:00');
-  el.innerHTML = `<b>${fmtDay(dep)}</b><span>Departure ${dep.getFullYear()}</span>`;
+  const big = document.getElementById('heroDepartDate');
+  if(big) big.textContent = dep.toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const cd = document.getElementById('heroCountdown');
+  if(cd){
+    const days = Math.ceil((dep - new Date(new Date().toDateString()))/86400000);
+    cd.textContent = days > 1 ? `${days} days to go` : days === 1 ? 'Tomorrow' : days === 0 ? 'Today — wheels turning' : 'On the road';
+  }
 }
 
 function applyRouteLock(){
-  if(!TRIP?.route_locked) return;
-  const r = TRIP.route_locked==='route1' ? '1' : '2';
-  const o = r==='1' ? '2' : '1';
-  const name  = ROUTE_NAMES[TRIP.route_locked];
-  const other = o==='1' ? 'Route 1' : 'Route 2';
-  // the locked route is always drawn; the toggles read as status, not controls
-  geoShowRoute(r, true);
-  if(GEO) GEO.setFrame(['joburg','kuruman','hobas','sesriem', r==='2'?'gaborone':'swakop']);
-  const tgR = document.querySelector(`.tg[data-r="${r}"]`);
-  const tgO = document.querySelector(`.tg[data-r="${o}"]`);
-  if(tgR){ tgR.classList.add('act'); if(!tgR.textContent.includes('✓')) tgR.textContent += ' · ✓ locked'; }
-  if(tgO) tgO.style.display = 'none';
-  document.querySelector('.tg[data-r="0"]')?.classList.add('act');
-  document.querySelectorAll('.tg').forEach(t=>t.style.pointerEvents='none');
-  document.querySelectorAll('.maplegend span').forEach(s=>{ if(s.textContent.includes(other)) s.style.display='none'; });
-  const win = document.querySelector('.routecard.r'+r);
+  // the route is final — draw the homeward leg and badge the card
+  geoShowRoute('2', true);
+  if(GEO) GEO.setFrame(['joburg','kuruman','hobas','aus','sesriem','gaborone']);
+  const win = document.querySelector('.routecard.r2');
   if(win && !win.querySelector('.lock-badge')){
-    const b=document.createElement('div'); b.className='lock-badge'; b.textContent='✓ Route locked';
+    const b=document.createElement('div'); b.className='lock-badge'; b.textContent='✓ Locked in';
     win.querySelector('.rc-top').appendChild(b);
   }
 }
@@ -2162,7 +2061,7 @@ async function loadCosts(){
 }
 
 /* ---- Trip cost estimate for the crew (Phase 9) ----
-   Reflects the locked decisions via stayRequired(); every line carries
+   Reflects the final itinerary via stayRequired(); every line carries
    its verification status so the crew can see what's firm vs estimated. */
 async function renderCrewEstimate(){
   if(!SB || !AUTH_USER) return;
@@ -2212,8 +2111,8 @@ async function renderCrewEstimate(){
   document.getElementById('estTotal').textContent    = 'R'+Math.round(total).toLocaleString('en-ZA');
   document.getElementById('estVerified').textContent = `${vOK}/${vAll}`;
   document.getElementById('estBasis').textContent =
-    `Based on the locked decisions — departing ${TRIP?.departure_date?fmtDate(TRIP.departure_date):'TBC'}, `+
-    `${TRIP?.route_locked?ROUTE_NAMES[TRIP.route_locked]:'route TBC'} — split across ${head} camper${head>1?'s':''} in ${vehicles} vehicle${vehicles>1?'s':''}.`;
+    `Departing ${TRIP?.departure_date?fmtDate(TRIP.departure_date):'TBC'} — `+
+    `split across ${head} camper${head>1?'s':''} in ${vehicles} vehicle${vehicles>1?'s':''}.`;
 }
 function renderMyPayment(pay){
   const s = pay?.status||'unpaid';
@@ -2296,6 +2195,26 @@ const ROUTE_STAYS = [
 
 /* ---- concertina: collapse/expand each Planning HQ panel ----
    State persists per device so the sections you work in stay open. */
+function setAllPanels(closed){
+  const keys = [];
+  document.querySelectorAll('#planning .plan-panel').forEach(p=>{
+    p.classList.toggle('closed', closed);
+    if(closed) keys.push(p.querySelector('h4')?.textContent.trim());
+  });
+  try { localStorage.setItem('namibia-plan-closed', JSON.stringify(keys.filter(Boolean))); } catch(e){}
+  const btn = document.getElementById('planCollapseAll');
+  if(btn) btn.textContent = closed ? 'Expand all' : 'Collapse all';
+}
+document.getElementById('planCollapseAll')?.addEventListener('click', ()=>{
+  const anyOpen = [...document.querySelectorAll('#planning .plan-panel')].some(p=>!p.classList.contains('closed'));
+  setAllPanels(anyOpen);
+});
+function syncCollapseAllLabel(){
+  const btn = document.getElementById('planCollapseAll');
+  if(!btn) return;
+  const anyOpen = [...document.querySelectorAll('#planning .plan-panel')].some(p=>!p.classList.contains('closed'));
+  btn.textContent = anyOpen ? 'Collapse all' : 'Expand all';
+}
 function initPlanAccordion(){
   let closed = [];
   try { closed = JSON.parse(localStorage.getItem('namibia-plan-closed')||'[]'); } catch(e){}
@@ -2311,30 +2230,9 @@ function initPlanAccordion(){
       const on = p.classList.contains('closed');
       list = list.filter(k=>k!==key); if(on) list.push(key);
       try { localStorage.setItem('namibia-plan-closed', JSON.stringify(list)); } catch(e){}
+      syncCollapseAllLabel();
     });
   });
-}
-
-// Populate the "applies to ruling" select from the poll definitions
-document.getElementById('decPoll').innerHTML =
-  '<option value="">— none —</option>' + POLLS.map(p=>`<option value="${p.key}">${p.no} · ${p.q}</option>`).join('');
-
-async function fetchDecisions(){
-  if(!SB || !AUTH_USER){ DECISIONS=[]; renderDecisionBoard(); return; }
-  const { data, error } = await SB.from('decisions').select('*').order('created_at',{ascending:false});
-  if(error){ console.warn(error); return; }
-  DECISIONS = data||[];
-  renderDecisionBoard(); renderPolls();
-  renderDayCards(true); observeAll();   // Day 3 stay may reflect the Shark Island call
-  if(isAdmin()){ renderDecisionLog(); renderPlanProgress(); }
-}
-
-function renderDecisionBoard(){
-  const host = document.getElementById('decisionBoard');
-  if(!DECISIONS.length){ host.style.display='none'; return; }
-  host.style.display='';
-  host.innerHTML = '<div class="board-title">⚖ The Record — decisions locked in</div>' +
-    DECISIONS.map(d=>`<div class="board-row"><b>${esc(d.title)}</b><span>${esc(d.outcome)}</span><i>${d.decided_on?fmtDate(d.decided_on):''}${d.context?(d.decided_on?' · ':'')+esc(d.context):''}</i></div>`).join('');
 }
 
 async function loadPlanning(){
@@ -2367,37 +2265,9 @@ async function loadPlanning(){
   if(crew.error||invites.error||bookings.error||items.error)
     console.warn('Planning load — run supabase-phase7-planning-migration.sql if tables are missing.',
                  crew.error||invites.error||bookings.error||items.error);
-  renderDecisionLog(); renderCrewAdmin(); renderInvites(); renderBookings(); renderCostItems(); renderPlanSummary();
-  initPlanAccordion();
+  renderCrewAdmin(); renderInvites(); renderBookings(); renderCostItems(); renderPlanSummary();
+  initPlanAccordion(); syncCollapseAllLabel();
 }
-
-/* ---- 1 · decision log ---- */
-function renderDecisionLog(){
-  document.getElementById('decTable').innerHTML = DECISIONS.map(d=>{
-    const poll = POLLS.find(p=>p.key===d.poll_key);
-    return `<tr><td style="color:var(--bone)">${esc(d.title)}</td><td style="color:var(--ochre-bright)">${esc(d.outcome)}</td><td>${d.decided_on?fmtDate(d.decided_on):'—'}</td><td>${esc(d.context||'—')}</td><td>${poll?esc(poll.q):'—'}</td><td><button class="plan-del" onclick="delDecision('${d.id}')">✕</button></td></tr>`;
-  }).join('') || '<tr><td colspan="6" style="color:var(--muted)">No decisions recorded yet.</td></tr>';
-}
-document.getElementById('decAddBtn')?.addEventListener('click', async ()=>{
-  const title   = document.getElementById('decTitle').value.trim();
-  const outcome = document.getElementById('decOutcome').value.trim();
-  if(!title){ document.getElementById('decTitle').focus(); return; }
-  if(!outcome){ document.getElementById('decOutcome').focus(); return; }
-  const { error } = await SB.from('decisions').insert({
-    title, outcome,
-    decided_on: document.getElementById('decDate').value || null,
-    context:    document.getElementById('decContext').value.trim() || null,
-    poll_key:   document.getElementById('decPoll').value || null,
-  });
-  if(error){ console.warn(error); return; }
-  ['decTitle','decOutcome','decDate','decContext','decPoll'].forEach(id=>document.getElementById(id).value='');
-  fetchDecisions();
-});
-window.delDecision = async function(id){
-  if(!confirm('Remove this decision from the record?')) return;
-  await SB.from('decisions').delete().eq('id',id);
-  fetchDecisions();
-};
 
 /* ---- 2 · crew & roles ---- */
 function renderCrewAdmin(){
@@ -2592,12 +2462,6 @@ function renderPlanProgress(){
   const items = [];
   const add = (group,label,done,detail) => items.push({group,label,done,detail});
 
-  // one item per voting ruling — decided directly or via the locked date/route
-  POLLS.forEach(p=>{
-    const d = pollDecision(p);
-    add('Decisions', p.q, !!d, d ? d.outcome : 'no call recorded yet');
-  });
-
   // one item per required stay (route lock, Shark Island call and backups applied)
   const stays = PLAN.bookings.filter(stayRequired);
   if(!stays.length) add('Camps', 'Route stays loaded', false, 'load the route stays to start tracking');
@@ -2675,9 +2539,7 @@ function renderPlanSummary(){
   document.getElementById('psTotal').textContent     = fmtR(camps+items);
   document.getElementById('psNote').textContent =
     'Estimates only — per-vehicle and shared costs are spread across the headcount.'
-    + (TRIP?.route_locked
-        ? ` ${ROUTE_NAMES[TRIP.route_locked]} is locked — the other route's stays are excluded.`
-        : ' Every listed stay is counted (drop or zero the route option the convoy doesn\'t take).')
+    + ' Backup stays are excluded.'
     + (unverified ? ` ${unverified} cost item${unverified>1?'s':''} still unverified.` : ' All cost items verified ✓');
   renderPlanProgress();
 }
@@ -2689,9 +2551,9 @@ const WAYPOINTS = {
   hobas:   { ll:[-27.6206, 17.7636], name:'Fish River Canyon', sub:'Days 2–3 · Hobas',      short:'D2-3',go:'day2' },
   aus:     { ll:[-26.6700, 16.2600], name:'Aus',               sub:'Day 4 · Wild horses',   short:'AUS',go:'day4' },
   sesriem: { ll:[-24.4880, 15.8000], name:'Sesriem',           sub:'Days 4–5 · Sossusvlei', short:'D4-5',go:'day4' },
-  swakop:  { ll:[-22.6784, 14.5258], name:'Swakopmund',        sub:'Route 1',               short:'R1',  go:'decision', cls:'r1' },
-  gobabis: { ll:[-22.4500, 18.9667], name:'Gobabis',           sub:'Day 6 · Zelda',         short:'D6',  go:'decision' },
-  gaborone:{ ll:[-24.6282, 25.9231], name:'Gaborone',          sub:'Day 7 · Gaborone',      short:'D7',  go:'decision', cls:'r2' },
+  swakop:  { ll:[-22.6784, 14.5258], name:'Swakopmund',        sub:'Route 1',               short:'R1',  go:'roadhome', cls:'r1' },
+  gobabis: { ll:[-22.4500, 18.9667], name:'Gobabis',           sub:'Day 6 · Zelda',         short:'D6',  go:'roadhome' },
+  gaborone:{ ll:[-24.6282, 25.9231], name:'Gaborone',          sub:'Day 7 · Gaborone',      short:'D7',  go:'roadhome', cls:'r2' },
 };
 let GEO = null;   // { map, r1Layer, r2Layer } once Leaflet is up
 function initGeoMap(){
@@ -2771,19 +2633,6 @@ function geoShowRoute(r, show){
   const layer = r==='1' ? GEO.r1Layer : GEO.r2Layer;
   if(show) layer.addTo(GEO.map); else GEO.map.removeLayer(layer);
 }
-const tgs=document.querySelectorAll('.tg');
-tgs.forEach(t=>t.addEventListener('click',()=>{
-  const r=t.dataset.r;
-  if(r==='0'){
-    tgs.forEach(x=>x.classList.toggle('act', x.dataset.r==='0'));
-    geoShowRoute('1',false); geoShowRoute('2',false);
-    return;
-  }
-  t.classList.toggle('act');
-  geoShowRoute(r, t.classList.contains('act'));
-  document.querySelector('.tg[data-r="0"]').classList.remove('act');
-}));
-
 /* ============ SCROLL REVEAL + RAIL + ANIM ============ */
 const io=new IntersectionObserver(es=>{
   es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);
@@ -2803,7 +2652,6 @@ window.addEventListener('scroll',()=>{
   updateGate();        // sync registration gate
   rememberedPrefill(); // this device knows you — pre-fill email + one-tap re-send
   initGeoMap();        // real geographic route map (Leaflet)
-  startVotes();        // loads, live-subscribes, and renders the polls
   loadTripPublic();    // decided departure date + locked route (public)
   observeAll();
 })();
