@@ -546,6 +546,42 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
 .alt-link{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.62rem;padding:6px 12px;
   border:1px solid var(--line);color:var(--teal-bright);border-radius:4px;text-decoration:none;text-align:center;white-space:nowrap}
 .alt-link:hover{border-color:var(--teal-bright)}
+/* ============================================================
+   SIDE NAV  (Phase 15)
+   ============================================================ */
+#sidenav{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:62;display:none;flex-direction:column;gap:2px}
+@media(min-width:1100px){#sidenav{display:flex}}
+#sidenav a{display:flex;align-items:center;gap:10px;text-decoration:none;padding:5px 8px;border-radius:6px;
+  font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:.6rem;color:var(--muted);
+  transition:color .2s,background .2s}
+#sidenav a i{width:7px;height:7px;border-radius:50%;background:rgba(236,224,204,.22);flex-shrink:0;transition:.2s}
+#sidenav a span{opacity:0;transform:translateX(-6px);transition:.2s;white-space:nowrap}
+#sidenav:hover a span{opacity:1;transform:none}
+#sidenav a:hover{color:var(--bone);background:rgba(236,224,204,.05)}
+#sidenav a.on{color:var(--ochre-bright)}
+#sidenav a.on i{background:var(--ochre-bright);box-shadow:0 0 0 3px rgba(219,162,63,.2)}
+#sidenav a.on span{opacity:1;transform:none}
+/* optional activities on the day cards */
+.acts{margin-top:16px;border-top:1px solid var(--line-soft);padding-top:14px}
+.acts h5{font-family:'Oswald';text-transform:uppercase;letter-spacing:.18em;font-size:.62rem;color:var(--teal-bright);margin-bottom:9px}
+.act{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line-soft)}
+.act:last-child{border-bottom:none}
+.act .an{font-family:'Oswald';text-transform:uppercase;letter-spacing:.03em;font-size:.82rem;color:var(--bone)}
+.act .an a{color:var(--bone);text-decoration:underline dotted rgba(116,183,192,.5);text-underline-offset:3px}
+.act .an a:hover{color:var(--teal-bright)}
+.act .ab{font-size:.86rem;color:var(--bone-dim);display:block;margin-top:2px}
+.act .am{margin-left:auto;text-align:right;font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;
+  font-size:.58rem;color:var(--muted);white-space:nowrap;padding-left:10px}
+.act .am b{display:block;color:var(--ochre-bright);font-size:.72rem}
+.act .am span{display:block;margin-top:2px}
+/* deposit auto/override control */
+.dep-mode{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px;
+  font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.62rem;color:var(--muted)}
+.dep-mode button{font-family:'Oswald';text-transform:uppercase;letter-spacing:.09em;font-size:.6rem;padding:4px 11px;
+  background:transparent;border:1px solid var(--line);color:var(--bone-dim);border-radius:20px;cursor:pointer}
+.dep-mode button.on{border-color:var(--green);color:var(--green-bright);background:rgba(134,145,80,.1)}
+.dep-mode button:hover{border-color:var(--ochre)}
+.dep-note{font-size:.78rem;color:var(--bone-dim);margin-top:8px;font-family:'Spectral',serif;text-transform:none;letter-spacing:0}
 .plan-sub{color:var(--bone-dim);font-size:.88rem;margin-bottom:20px}
 .plan-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
 .plan-form select{background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--bone);padding:8px 10px;font-size:.88rem;font-family:'Spectral',serif}
@@ -614,6 +650,17 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
 <body>
 <div class="topo"></div>
 <div id="rail"></div>
+<nav id="sidenav" aria-label="Page sections">
+  <a href="#gate"    data-sec="gate"><i></i><span>Join</span></a>
+  <a href="#laws"    data-sec="laws"><i></i><span>The Laws</span></a>
+  <a href="#map"     data-sec="map"><i></i><span>Route Map</span></a>
+  <a href="#days"    data-sec="days"><i></i><span>Daily Guide</span></a>
+  <a href="#roadhome" data-sec="roadhome"><i></i><span>The Road Home</span></a>
+  <a href="#roster"  data-sec="roster"><i></i><span>Crew</span></a>
+  <a href="#costs"   data-sec="costs"><i></i><span>Costs</span></a>
+  <a href="#triplog" data-sec="triplog" id="navTriplog" style="display:none"><i></i><span>Trip Log</span></a>
+  <a href="#planning" data-sec="planning" id="navPlanning" style="display:none"><i></i><span>Planning HQ</span></a>
+</nav>
 <a id="hqTab" href="#planning">⚙ Planning HQ <span class="pct" id="hqTabPct" style="display:none"></span></a>
 
 <!-- LIVE TRIP BAR (Phase 11) — appears during the trip window -->
@@ -918,6 +965,7 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
           <h4>Your Deposit</h4>
           <div class="cost-amount">R<span id="depositAmt">—</span></div>
           <div class="cost-deadline">Due by <b id="depositDeadline">TBC</b></div>
+          <div class="dep-note" id="depBasis"></div>
           <div style="margin-top:20px;border-top:1px solid var(--line);padding-top:20px">
             <div class="pay-status unpaid" id="myPayStatus">Unpaid</div>
             <div id="payClaimForm">
@@ -974,6 +1022,13 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
             <div class="admin-field"><label>Deposit Amount (R)</label><input id="adminDepAmt" type="number" placeholder="e.g. 2310"></div>
             <div class="admin-field"><label>Collection Deadline</label><input id="adminDeadline" type="date"></div>
           </div>
+          <div class="dep-mode">
+            <span>Deposit basis</span>
+            <button id="depAutoBtn" type="button">Track accommodation total</button>
+            <button id="depManualBtn" type="button">Use my own number</button>
+            <span id="depAutoVal"></span>
+          </div>
+          <div class="dep-note" id="depNote"></div>
           <button class="admin-save" id="adminSaveSettings">Save deposit settings</button>
         </div>
         <div style="margin-top:32px" class="reveal">
@@ -1124,6 +1179,7 @@ let AUTH_USER = null;   // supabase auth user (or null)
 let CREW_ROW  = null;   // crew table row (or null)
 let TRIP = null;        // public trip_settings: departure_date, route_locked (Phase 8)
 let STAYS = {};         // trip day → the camp currently locked in (public view)
+let ACTS  = {};         // trip day → optional activities at that stop
 const isViewer = () => CREW_ROW?.role === 'viewer';   // follower account (Phase 11)
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = d => new Date(d+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
@@ -1303,6 +1359,21 @@ const days = [
 ];
 
 const dayCards = document.getElementById('dayCards');
+// optional things to do at this stop — from the planning table, public
+function activitiesBlock(dayNo){
+  const list = ACTS[dayNo];
+  if(!list || !list.length) return '';
+  return `<div class="acts"><h5>Optional at this stop</h5>${list.map(a=>{
+    const name = a.website
+      ? `<a href="${esc(a.website)}" target="_blank" rel="noopener">${esc(a.name)}</a>`
+      : esc(a.name);
+    const cost = a.cost_per_person==null ? '' :
+      (Number(a.cost_per_person) > 0 ? `<b>R${Number(a.cost_per_person).toLocaleString('en-ZA')}</b>pp` : '<b>Free</b>');
+    return `<div class="act"><div><span class="an">${name}</span>${a.blurb?`<span class="ab">${esc(a.blurb)}</span>`:''}</div>
+      <div class="am">${cost}${a.duration?`<span>${esc(a.duration)}</span>`:''}</div></div>`;
+  }).join('')}</div>`;
+}
+
 // the camp for a given trip day — live from the planning table when available
 function stayLabel(dayNo, fallback){
   const s = STAYS[dayNo];
@@ -1346,6 +1417,7 @@ function renderDayCards(instant){
       ${surf}
       <div class="stay">${stayLabel(i+1, d.stay)}</div>
       <p>${d.body}</p>
+      ${activitiesBlock(i+1)}
       ${co}
     </div>`;
   const el = document.createElement('div');
@@ -1555,8 +1627,18 @@ async function loadTripPublic(){
   if(!data) return;
   TRIP = data;
   // whichever camp is currently locked in for each day
-  const { data: stays } = await SB.from('public_stays').select('*');
-  STAYS = {};
+  const [{ data: stays }, { data: acts }] = await Promise.all([
+    SB.from('public_stays').select('*'),
+    SB.from('public_activities').select('*').order('sort_order'),
+  ]);
+  STAYS = {}; ACTS = {};
+  (acts||[]).forEach(a=>{
+    if(/backup/i.test(a.day_label||'')) return;
+    const m = /day\s*(\d+)/i.exec(a.day_label||'');
+    if(!m) return;
+    const start = parseInt(m[1],10), n = Math.max(1, Number(a.nights)||1);
+    for(let k=0;k<n;k++) (ACTS[start+k] = ACTS[start+k] || []).push(a);
+  });
   (stays||[]).forEach(s=>{
     if(/backup/i.test(s.day_label||'')) return;
     const m = /day\s*(\d+)/i.exec(s.day_label||'');
@@ -1640,6 +1722,7 @@ function startLive(){
   }
   const started = d>=1;                     // live now, or the archive afterwards
   document.getElementById('triplog').style.display = started ? '' : 'none';
+  syncSideNav();
   if(started){
     document.getElementById('tlSub').textContent = live
       ? 'Live from the convoy — check-ins and photos as each day unfolds.'
@@ -1934,12 +2017,22 @@ async function loadCosts(){
 
   const { data: ts } = await SB.from('trip_settings').select('*').eq('id',1).maybeSingle();
   TRIP_SETTINGS = ts;
+  const auto = await accommodationTotal();          // null when it can't be computed
+  if(ts && ts.deposit_auto && auto != null) ts.deposit_amount = auto;
+  const bas = document.getElementById('depBasis');
+  if(bas) bas.textContent = (ts?.deposit_auto && auto != null)
+    ? 'This is your share of the accommodation — every camp, all eight days.'
+    : '';
   if(ts){
     document.getElementById('depositAmt').textContent = ts.deposit_amount ? Number(ts.deposit_amount).toLocaleString('en-ZA') : '—';
     document.getElementById('depositDeadline').textContent = ts.collection_deadline
       ? new Date(ts.collection_deadline+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'})
       : 'TBC';
-    if(isAdmin){ document.getElementById('adminDepAmt').value = ts.deposit_amount||''; document.getElementById('adminDeadline').value = ts.collection_deadline||''; }
+    if(isAdmin){
+      document.getElementById('adminDepAmt').value = ts.deposit_amount||'';
+      document.getElementById('adminDeadline').value = ts.collection_deadline||'';
+      renderDepositMode(ts.deposit_auto, auto);
+    }
   }
 
   const { data: pa } = await SB.from('payment_account').select('*').eq('id',1).maybeSingle();
@@ -1959,6 +2052,17 @@ async function loadCosts(){
   renderCrewEstimate();
   if(isAdmin) loadAdminPayments();
   observeAll();
+}
+
+/* Accommodation total per camper across the whole trip — the basis for
+   the deposit when it's set to track (rate x nights, backups excluded). */
+async function accommodationTotal(){
+  if(!SB) return null;
+  const { data, error } = await SB.from('site_bookings').select('*');
+  if(error || !data || !data.length) return null;
+  const total = data.filter(b=>stayRequired(b) && b.status!=='unavailable')
+    .reduce((s,b)=>s + (Number(b.cost_per_camper)||0) * (Number(b.nights)||1), 0);
+  return Math.round(total) || null;
 }
 
 /* ---- Trip cost estimate for the crew (Phase 9) ----
@@ -2052,10 +2156,37 @@ window.verifyPayment = async function(id){
   if(id===AUTH_USER?.id) renderMyPayment({ status:'verified' });
   loadAdminPayments();
 };
+function renderDepositMode(isAuto, autoVal){
+  const a = document.getElementById('depAutoBtn'), m = document.getElementById('depManualBtn');
+  if(!a) return;
+  a.classList.toggle('on', !!isAuto);
+  m.classList.toggle('on', !isAuto);
+  document.getElementById('adminDepAmt').disabled = !!isAuto;
+  document.getElementById('depAutoVal').textContent =
+    autoVal != null ? `= R${autoVal.toLocaleString('en-ZA')} per camper` : 'no rates captured yet';
+  document.getElementById('depNote').textContent = isAuto
+    ? 'The deposit follows the accommodation total, so it updates itself whenever a rate or a camp changes.'
+    : 'Using your own figure — the accommodation total is ignored until you switch back.';
+}
+async function setDepositAuto(on){
+  if(!SB) return;
+  const patch = { id:1, deposit_auto:on, updated_at:new Date().toISOString() };
+  if(on){ const t = await accommodationTotal(); if(t != null) patch.deposit_amount = t; }
+  await SB.from('trip_settings').upsert(patch, { onConflict:'id' });
+  loadCosts();
+}
+document.getElementById('depAutoBtn')?.addEventListener('click', ()=>setDepositAuto(true));
+document.getElementById('depManualBtn')?.addEventListener('click', ()=>setDepositAuto(false));
+
 document.getElementById('adminSaveSettings')?.addEventListener('click', async ()=>{
   if(!SB) return;
   const btn = document.getElementById('adminSaveSettings');
-  await SB.from('trip_settings').upsert({ id:1, deposit_amount:parseFloat(document.getElementById('adminDepAmt').value)||null, collection_deadline:document.getElementById('adminDeadline').value||null, updated_at:new Date().toISOString() },{ onConflict:'id' });
+  const manual = { id:1, collection_deadline:document.getElementById('adminDeadline').value||null, updated_at:new Date().toISOString() };
+  if(!document.getElementById('adminDepAmt').disabled){
+    manual.deposit_amount = parseFloat(document.getElementById('adminDepAmt').value)||null;
+    manual.deposit_auto = false;   // typing your own number switches off tracking
+  }
+  await SB.from('trip_settings').upsert(manual,{ onConflict:'id' });
   btn.textContent='Saved ✓'; setTimeout(()=>btn.textContent='Save deposit settings',2000);
   loadCosts();
 });
@@ -2142,11 +2273,13 @@ async function loadPlanning(){
     sec.style.display='none';
     document.getElementById('gatePlanLink').style.display='none';
     document.getElementById('hqTab').style.display='none';
+    syncSideNav();
     return;
   }
   sec.style.display='';
   document.getElementById('gatePlanLink').style.display='';
   document.getElementById('hqTab').style.display='inline-flex';
+  syncSideNav();
   const [crew, invites, bookings, alts, items, payments, settings, account] = await Promise.all([
     SB.from('crew').select('id,email,display_name,role').order('created_at'),
     SB.from('invites').select('*').order('created_at'),
@@ -2591,6 +2724,30 @@ function geoShowRoute(r, show){
   const layer = r==='1' ? GEO.r1Layer : GEO.r2Layer;
   if(show) layer.addTo(GEO.map); else GEO.map.removeLayer(layer);
 }
+/* ============ SIDE NAV — scroll spy ============ */
+function initSideNav(){
+  const links = [...document.querySelectorAll('#sidenav a')];
+  const secs  = links.map(a=>document.getElementById(a.dataset.sec)).filter(Boolean);
+  const spy = ()=>{
+    const mark = window.scrollY + window.innerHeight*0.35;
+    const shown = secs.filter(s=>s.offsetParent !== null);   // hidden sections don't count
+    let cur = shown[0]?.id ?? null;                          // above the fold → first section
+    shown.forEach(s=>{ if(s.offsetTop <= mark) cur = s.id; });
+    links.forEach(a=>a.classList.toggle('on', a.dataset.sec === cur));
+  };
+  window.addEventListener('scroll', spy, { passive:true });
+  window.addEventListener('resize', spy);
+  spy();
+  window.__navSpy = spy;
+}
+// sections that appear only for certain people
+function syncSideNav(){
+  const p = document.getElementById('navPlanning'), t = document.getElementById('navTriplog');
+  if(p) p.style.display = document.getElementById('planning').style.display === 'none' ? 'none' : 'flex';
+  if(t) t.style.display = document.getElementById('triplog').style.display === 'none' ? 'none' : 'flex';
+  window.__navSpy?.();
+}
+
 /* ============ SCROLL REVEAL + RAIL + ANIM ============ */
 const io=new IntersectionObserver(es=>{
   es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);
@@ -2609,6 +2766,7 @@ window.addEventListener('scroll',()=>{
   updateAuthUI();      // set initial UI state (not signed in)
   updateGate();        // sync registration gate
   rememberedPrefill(); // this device knows you — pre-fill email + one-tap re-send
+  initSideNav();       // left rail: where you are, and jump anywhere
   initGeoMap();        // real geographic route map (Leaflet)
   loadTripPublic();    // decided departure date + locked route (public)
   observeAll();
