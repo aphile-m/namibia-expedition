@@ -88,15 +88,6 @@ h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:600;line-height:1.05;tex
 .hero h1 .ln:nth-child(2) span{animation-delay:.55s;color:var(--ochre-bright)}
 @keyframes up{from{transform:translateY(110%)}to{transform:translateY(0)}}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.hero-depart{margin-top:30px;animation:fade 1s .75s both}
-.hero-depart .hd-label{display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.36em;
-  font-size:.66rem;color:var(--ochre-bright);margin-bottom:8px}
-.hero-depart b{display:block;font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;
-  font-size:clamp(1.5rem,4.4vw,2.9rem);letter-spacing:.03em;color:var(--bone);
-  text-shadow:0 4px 26px rgba(0,0,0,.6);line-height:1.05}
-.hero-depart .hd-count{display:inline-block;margin-top:10px;font-family:'Oswald',sans-serif;text-transform:uppercase;
-  letter-spacing:.2em;font-size:.68rem;color:#fff;background:rgba(192,81,43,.85);
-  border:1px solid rgba(236,224,204,.28);padding:5px 14px;border-radius:20px}
 .hero-meta{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;margin-top:26px;animation:fade 1s .9s both}
 .hero-meta div{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.16em;font-size:.82rem}
 .hero-meta b{display:block;font-size:1.5rem;color:var(--bone);letter-spacing:.04em;font-weight:600}
@@ -643,11 +634,6 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
       <span class="ln"><span>Southern Namibia</span></span>
       <span class="ln"><span>&amp; The Kalahari</span></span>
     </h1>
-    <div class="hero-depart" id="heroDepart">
-      <span class="hd-label">Wheels turning</span>
-      <b id="heroDepartDate">Thursday, 24 September 2026</b>
-      <span class="hd-count" id="heroCountdown"></span>
-    </div>
     <div class="hero-meta">
       <div><b>8</b><span>Days</span></div>
       <div><b>2</b><span>Rest Days</span></div>
@@ -767,11 +753,6 @@ tr.bk-editing{background:rgba(219,162,63,.05)}
       <span class="ln"><span>Southern Namibia</span></span>
       <span class="ln"><span>&amp; The Kalahari</span></span>
     </h1>
-    <div class="hero-depart" id="heroDepart">
-      <span class="hd-label">Wheels turning</span>
-      <b id="heroDepartDate">Thursday, 24 September 2026</b>
-      <span class="hd-count" id="heroCountdown"></span>
-    </div>
     <div class="hero-meta">
       <div><b>8</b><span>Days</span></div>
       <div><b>2</b><span>Rest Days</span></div>
@@ -1672,13 +1653,12 @@ async function loadTripPublic(){
 function renderHeroDate(){
   if(!TRIP?.departure_date) return;
   const dep = new Date(TRIP.departure_date+'T00:00:00');
-  const big = document.getElementById('heroDepartDate');
-  if(big) big.textContent = dep.toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const cd = document.getElementById('heroCountdown');
-  if(cd){
-    const days = Math.ceil((dep - new Date(new Date().toDateString()))/86400000);
-    cd.textContent = days > 1 ? `${days} days to go` : days === 1 ? 'Tomorrow' : days === 0 ? 'Today — wheels turning' : 'On the road';
+  let el = document.getElementById('heroDep');
+  if(!el){
+    el = document.createElement('div'); el.id='heroDep';
+    document.querySelector('.hero-meta').appendChild(el);   // sits after the km stat
   }
+  el.innerHTML = `<b>${fmtDay(dep)}</b><span>Departure ${dep.getFullYear()}</span>`;
 }
 
 function applyRouteLock(){
