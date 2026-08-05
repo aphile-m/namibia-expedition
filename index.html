@@ -169,7 +169,6 @@ svg.map{width:100%;height:auto;display:block}
 .lb-link{color:var(--ochre-bright);text-decoration:none;margin-left:auto}
 body.live-mode{padding-top:38px}
 /* trip log */
-#triplog{border-top:1px solid var(--line)}
 .tl-day{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:10px;
   padding:24px 26px;margin-bottom:20px;box-shadow:var(--shadow)}
 .tl-day.today{border-color:rgba(221,98,51,.55)}
@@ -288,35 +287,6 @@ body.live-mode{padding-top:38px}
 .callout h5{font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:.66rem;color:var(--ochre-bright);margin-bottom:5px}
 .callout.warn h5{color:var(--rust-bright)}
 .callout p{font-size:.92rem;margin:0;color:var(--bone-dim)}
-
-/* ---------- road home cards ---------- */
-.split{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.routecard{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);
-  border-radius:10px;overflow:hidden;box-shadow:var(--shadow);transition:.4s}
-.routecard:hover{transform:translateY(-4px)}
-.rc-top{padding:30px 28px 24px;position:relative;overflow:hidden;min-height:165px;display:flex;flex-direction:column;justify-content:flex-end}
-.r1 .rc-top{background:linear-gradient(135deg,#2c4a4f,#16201f)}
-.r2 .rc-top{background:linear-gradient(135deg,#3a3f24,#1a1c12)}
-.rc-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:saturate(.92) contrast(1.04) brightness(.78)}
-.rc-top::after{content:'';position:absolute;inset:0;z-index:1}
-.r1 .rc-top::after{background:linear-gradient(135deg,rgba(91,151,160,.5),rgba(21,17,13,.82))}
-.r2 .rc-top::after{background:linear-gradient(135deg,rgba(134,145,80,.5),rgba(21,17,13,.82))}
-.rc-top .tag{font-family:'Oswald';text-transform:uppercase;letter-spacing:.28em;font-size:.66rem;position:relative;z-index:2}
-.r1 .rc-top .tag{color:var(--teal-bright)}.r2 .rc-top .tag{color:var(--green-bright)}
-.rc-top h3{font-size:1.7rem;margin:6px 0 2px;position:relative;z-index:2}
-.rc-top .sub{font-style:italic;color:rgba(236,224,204,.88);font-size:.98rem;position:relative;z-index:2}
-.rc-pitch{padding:18px 28px;font-size:.97rem;color:var(--bone-dim);border-bottom:1px solid var(--line);font-style:italic}
-.leglist{padding:8px 28px 22px}
-.legrow{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--line-soft)}
-.legrow:last-child{border-bottom:none}
-.legrow .d{font-family:'Oswald';font-weight:700;font-size:.7rem;letter-spacing:.18em;
-  color:var(--muted);min-width:46px;padding-top:3px}
-.legrow .info b{font-family:'Oswald';text-transform:uppercase;letter-spacing:.04em;font-size:.98rem;color:var(--bone);display:block}
-.legrow .info span{font-size:.86rem;color:var(--bone-dim)}
-.legrow .km{margin-left:auto;text-align:right;font-family:'Oswald';white-space:nowrap}
-.legrow .km b{font-size:1rem;color:var(--ochre-bright);display:block}
-.legrow .km.hard b{color:var(--rust-bright)}
-.legrow .km span{font-size:.6rem;letter-spacing:.18em;color:var(--muted)}
 
 /* matrix */
 .matrix{margin-top:36px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg2)}
@@ -564,6 +534,7 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
 /* optional activities on the day cards */
 .acts{margin-top:16px;border-top:1px solid var(--line-soft);padding-top:14px}
 .acts h5{font-family:'Oswald';text-transform:uppercase;letter-spacing:.18em;font-size:.62rem;color:var(--teal-bright);margin-bottom:9px}
+.acts.daylive h5{color:var(--rust-bright)}
 .act{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line-soft)}
 .act:last-child{border-bottom:none}
 .act .an{font-family:'Oswald';text-transform:uppercase;letter-spacing:.03em;font-size:.82rem;color:var(--bone)}
@@ -629,9 +600,6 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
 .opt.closed.mine:hover,.opt.closed.lead:hover{border-color:inherit}
 .lock-badge{position:absolute;top:14px;right:14px;z-index:3;font-family:'Oswald',sans-serif;text-transform:uppercase;
   letter-spacing:.14em;font-size:.6rem;padding:5px 10px;border-radius:20px;background:var(--green);color:#10100c;font-weight:600}
-.routecard.not-taken{opacity:.5;filter:saturate(.65)}
-.routecard.not-taken:hover{transform:none}
-.routecard.not-taken .lock-badge{background:rgba(0,0,0,.55);color:var(--bone-dim);border:1px solid var(--line);font-weight:400}
 .tg.dead{opacity:.35;cursor:not-allowed;text-decoration:line-through}
 .day .date{color:var(--ochre-bright)}
 /* swipeable day galleries */
@@ -655,10 +623,8 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
   <a href="#laws"    data-sec="laws"><i></i><span>The Laws</span></a>
   <a href="#map"     data-sec="map"><i></i><span>Route Map</span></a>
   <a href="#days"    data-sec="days"><i></i><span>Daily Guide</span></a>
-  <a href="#roadhome" data-sec="roadhome"><i></i><span>The Road Home</span></a>
   <a href="#roster"  data-sec="roster"><i></i><span>Crew</span></a>
   <a href="#costs"   data-sec="costs"><i></i><span>Costs</span></a>
-  <a href="#triplog" data-sec="triplog" id="navTriplog" style="display:none"><i></i><span>Trip Log</span></a>
   <a href="#planning" data-sec="planning" id="navPlanning" style="display:none"><i></i><span>Planning HQ</span></a>
 </nav>
 <a id="hqTab" href="#planning">⚙ Planning HQ <span class="pct" id="hqTabPct" style="display:none"></span></a>
@@ -670,7 +636,7 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
   <span class="lb-leg" id="lbLeg"></span>
   <span class="lb-count" id="lbCount"></span>
   <button id="lbCheckin" style="display:none">📍 Check in</button>
-  <a href="#triplog" class="lb-link">Trip log ↓</a>
+  <a href="#days" class="lb-link">Today ↓</a>
 </div>
 
 <!-- place picker for photos without EXIF location -->
@@ -737,7 +703,9 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
                     <a href="#roster">Crew roster</a>
           <a href="#costs">Costs &amp; deposit</a>
           <a href="#planning" id="gatePlanLink" style="display:none">Trip planning</a>
+          <button class="authbtn sec" id="signOutBtn" style="padding:7px 14px;font-size:.68rem">Sign out</button>
         </div>
+        <div id="stateLinkSent" style="display:none"><span class="authnote">✓ Check your email — tap the link to sign in</span></div>
       </div>
     </div>
     <div class="reveal" id="gateStatsPanel">
@@ -824,6 +792,18 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
       </div>
       <div class="surfnote">Estimates drawn from the leg descriptions &amp; route geography — confirm against live road reports before departure.</div>
     </div>
+        <div class="chart reveal">
+      <h4>Where the Driving Lands</h4>
+      <div class="csub">Hours behind the wheel across the eight days — the two flat bars are the rest days.</div>
+      <div class="bargrp"><div class="barlabel"><span>Day 1 · Joburg → Kuruman</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="57">6.0 hrs</div></div></div>
+      <div class="bargrp"><div class="barlabel"><span>Day 2 · Kuruman → Fish River Canyon</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="71">7.5 hrs</div></div></div>
+      <div class="bargrp"><div class="barlabel"><span>Day 3 · Canyon rest day</span></div><div class="bartrack"><div class="barfill bf-r1" data-w="4">—</div></div></div>
+      <div class="bargrp"><div class="barlabel"><span>Day 4 · Canyon → Sesriem via Aus</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="62">6.5 hrs</div></div></div>
+      <div class="bargrp"><div class="barlabel"><span>Day 5 · Sossusvlei dune day</span></div><div class="bartrack"><div class="barfill bf-r1" data-w="12">park only</div></div></div>
+      <div class="bargrp"><div class="barlabel"><span>Day 6 · Sesriem → Gobabis</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="62">6.5 hrs</div></div></div>
+      <div class="bargrp"><div class="barlabel"><span>Day 7 · Gobabis → Gaborone</span></div><div class="bartrack"><div class="barfill bf-hard" data-w="100">10.5 hrs · the crush</div></div></div>
+      <div class="bargrp"><div class="barlabel"><span>Day 8 · Gaborone → Joburg</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="43">4.5 hrs</div></div></div>
+    </div>
   </div>
 </section>
 
@@ -840,71 +820,6 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
 </section>
 
 <!-- ===================== THE ROAD HOME ===================== -->
-<section id="roadhome">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="eyebrow">Days 6–8</div>
-      <h2>The Road Home</h2>
-      <p>From Sesriem the convoy turns east: one gravel-to-tar transit, one long Kalahari push, and a short hop home. All on paved highway from Gobabis onward.</p>
-    </div>
-    <div class="split reveal" style="grid-template-columns:1fr">
-      <div class="routecard r2">
-        <div class="rc-top">
-          <img class="rc-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Quiver-Tree-Forest-2015.JPG?width=1100" alt="Quiver tree forest" loading="lazy" onerror="this.style.display='none'">
-          <div class="tag">The Return</div>
-          <h3>Across the Kalahari</h3>
-          <div class="sub">Sesriem → Gobabis → Gaborone → home</div>
-        </div>
-        <div class="rc-pitch">Straight across Botswana — maximum wild bush transit, and a short final morning so the last day is a lunch arrival, not a slog.</div>
-        <div class="leglist">
-          <div class="legrow"><div class="d">Day 6</div><div class="info"><b>&rarr; Gobabis</b><span>Diagonally across the central plateau, the last Namibian gravel then paved highway east. Zelda Game Cabin.</span></div><div class="km"><b>560 km</b><span>~6.5 hrs</span></div></div>
-          <div class="legrow"><div class="d">Day 7</div><div class="info"><b>&rarr; Gaborone (The Big Crush)</b><span>Sunrise-to-sunset across the width of Botswana on the Trans-Kalahari — wheels at 06:30 to clear Buitepos. Rotate drivers.</span></div><div class="km hard"><b>882 km</b><span>~10.5 hrs</span></div></div>
-          <div class="legrow"><div class="d">Day 8</div><div class="info"><b>&rarr; Johannesburg</b><span>A quick N4 dash via Tlokweng — back on the highveld by lunch, full afternoon to clean the rigs and wind down.</span></div><div class="km"><b>350 km</b><span>~4.5 hrs</span></div></div>
-        </div>
-        <div class="rc-surfline">Full circuit &asymp; <b>81% tar</b> · <span class="g">13% gravel</span> · <span class="c">6% corrugated</span></div>
-      </div>
-    </div>
-
-    <!-- INTENSITY CHART -->
-    <div class="chart reveal">
-      <h4>Where the Driving Lands</h4>
-      <div class="csub">Hours behind the wheel across the eight days — the two flat bars are the rest days.</div>
-      <div class="bargrp"><div class="barlabel"><span>Day 1 · Joburg → Kuruman</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="57">6.0 hrs</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 2 · Kuruman → Fish River Canyon</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="71">7.5 hrs</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 3 · Canyon rest day</span></div><div class="bartrack"><div class="barfill bf-r1" data-w="4">—</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 4 · Canyon → Sesriem via Aus</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="62">6.5 hrs</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 5 · Sossusvlei dune day</span></div><div class="bartrack"><div class="barfill bf-r1" data-w="12">park only</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 6 · Sesriem → Gobabis</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="62">6.5 hrs</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 7 · Gobabis → Gaborone</span></div><div class="bartrack"><div class="barfill bf-hard" data-w="100">10.5 hrs · the crush</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 8 · Gaborone → Joburg</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="43">4.5 hrs</div></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== CREW ACCESS ===================== -->
-<section id="crew" style="padding-bottom:0">
-  <div class="wrap">
-    <div class="namebar reveal" id="authPanel">
-      <div id="stateSignIn">
-        <label class="namebar" style="margin-bottom:6px;display:block">Crew Member</label>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <input id="authEmail" type="email" placeholder="Enter your email to sign in…" autocomplete="email"
-            style="flex:1;min-width:200px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--bone);padding:9px 12px;font-size:.95rem">
-          <button class="authbtn" id="sendLinkBtn">Send magic link →</button>
-        </div>
-      </div>
-      <div id="stateLinkSent" style="display:none">
-        <span class="authnote">✓ Check your email — tap the link to sign in</span>
-      </div>
-      <div id="stateSignedIn" style="display:none;align-items:center;gap:14px;flex-wrap:wrap">
-        <label class="namebar" style="margin:0">Crew Member</label>
-        <span class="namebar who" id="whoLabel" style="flex:1">—</span>
-        <button class="authbtn sec" id="signOutBtn">Sign out</button>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ONBOARDING MODAL (first login) -->
 <div id="onboardOverlay">
   <div id="onboardModal">
@@ -1141,19 +1056,6 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
   </div>
 </section>
 
-<!-- ===================== TRIP LOG (Phase 11 · live) ===================== -->
-<section id="triplog" style="display:none">
-  <div class="wrap">
-    <div class="sec-head reveal in">
-      <div class="eyebrow">On The Road</div>
-      <h2>The Trip Log</h2>
-      <p id="tlSub">Live from the convoy — check-ins and photos as each day unfolds.</p>
-    </div>
-    <div id="tlLocked" style="display:none;padding:24px;color:var(--muted);font-size:.9rem">Sign in to follow the live trip log.</div>
-    <div id="tlDays"></div>
-  </div>
-</section>
-
 <footer>
   <div class="mark">▲ ▲ ▲</div>
   Wheels turning by 08:00 · Fuel at every opportunity · Bring it home
@@ -1359,6 +1261,30 @@ const days = [
 ];
 
 const dayCards = document.getElementById('dayCards');
+/* Once the trip starts, each day carries its own roll call and photo
+   wall — no separate log to cross-reference. */
+function liveBlock(dayNo){
+  const today = tripDay();
+  if(today < 1 || dayNo > Math.min(today, 8)) return '';   // days that have happened
+  if(!AUTH_USER) return '';
+  const cis = LIVE.checkins.filter(c=>c.day===dayNo);
+  const phs = LIVE.photos.filter(p=>p.day===dayNo);
+  const canPost = !!(CREW_ROW && !isViewer());
+  const chips = cis.map(c=>`<span class="chip">${esc(LIVE.names[c.crew_id]||'?')}</span>`).join('')
+    || '<span style="color:var(--muted);font-size:.8rem">no check-ins yet</span>';
+  const photos = phs.map(p=>{
+    const url = `${SUPABASE_URL}/storage/v1/object/public/trip-photos/${p.storage_path}`;
+    const meta = [LIVE.names[p.crew_id], p.place_name].filter(Boolean).map(esc).join(' · ');
+    return `<div class="tl-photo" onclick="window.open('${url}','_blank')"><img src="${url}" loading="lazy" alt="Trip photo"><div class="ph-meta"><b>${meta||'—'}</b></div></div>`;
+  }).join('');
+  return `<div class="acts daylive">
+    <h5>${dayNo===today?'● Live today':'On the road'} — day ${dayNo}</h5>
+    <div class="tl-checkins"><span class="cnt">${cis.length}/${LIVE.crewCount} checked in</span>${chips}</div>
+    ${photos?`<div class="tl-photos">${photos}</div>`:''}
+    ${canPost?`<button class="tl-upload" onclick="tlUpload(${dayNo})">📷 Add a photo · Day ${dayNo}</button>`:''}
+  </div>`;
+}
+
 // optional things to do at this stop — from the planning table, public
 function activitiesBlock(dayNo){
   const list = ACTS[dayNo];
@@ -1418,6 +1344,7 @@ function renderDayCards(instant){
       <div class="stay">${stayLabel(i+1, d.stay)}</div>
       <p>${d.body}</p>
       ${activitiesBlock(i+1)}
+      ${liveBlock(i+1)}
       ${co}
     </div>`;
   const el = document.createElement('div');
@@ -1484,15 +1411,9 @@ async function loadCrewRow(){
 }
 
 function updateAuthUI(){
-  const si = !!AUTH_USER;
-  document.getElementById('stateSignIn').style.display    = si ? 'none' : '';
-  document.getElementById('stateLinkSent').style.display  = 'none';
-  const siDiv = document.getElementById('stateSignedIn');
-  siDiv.style.display = si ? 'flex' : 'none';
-  if(si && CREW_ROW)
-    document.getElementById('whoLabel').innerHTML = `Signed in as <b>${CREW_ROW.display_name}</b>`;
-  // Admin-only reset
-  const isAdmin = AUTH_USER?.email === 'aphilem@gmail.com';
+  // one auth surface: the gate. Signed-in state is handled in updateGate().
+  const ls = document.getElementById('stateLinkSent');
+  if(ls && AUTH_USER) ls.style.display = 'none';
 }
 
 /* ---- session handling: remember this device ----
@@ -1531,27 +1452,11 @@ function rememberedPrefill(){
   try { email = localStorage.getItem('namibia-known-email')||''; name = localStorage.getItem('namibia-known-name')||''; } catch(e){}
   if(!email) return;
   const ge = document.getElementById('gateEmail'); if(ge && !ge.value) ge.value = email;
-  const ae = document.getElementById('authEmail'); if(ae && !ae.value) ae.value = email;
   const sub = document.querySelector('.gate-sub');
   if(sub) sub.innerHTML = `Welcome back${name?', <b style="color:var(--ochre-bright)">'+esc(name)+'</b>':''} — this device is remembered. One tap below and a fresh sign-in link lands in your inbox.`;
   const btn = document.getElementById('gateSendBtn'); if(btn) btn.textContent = 'Send my sign-in link →';
 }
 
-// Send magic link
-document.getElementById('sendLinkBtn')?.addEventListener('click', async ()=>{
-  const email = document.getElementById('authEmail').value.trim();
-  if(!email){ document.getElementById('authEmail').focus(); return; }
-  const { error } = await SB.auth.signInWithOtp({
-    email, options:{ emailRedirectTo: window.location.href }
-  });
-  if(!error){
-    document.getElementById('stateSignIn').style.display   = 'none';
-    document.getElementById('stateLinkSent').style.display = '';
-  } else { console.warn(error); }
-});
-document.getElementById('authEmail')?.addEventListener('keydown', e=>{
-  if(e.key==='Enter') document.getElementById('sendLinkBtn').click();
-});
 
 // Sign out
 document.getElementById('signOutBtn')?.addEventListener('click', ()=> SB.auth.signOut());
@@ -1665,14 +1570,9 @@ function renderHeroDate(){
 }
 
 function applyRouteLock(){
-  // the route is final — draw the homeward leg and badge the card
+  // the route is final — just draw the homeward leg
   geoShowRoute('2', true);
   if(GEO) GEO.setFrame(['joburg','kuruman','hobas','aus','sesriem','gaborone']);
-  const win = document.querySelector('.routecard.r2');
-  if(win && !win.querySelector('.lock-badge')){
-    const b=document.createElement('div'); b.className='lock-badge'; b.textContent='✓ Locked in';
-    win.querySelector('.rc-top').appendChild(b);
-  }
 }
 
 /* Which stays actually count toward planning progress and the cost
@@ -1720,24 +1620,16 @@ function startLive(){
     document.getElementById('lbDay').textContent = d;
     document.getElementById('lbLeg').textContent = LEGS[d].t;
   }
-  const started = d>=1;                     // live now, or the archive afterwards
-  document.getElementById('triplog').style.display = started ? '' : 'none';
-  syncSideNav();
-  if(started){
-    document.getElementById('tlSub').textContent = live
-      ? 'Live from the convoy — check-ins and photos as each day unfolds.'
-      : 'The record of the trip — every check-in and photo, day by day.';
-    loadLive();
-  }
+  if(d >= 1) loadLive();                       // live now, or the record afterwards
   if(live && !location.hash && !window.__liveScrolled){
-    window.__liveScrolled = true;   // open on today's part of the page, once
-    setTimeout(()=>document.getElementById('triplog')?.scrollIntoView({ behavior:'smooth' }), 700);
+    window.__liveScrolled = true;              // open on today's card, once
+    setTimeout(()=>document.getElementById('day'+d)?.scrollIntoView({ behavior:'smooth', block:'start' }), 700);
   }
 }
 
 async function loadLive(){
   if(tripDay()<1) return;
-  if(!SB || !AUTH_USER){ renderLiveBar(); renderTripLog(); return; }
+  if(!SB || !AUTH_USER){ renderLiveBar(); renderDayCards(true); return; }
   const [ci, ph, cr] = await Promise.all([
     SB.from('check_ins').select('*'),
     SB.from('trip_photos').select('*').order('created_at'),
@@ -1747,7 +1639,7 @@ async function loadLive(){
   LIVE.photos    = ph.data || [];
   LIVE.names     = Object.fromEntries((cr.data||[]).map(c=>[c.id, c.display_name]));
   LIVE.crewCount = (cr.data||[]).filter(c=>c.role!=='viewer').length;
-  renderLiveBar(); renderTripLog();
+  renderLiveBar(); renderDayCards(true); observeAll();
   if(!LIVE.subscribed){
     LIVE.subscribed = true;
     SB.channel('live-stream')
@@ -1772,34 +1664,6 @@ function renderLiveBar(){
   }
 }
 
-function renderTripLog(){
-  const host = document.getElementById('tlDays');
-  const locked = document.getElementById('tlLocked');
-  if(!AUTH_USER){ locked.style.display='block'; host.innerHTML=''; return; }
-  locked.style.display='none';
-  const top = Math.min(tripDay(), 8);
-  const canPost = !!(CREW_ROW && !isViewer());
-  let html = '';
-  for(let day=top; day>=1; day--){
-    const cis = LIVE.checkins.filter(c=>c.day===day);
-    const phs = LIVE.photos.filter(p=>p.day===day);
-    const date = TRIP?.departure_date ? fmtDay(addDays(TRIP.departure_date, day-1)) : '';
-    const isToday = day===tripDay();
-    html += `<div class="tl-day ${isToday?'today':''}">
-      <div class="tl-head"><b>Day ${day} · ${LEGS[day].t}</b>${isToday?'<span class="tl-live">● live</span>':''}<span class="tl-date">${date}</span></div>
-      <div class="tl-checkins"><span class="cnt">${cis.length}/${LIVE.crewCount} checked in</span>${
-        cis.map(c=>`<span class="chip">${esc(LIVE.names[c.crew_id]||'?')}</span>`).join('') ||
-        '<span style="color:var(--muted);font-size:.8rem">no check-ins yet</span>'}</div>
-      <div class="tl-photos">${phs.map(p=>{
-        const url = `${SUPABASE_URL}/storage/v1/object/public/trip-photos/${p.storage_path}`;
-        const meta = [LIVE.names[p.crew_id], p.place_name].filter(Boolean).map(esc).join(' · ');
-        return `<div class="tl-photo" onclick="window.open('${url}','_blank')"><img src="${url}" loading="lazy" alt="Trip photo"><div class="ph-meta"><b>${meta||'—'}</b></div></div>`;
-      }).join('')}</div>
-      ${canPost?`<button class="tl-upload" onclick="tlUpload(${day})">📷 Add a photo · Day ${day}</button>`:''}
-    </div>`;
-  }
-  host.innerHTML = html;
-}
 
 /* ---- check in (crew only; location is best-effort) ---- */
 document.getElementById('lbCheckin')?.addEventListener('click', async ()=>{
@@ -1927,7 +1791,12 @@ function updateGate(){
   const gs = document.getElementById('gateSigned');
   gs.style.display = signedIn ? 'flex' : 'none';
   if(signedIn) document.getElementById('gateWhoName').textContent = CREW_ROW.display_name || AUTH_USER.email;
-  if(CONFIGURED) loadGateStats();
+  // crew counts live on the roster once you're in — here they're just the hook
+  const stats = document.getElementById('gateStatsPanel');
+  if(stats) stats.style.display = signedIn ? 'none' : '';
+  const wrap = document.querySelector('#gate .wrap');
+  if(wrap) wrap.style.gridTemplateColumns = signedIn ? '1fr' : '';
+  if(CONFIGURED && !signedIn) loadGateStats();
 }
 async function loadGateStats(){
   if(!SB) return;
@@ -1945,8 +1814,6 @@ document.getElementById('gateSendBtn')?.addEventListener('click', async ()=>{
     document.getElementById('gateEmail').disabled = true;
     document.getElementById('gateSendBtn').disabled = true;
     document.getElementById('gateLinkSent').style.display = 'block';
-    document.getElementById('stateLinkSent').style.display = 'block';
-    document.getElementById('stateSignIn').style.display = 'none';
   }
 });
 document.getElementById('gateEmail')?.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('gateSendBtn').click(); });
@@ -2642,9 +2509,9 @@ const WAYPOINTS = {
   hobas:   { ll:[-27.6206, 17.7636], name:'Fish River Canyon', sub:'Days 2–3 · Hobas',      short:'D2-3',go:'day2' },
   aus:     { ll:[-26.6700, 16.2600], name:'Aus',               sub:'Day 4 · Wild horses',   short:'AUS',go:'day4' },
   sesriem: { ll:[-24.4880, 15.8000], name:'Sesriem',           sub:'Days 4–5 · Sossusvlei', short:'D4-5',go:'day4' },
-  swakop:  { ll:[-22.6784, 14.5258], name:'Swakopmund',        sub:'Route 1',               short:'R1',  go:'roadhome', cls:'r1' },
-  gobabis: { ll:[-22.4500, 18.9667], name:'Gobabis',           sub:'Day 6 · Zelda',         short:'D6',  go:'roadhome' },
-  gaborone:{ ll:[-24.6282, 25.9231], name:'Gaborone',          sub:'Day 7 · Gaborone',      short:'D7',  go:'roadhome', cls:'r2' },
+  swakop:  { ll:[-22.6784, 14.5258], name:'Swakopmund',        sub:'Route 1',               short:'R1',  go:'day6', cls:'r1' },
+  gobabis: { ll:[-22.4500, 18.9667], name:'Gobabis',           sub:'Day 6 · Zelda',         short:'D6',  go:'day7' },
+  gaborone:{ ll:[-24.6282, 25.9231], name:'Gaborone',          sub:'Day 7 · Gaborone',      short:'D7',  go:'day7', cls:'r2' },
 };
 let GEO = null;   // { map, r1Layer, r2Layer } once Leaflet is up
 function initGeoMap(){
@@ -2742,9 +2609,8 @@ function initSideNav(){
 }
 // sections that appear only for certain people
 function syncSideNav(){
-  const p = document.getElementById('navPlanning'), t = document.getElementById('navTriplog');
+  const p = document.getElementById('navPlanning');
   if(p) p.style.display = document.getElementById('planning').style.display === 'none' ? 'none' : 'flex';
-  if(t) t.style.display = document.getElementById('triplog').style.display === 'none' ? 'none' : 'flex';
   window.__navSpy?.();
 }
 
