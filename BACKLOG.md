@@ -113,3 +113,41 @@ without any crew powers (no voting, roster edits, or payments).
 - Photo upload attaches a location automatically from EXIF when present,
   otherwise via place search or current location, and photos appear on the
   right day with place labels.
+
+## 3. Ecosystems and rest stops on the driving legs
+
+**Goal:** make the driving days read as an experience rather than a
+distance. Each leg should show the ecosystems it crosses and where the
+convoy will actually stop, with stop time built into the quoted hours.
+
+**Ecosystems along the route:**
+- Per-leg biome segments (highveld grassland → Kalahari thornveld → Nama
+  Karoo → succulent Karoo / Gariep → pro-Namib gravel plains → Namib sand
+  sea → Kalahari sandveld). Render as a banded strip on the day card in
+  the same visual language as the existing surface-mix bar, so a leg shows
+  *what you drive through*, not just what you drive on.
+- Short note per band: what to look for (quiver trees, camelthorn, welwitschia,
+  oryx/springbok, the wild horses at Garub, raptors on the Trans-Kalahari).
+- Optionally colour the map polyline by biome, or drop biome markers on it.
+
+**Rest stops built into the timing:**
+- Model a stop as ~30 min every 2–3 hours of driving. Store per-leg stops
+  (name, km from start, type: fuel / view / meal / leg-stretch, facilities,
+  coordinates) rather than deriving them, so real places are named.
+- Day cards should then quote **driving time + stop time = door-to-door
+  time** (e.g. Day 2: 7.5 hrs driving + 1.5 hrs stops ≈ 9 hrs, wheels at
+  06:30, arrive ~15:30). Update the driving-hours chart to stack the two.
+- Show the stops on the route map as small waypoints along the leg, and
+  list them on the day card in order with their km mark.
+- Candidate anchors already known: Upington and Nakop (Day 2), Seeheim,
+  Aus/Garub and Helmeringhausen (Day 4), Solitaire and Rehoboth/Windhoek
+  (Day 6), Ghanzi and Kang (Day 7).
+- Sense-check each long leg against the 8-hour law once stop time is
+  included — Day 7 (882 km) almost certainly breaks it door-to-door and
+  the site should say so plainly.
+
+**Acceptance:**
+- Every driving day shows its ecosystems and its planned stops.
+- Quoted arrival times account for stops; the chart distinguishes driving
+  from stopped time.
+- Stops appear on the map along the correct leg.
