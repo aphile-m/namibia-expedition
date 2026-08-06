@@ -260,6 +260,23 @@ body.live-mode{padding-top:38px}
 .surfbar{height:9px;border-radius:5px;overflow:hidden;display:flex;background:rgba(255,255,255,.04)}
 .surfseg{height:100%}
 .s-tar{background:#8fa9bf}.s-gravel{background:var(--ochre)}.s-corr{background:var(--rust-bright)}
+/* ecosystems crossed on the leg */
+.e-grass{background:#8a9a4b}.e-thorn{background:#b07d3a}.e-karoo{background:#9c7d63}
+.e-succ{background:#7fa08a}.e-plains{background:#c9a06a}.e-sand{background:#d2802f}
+.e-savanna{background:#a89a52}.e-river{background:#5b97a0}.e-kal{background:#c08a4a}.e-bush{background:#7d8f4e}
+/* planned stops */
+.stops{margin-top:16px}
+.stoplabel{font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:.58rem;color:var(--muted);margin-bottom:8px}
+.stop{display:flex;gap:10px;align-items:baseline;padding:5px 0;font-size:.86rem;color:var(--bone-dim)}
+.stop .km{font-family:'Oswald';font-size:.62rem;letter-spacing:.08em;color:var(--ochre-bright);min-width:52px}
+.stop b{color:var(--bone);font-weight:500}
+.stop i{font-style:normal;margin-left:auto;font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.56rem;color:var(--muted);white-space:nowrap;padding-left:10px}
+.timing{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 2px;padding:12px 14px;border-radius:6px;
+  background:rgba(255,255,255,.03);border:1px solid var(--line-soft)}
+.timing div span{font-family:'Oswald';font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:block}
+.timing div b{font-family:'Oswald';font-size:1rem;color:var(--bone)}
+.timing .t-total b{color:var(--ochre-bright)}
+.timing .t-warn b{color:var(--rust-bright)}
 .surfkeys{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
 .surfkeys span{font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;font-size:.6rem;color:var(--bone-dim);display:flex;align-items:center;gap:6px}
 .surfkeys i{width:10px;height:10px;border-radius:2px;display:inline-block}
@@ -314,6 +331,9 @@ body.live-mode{padding-top:38px}
 .bf-r1{background:linear-gradient(90deg,#3f6c73,var(--teal-bright))}
 .bf-r2{background:linear-gradient(90deg,#5c6638,var(--green-bright))}
 .bf-hard{background:linear-gradient(90deg,#8a371d,var(--rust-bright))}
+.bf-stop{background:repeating-linear-gradient(45deg,rgba(219,162,63,.55) 0 6px,rgba(219,162,63,.25) 6px 12px)}
+.bartrack{display:flex}
+.barfill.seg{width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
 
 /* ---------- vote ---------- */
 .namebar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:34px;
@@ -755,6 +775,7 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
       <div class="maplegend">
         <span><i style="border-color:var(--ochre)"></i>Days 1–5 · out to the dunes</span>
         <span><i style="border-color:var(--green-bright)"></i>Days 6–8 · the run home</span>
+        <span><i style="border-color:rgba(236,224,204,.5)"></i>Planned stops</span>
       </div>
     </div>
 
@@ -797,15 +818,13 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
     </div>
         <div class="chart reveal">
       <h4>Where the Driving Lands</h4>
-      <div class="csub">Hours behind the wheel across the eight days — the two flat bars are the rest days.</div>
-      <div class="bargrp"><div class="barlabel"><span>Day 1 · Joburg → Kuruman</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="57">6.0 hrs</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 2 · Kuruman → Fish River Canyon</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="71">7.5 hrs</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 3 · Canyon rest day</span></div><div class="bartrack"><div class="barfill bf-r1" data-w="4">—</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 4 · Canyon → Sesriem via Aus</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="62">6.5 hrs</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 5 · Sossusvlei dune day</span></div><div class="bartrack"><div class="barfill bf-r1" data-w="12">park only</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 6 · Sesriem → Gobabis</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="62">6.5 hrs</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 7 · Gobabis → Gaborone</span></div><div class="bartrack"><div class="barfill bf-hard" data-w="100">10.5 hrs · the crush</div></div></div>
-      <div class="bargrp"><div class="barlabel"><span>Day 8 · Gaborone → Joburg</span></div><div class="bartrack"><div class="barfill bf-r2" data-w="43">4.5 hrs</div></div></div>
+      <div class="csub">Door to door across the eight days — solid is driving, hatched is time stopped. The two short bars are the rest days.</div>
+      <div id="driveChart"></div>
+      <div class="surfkeys" style="margin-top:16px">
+        <span><i style="background:var(--green)"></i>Driving</span>
+        <span><i style="background:var(--ochre);opacity:.55"></i>Stops</span>
+        <span><i style="background:var(--rust-bright)"></i>Over 8 hrs driving</span>
+      </div>
     </div>
   </div>
 </section>
@@ -1155,6 +1174,9 @@ const days = [
      {f:'Kalahari Trails, Red Dune Route, Northern Cape, South Africa (20541582945).jpg', t:'Red Dune Country', c:'Kalahari Trails · Wikimedia (CC BY-SA)'},
    ],
    surface:[['tar',530]],
+   eco:[['Highveld grassland',300,'e-grass'],['Kalahari thornveld',230,'e-thorn']],
+   stops:[[130,'Ventersdorp','fuel','Fuel and a first leg-stretch',-26.3167,26.8167],
+          [330,'Vryburg','meal','Lunch stop — last big town before Kuruman',-26.9564,24.7286]],
    badges:[['100% Asphalt','b-asphalt']],route:'N14 via Ventersdorp & Vryburg',
    stay:'Red Sands Country Lodge',
    body:'Pristine, manicured grass stands, private luxury stone ablution blocks, and an exceptional on-site restaurant for the first night out.',
@@ -1167,6 +1189,10 @@ const days = [
      {f:'Fish River Canyon - Dwyka Riples.jpg', t:'Canyon Rock Detail', c:'Fish River Canyon · Wikimedia (CC BY-SA)'},
    ],
    surface:[['tar',540],['gravel',130]],
+   eco:[['Kalahari thornveld',260,'e-thorn'],['Gariep river belt',180,'e-river'],['Nama Karoo',230,'e-karoo']],
+   stops:[[260,'Upington','meal','Fuel and lunch on the Gariep — last cheap fuel in rands',-28.4478,21.2561],
+          [440,'Nakop border','border','Passports, road fund, insurance — allow 45 min',-28.5833,20.0167],
+          [540,'Grünau','fuel','Fuel before the gravel run to the canyon',-27.7333,18.3667]],
    badges:[['Asphalt → Gravel','b-gravel'],['Nakop Border','b-asphalt']],route:'N14 to Upington → Nakop → B1 & C12 gravel corridors',
    stay:'Hobas Campsite (NWR) · night 1 of 2',
    body:'Sitting directly inside the national park gates — unrestricted access to the canyon rim for sunset and sunrise with no gate-closure worries. Clean central ablutions, power, and massive shade trees.',
@@ -1193,6 +1219,10 @@ const days = [
      {f:'Sossusvlei Dune Namib Desert Namibia Luca Galuzzi 2004.JPG', t:'Into the Namib', c:'Luca Galuzzi / Wikimedia (CC BY-SA)'},
    ],
    surface:[['tar',150],['gravel',150],['corr',200]],
+   eco:[['Nama Karoo',110,'e-karoo'],['Succulent Karoo',120,'e-succ'],['Pro-Namib gravel plains',130,'e-plains'],['Namib sand sea fringe',140,'e-sand']],
+   stops:[[110,'Seeheim','fuel','Fuel at the junction — thin pickings after this',-26.85,17.7833],
+          [230,'Garub waterhole','view','The wild horses. Hide overlooks the pan — allow 45 min',-26.6167,16.0],
+          [360,'Helmeringhausen','fuel','Farm-stall fuel stop on the C14',-25.8833,16.8167]],
    badges:[['Corrugated Gravel','b-corr'],['C13 & C27','b-gravel'],['Wildlife Stop','b-asphalt']],
    route:'North via Seeheim & Aus, then the C13/C27 through the NamibRand',
    stay:'Sesriem Campsite (NWR) · night 1 of 2',
@@ -1221,6 +1251,10 @@ const days = [
      {f:'Quiver-Tree-Forest-2015.JPG', t:'Highland Scrub', c:'Wikimedia (CC BY-SA)'},
    ],
    surface:[['gravel',180],['tar',380]],
+   eco:[['Namib escarpment',80,'e-plains'],['Central highland savanna',250,'e-savanna'],['Kalahari sandveld',230,'e-thorn']],
+   stops:[[80,'Solitaire','meal','The apple crumble, and fuel. Non-negotiable',-23.8833,16.0],
+          [330,'Rehoboth','fuel','Fuel on the B1 south of Windhoek',-23.3167,17.0833],
+          [420,'Windhoek bypass','fuel','Resupply — last proper shops before Botswana',-22.5594,17.0832]],
    badges:[['Gravel → Tar','b-gravel'],['Homeward','b-asphalt']],route:'Diagonally across the central plateau to the edge of the Kalahari corridor',
    stay:'Zelda Game Cabin, Gobabis',
    body:'The last of the Namibian gravel, then paved highway east. A game farm stop with a proper bar and a real bed option before the big Botswana push.',
@@ -1232,6 +1266,11 @@ const days = [
      {f:'Kgalagadi Transfrontier Park Gate, Red Dune Route, Northern Cape, South Africa (19917615043).jpg', t:'Kalahari Crossing', c:'Wikimedia (CC BY-SA)'},
    ],
    surface:[['tar',882]],
+   eco:[['Kalahari sandveld',110,'e-thorn'],['Central Kalahari',550,'e-kal'],['Kalahari hardveld',222,'e-savanna']],
+   stops:[[110,'Buitepos / Mamuno','border','Two posts back to back — passports, levy, insurance. 45 min',-22.2667,20.0],
+          [400,'Ghanzi','meal','Fuel and food, the only real town on the Trans-Kalahari',-21.7,21.65],
+          [660,'Kang','fuel','The classic Trans-Kalahari fuel oasis',-23.6667,22.7833],
+          [780,'Jwaneng','fuel','Last fuel before the run into Gaborone',-24.6017,24.7281]],
    badges:[['100% Asphalt','b-asphalt'],['2 Borders','b-corr']],route:'Trans-Kalahari A2 via Buitepos, Ghanzi & Kang',
    stay:'Gaborone',
    body:'Sunrise-to-sunset across the width of Botswana. Wheels at 06:30 to clear Buitepos early, and rotate drivers — this is the one day that runs past the eight-hour rule.',
@@ -1243,6 +1282,9 @@ const days = [
      {f:'Kalahari Trails, Red Dune Route, Northern Cape, South Africa (20541582945).jpg', t:'Last Morning', c:'Wikimedia (CC BY-SA)'},
    ],
    surface:[['tar',350]],
+   eco:[['Kalahari hardveld',150,'e-savanna'],['Bushveld',120,'e-bush'],['Highveld grassland',80,'e-grass']],
+   stops:[[15,'Tlokweng / Kopfontein','border','The last border. Quieter than Skilpadshek — 45 min',-24.65,25.9833],
+          [180,'Zeerust','fuel','Fuel and a final coffee on the N4',-25.5333,26.0833]],
    badges:[['100% Asphalt','b-asphalt'],['Tlokweng Border','b-gravel']],route:'N4 via Tlokweng/Kopfontein — back on the highveld by lunch',
    stay:'Home',
    body:'A short, easy hop to close the circuit. Back in Joburg early enough to wash the dust off the rigs and still have the afternoon.',
@@ -1250,6 +1292,31 @@ const days = [
 ];
 
 const dayCards = document.getElementById('dayCards');
+const fmtHrs = h => (Math.round(h*2)/2).toFixed(1).replace('.0','')+' hrs';
+/* Driving is only part of a day — stops make it door-to-door. Wheels at
+   06:30 (06:00 on the long one), so the card can name an arrival. */
+function timingBlock(d, stopMins){
+  if(d.rest || !d.stops || !d.stops.length) return '';
+  const drive = parseFloat(String(d.time).replace(/[^\d.]/g,'')) || 0;
+  if(!drive) return '';
+  const total = drive + stopMins/60;
+  const start = total > 11 ? 6 : 6.5;                       // earlier wheels on the big day
+  const arrive = start + total;
+  const hhmm = t => `${String(Math.floor(t)).padStart(2,'0')}:${String(Math.round((t%1)*60)).padStart(2,'0')}`;
+  // Law 02 is about time behind the wheel; arriving in the dark is the
+  // separate risk that stop time creates. Flag them separately.
+  const overDrive = drive > 8;
+  const late = arrive >= 18;
+  return `<div class="timing">
+    <div><span>Driving</span><b>${fmtHrs(drive)}</b></div>
+    <div><span>Stops</span><b>${fmtHrs(stopMins/60)}</b></div>
+    <div class="t-total"><span>Door to door</span><b>${fmtHrs(total)}</b></div>
+    <div class="${late?'t-warn':''}"><span>Wheels / arrive</span><b>${hhmm(start)} → ${hhmm(arrive)}</b></div>
+    ${overDrive?'<div class="t-warn"><span>Law 02</span><b>Over 8 hrs driving</b></div>':''}
+    ${late&&!overDrive?'<div class="t-warn"><span>Daylight</span><b>Arrives near dark</b></div>':''}
+  </div>`;
+}
+
 /* Once the trip starts, each day carries its own roll call and photo
    wall — no separate log to cross-reference. */
 function liveBlock(dayNo){
@@ -1310,6 +1377,21 @@ function renderDayCards(instant){
   const surf = d.surface.length
     ? `<div class="surf"><div class="surflabel">Surface mix</div><div class="surfbar">${surfSeg}</div><div class="surfkeys">${surfKeys}</div></div>`
     : '';
+  // what you drive through, not just what you drive on
+  const eco = (d.eco||[]).length ? (()=>{
+    const t = d.eco.reduce((s,e)=>s+e[1],0);
+    return `<div class="surf"><div class="surflabel">Ecosystems crossed</div><div class="surfbar">${
+      d.eco.map(e=>`<div class="surfseg ${e[2]}" style="width:${(e[1]/t*100).toFixed(1)}%"></div>`).join('')
+    }</div><div class="surfkeys">${
+      d.eco.map(e=>`<span><i class="${e[2]}"></i>${e[0]} ${e[1]} km</span>`).join('')
+    }</div></div>`;
+  })() : '';
+  // named stops, and what they do to the day
+  const stopMins = (d.stops||[]).reduce((s,x)=>s + (x[2]==='border'||x[2]==='view' ? 45 : 30), 0);
+  const stops = (d.stops||[]).length ? `<div class="stops"><div class="stoplabel">Planned stops · ${d.stops.length} · ${fmtHrs(stopMins/60)} off the road</div>${
+    d.stops.map(s=>`<div class="stop"><span class="km">${s[0]} km</span><div><b>${esc(s[1])}</b> — ${esc(s[3])}</div><i>${esc(s[2])}</i></div>`).join('')
+  }</div>` : '';
+  const timing = timingBlock(d, stopMins);
   const stats = d.rest
     ? `<div class="stats"><div><b>Rest<span style="font-size:.8rem"> day</span></b><span>No Camp Move</span></div><div><b>${d.restStat[0]}</b><span>${d.restStat[1]}</span></div></div>`
     : `<div class="stats"><div><b>${d.dist}<span style="font-size:.8rem"> km</span></b><span>Distance</span></div><div><b>${d.time}</b><span>Drive Time</span></div></div>`;
@@ -1330,6 +1412,9 @@ function renderDayCards(instant){
       ${stats}
       <div class="badges">${bd}</div>
       ${surf}
+      ${eco}
+      ${timing}
+      ${stops}
       <div class="stay">${stayLabel(i+1, d.stay)}</div>
       <p>${d.body}</p>
       ${activitiesBlock(i+1)}
@@ -1391,6 +1476,31 @@ window.galDrop = function(img){
   }
 };
 renderDayCards(false);
+
+/* The chart is the same data as the cards — built from it, not repeated by hand. */
+function renderDriveChart(){
+  const host = document.getElementById('driveChart');
+  if(!host) return;
+  const rows = days.map((d,i)=>{
+    const drive = d.rest ? 0 : (parseFloat(String(d.time).replace(/[^\d.]/g,'')) || 0);
+    const stopH = (d.stops||[]).reduce((s,x)=>s + (x[2]==='border'||x[2]==='view' ? 45 : 30), 0)/60;
+    return { n:i+1, label:`${d.from} → ${d.to}`, drive, stopH, rest:!!d.rest };
+  });
+  const max = Math.max(...rows.map(r=>r.drive + r.stopH), 1);
+  host.innerHTML = rows.map(r=>{
+    const total = r.drive + r.stopH;
+    const over = r.drive > 8;
+    if(r.rest) return `<div class="bargrp"><div class="barlabel"><span>Day ${r.n} · ${esc(r.label)}</span><span>rest day</span></div>
+      <div class="bartrack"><div class="barfill seg bf-r1" data-w="4">&nbsp;</div></div></div>`;
+    return `<div class="bargrp">
+      <div class="barlabel"><span>Day ${r.n} · ${esc(r.label)}</span><span>${fmtHrs(total)} door to door</span></div>
+      <div class="bartrack">
+        <div class="barfill seg ${over?'bf-hard':'bf-r2'}" data-w="${(r.drive/max*100).toFixed(1)}">${fmtHrs(r.drive)}</div>
+        <div class="barfill seg bf-stop" data-w="${(r.stopH/max*100).toFixed(1)}"></div>
+      </div></div>`;
+  }).join('');
+}
+renderDriveChart();
 
 /* ============ AUTH ============ */
 async function loadCrewRow(){
@@ -2519,6 +2629,14 @@ function initGeoMap(){
   L.polyline(spine, { color:'#dba23f', weight:3, dashArray:'8 7' }).addTo(map);
   ['joburg','kuruman','hobas','aus','sesriem'].forEach(k=>mk(k,'#dba23f').addTo(map));
   mk('gobabis','#cdbf9f').addTo(map);   // on both homeward options
+  // planned stops along the legs — small dots, named on hover
+  days.forEach((d,i)=>(d.stops||[]).forEach(s=>{
+    if(s[4] == null) return;
+    L.circleMarker([s[4],s[5]], { radius:3.5, color:'#ece0cc', weight:1, opacity:.55,
+      fillColor:'#ece0cc', fillOpacity:.35 })
+      .bindTooltip(`<b>${esc(s[1])}</b><br>Day ${i+1} · ${s[0]} km · ${esc(s[2])}`, { direction:'top', className:'geo-label' })
+      .addTo(map);
+  }));
   const r1Layer = L.layerGroup([ L.polyline([P('sesriem'),P('swakop'),P('gobabis'),P('joburg')], { color:'#74b7c0', weight:3 }), mk('swakop','#74b7c0') ]);
   const r2Layer = L.layerGroup([ L.polyline([P('sesriem'),P('gobabis'),P('gaborone'),P('joburg')], { color:'#a6b366', weight:3 }), mk('gaborone','#a6b366') ]);
   GEO = { map, r1Layer, r2Layer,
