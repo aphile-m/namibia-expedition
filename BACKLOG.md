@@ -116,6 +116,13 @@ without any crew powers (no voting, roster edits, or payments).
 
 ## 3. Ecosystems and rest stops on the driving legs
 
+> **Shipped:** ecosystem bands and named stops on every driving day,
+> door-to-door timing (driving + stops, with wheels-at and arrival),
+> the chart rebuilt from the day data as stacked driving/stopped time,
+> and the stops plotted on the route map. Law 02 and daylight are
+> flagged separately — only Day 7 breaks the 8-hour driving rule.
+> Still open: colouring the map polyline by biome.
+
 **Goal:** make the driving days read as an experience rather than a
 distance. Each leg should show the ecosystems it crosses and where the
 convoy will actually stop, with stop time built into the quoted hours.
