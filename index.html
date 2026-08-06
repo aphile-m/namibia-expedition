@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Southern Namibia & Kalahari Expedition</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23f0bd54%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2223%22%20r%3D%229.5%22%20fill%3D%22%23c0512b%22%2F%3E%3Cpath%20d%3D%22M0%2039c12-10%2022%202%2034-4%2012-6%2020%204%2030-2v31H0z%22%20fill%3D%22%238f3f17%22%2F%3E%3Cpath%20d%3D%22M0%2050c14-6%2026%204%2040-2%2010-4%2018%202%2024-1v17H0z%22%20fill%3D%22%232b1409%22%2F%3E%3C%2Fsvg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23f0bd54%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2223%22%20r%3D%229.5%22%20fill%3D%22%23c0512b%22%2F%3E%3Cpath%20d%3D%22M0%2039c12-10%2022%202%2034-4%2012-6%2020%204%2030-2v31H0z%22%20fill%3D%22%238f3f17%22%2F%3E%3Cpath%20d%3D%22M0%2050c14-6%2026%204%2040-2%2010-4%2018%202%2024-1v17H0z%22%20fill%3D%22%232b1409%22%2F%3E%3C%2Fsvg%3E">
+<meta name="theme-color" content="#15110d">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -544,6 +547,26 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
    ============================================================ */
 #sidenav{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:62;display:none;flex-direction:column;gap:2px}
 @media(min-width:1100px){#sidenav{display:flex}}
+/* mobile: a button opens the same list as a panel */
+#navToggle{position:fixed;left:14px;bottom:16px;z-index:63;display:none;align-items:center;gap:7px;
+  font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:.66rem;color:var(--bone);
+  background:rgba(15,11,8,.92);border:1px solid rgba(236,224,204,.25);padding:9px 15px;border-radius:30px;
+  cursor:pointer;box-shadow:0 8px 24px -8px rgba(0,0,0,.7);backdrop-filter:blur(6px)}
+#navToggle:hover{border-color:var(--ochre)}
+@media(max-width:1099px){
+  #navToggle{display:inline-flex}
+  body.nav-open #sidenav{display:flex;left:14px;right:auto;bottom:64px;top:auto;transform:none;
+    background:#14100b;border:1px solid rgba(236,224,204,.2);border-radius:10px;padding:10px 8px;
+    box-shadow:0 20px 50px -12px rgba(0,0,0,.8);max-height:65vh;overflow:auto}
+  body.nav-open #sidenav a{padding:9px 12px;font-size:.68rem}
+  body.nav-open #sidenav a span{opacity:1;transform:none}
+}
+/* version + publish time */
+#buildstamp{position:fixed;top:8px;left:12px;z-index:61;font-family:'Oswald',sans-serif;text-transform:uppercase;
+  letter-spacing:.12em;font-size:.55rem;color:var(--muted);background:rgba(15,11,8,.7);padding:3px 9px;
+  border-radius:20px;border:1px solid var(--line-soft);pointer-events:none}
+body.live-mode #buildstamp{top:44px}
+@media(max-width:600px){#buildstamp{font-size:.5rem;letter-spacing:.08em}}
 #sidenav a{display:flex;align-items:center;gap:10px;text-decoration:none;padding:5px 8px;border-radius:6px;
   font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:.6rem;color:var(--muted);
   transition:color .2s,background .2s}
@@ -640,7 +663,9 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
 </head>
 <body>
 <div class="topo"></div>
+<div id="buildstamp" title="Version and publish time">v27.4f594cf · 2026-08-06T01:37:32Z</div>
 <div id="rail"></div>
+<button id="navToggle" aria-label="Jump to a section">☰ <span>Sections</span></button>
 <nav id="sidenav" aria-label="Page sections">
   <a href="#gate"    data-sec="gate"><i></i><span>Join</span></a>
   <a href="#laws"    data-sec="laws"><i></i><span>The Laws</span></a>
@@ -1169,9 +1194,11 @@ function scene(type){
 const days = [
   {id:'day1',num:'Day 01',title:'The Launch',from:'Johannesburg',to:'Kuruman',dist:'530',time:'~6 hrs',scene:'grassland',
    photos:[
-     {f:'Kgalagadi Transfrontier Park Gate, Red Dune Route, Northern Cape, South Africa (19917615043).jpg', t:'Kuruman · Kalahari Gate', c:'Kalahari Red Dune Route · Wikimedia (CC BY-SA)'},
-     {f:'The Eye of Kuruman, a natural spring, Northern Cape (6252715385).jpg', t:'The Eye of Kuruman', c:'Eye of Kuruman · Wikimedia (CC BY)'},
+     {f:'Kgalagadi Transfrontier Park banner Red dunes.JPG', t:'The Red Dunes', c:'Kgalagadi red dunes · Wikimedia (CC BY-SA)'},
      {f:'Kalahari Trails, Red Dune Route, Northern Cape, South Africa (20541582945).jpg', t:'Red Dune Country', c:'Kalahari Trails · Wikimedia (CC BY-SA)'},
+     {f:'The Eye of Kuruman, a natural spring, Northern Cape (6252715385).jpg', t:'The Eye of Kuruman', c:'Eye of Kuruman · Wikimedia (CC BY)'},
+     {f:'Church, Moffat Mission, Kuruman.JPG', t:'Moffat Mission, Kuruman', c:'Moffat Mission · Wikimedia (CC BY-SA)'},
+     {f:'Kgalagadi Transfrontier Park Gate, Red Dune Route, Northern Cape, South Africa (19917615043).jpg', t:'Kalahari Gate', c:'Red Dune Route · Wikimedia (CC BY-SA)'},
    ],
    surface:[['tar',530]],
    eco:[['Highveld grassland',300,'e-grass'],['Kalahari thornveld',230,'e-thorn']],
@@ -2679,6 +2706,18 @@ function geoShowRoute(r, show){
   const layer = r==='1' ? GEO.r1Layer : GEO.r2Layer;
   if(show) layer.addTo(GEO.map); else GEO.map.removeLayer(layer);
 }
+/* The deploy workflow rewrites these tokens; unreplaced means a local file. */
+function stampBuild(){
+  const el = document.getElementById('buildstamp');
+  if(!el) return;
+  const raw = el.textContent;
+  if(raw.includes('__APP_')){ el.textContent = 'dev build'; return; }
+  const [ver, built] = raw.split(' · ');
+  const d = new Date(built);
+  el.textContent = isNaN(d) ? raw
+    : `${ver} · published ${d.toLocaleString('en-ZA',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}`;
+}
+
 /* ============ SIDE NAV — scroll spy ============ */
 function initSideNav(){
   const links = [...document.querySelectorAll('#sidenav a')];
@@ -2690,6 +2729,14 @@ function initSideNav(){
     shown.forEach(s=>{ if(s.offsetTop <= mark) cur = s.id; });
     links.forEach(a=>a.classList.toggle('on', a.dataset.sec === cur));
   };
+  const tgl = document.getElementById('navToggle');
+  tgl?.addEventListener('click', ()=>document.body.classList.toggle('nav-open'));
+  links.forEach(a=>a.addEventListener('click', ()=>document.body.classList.remove('nav-open')));
+  document.addEventListener('click', e=>{
+    if(!document.body.classList.contains('nav-open')) return;
+    if(e.target.closest('#sidenav') || e.target.closest('#navToggle')) return;
+    document.body.classList.remove('nav-open');
+  });
   window.addEventListener('scroll', spy, { passive:true });
   window.addEventListener('resize', spy);
   spy();
@@ -2720,7 +2767,8 @@ window.addEventListener('scroll',()=>{
   updateAuthUI();      // set initial UI state (not signed in)
   updateGate();        // sync registration gate
   rememberedPrefill(); // this device knows you — pre-fill email + one-tap re-send
-  initSideNav();       // left rail: where you are, and jump anywhere
+  initSideNav();       // left rail on desktop, a panel on mobile
+  stampBuild();        // show which version you're looking at
   initGeoMap();        // real geographic route map (Leaflet)
   loadTripPublic();    // decided departure date + locked route (public)
   observeAll();
