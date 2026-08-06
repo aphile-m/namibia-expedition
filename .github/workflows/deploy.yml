@@ -23,6 +23,11 @@ jobs:
           sed -i "s|PASTE_PROJECT_URL|${{ secrets.SUPABASE_URL }}|g" index.html
           sed -i "s|PASTE_ANON_PUBLIC_KEY|${{ secrets.SUPABASE_ANON_KEY }}|g" index.html
 
+      - name: Stamp version and publish time
+        run: |
+          sed -i "s|__APP_VER__|v${{ github.run_number }}.$(git rev-parse --short HEAD)|g" index.html
+          sed -i "s|__APP_BUILT__|$(date -u +%Y-%m-%dT%H:%M:%SZ)|g" index.html
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
