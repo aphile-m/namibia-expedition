@@ -663,7 +663,7 @@ body.live-mode #buildstamp{top:44px}
 </head>
 <body>
 <div class="topo"></div>
-<div id="buildstamp" title="Version and publish time">v27.4f594cf · 2026-08-06T01:37:32Z</div>
+<div id="buildstamp" title="Version and publish time">v28.a683c39 · 2026-08-06T01:48:48Z</div>
 <div id="rail"></div>
 <button id="navToggle" aria-label="Jump to a section">☰ <span>Sections</span></button>
 <nav id="sidenav" aria-label="Page sections">
@@ -2408,7 +2408,9 @@ function renderBookings(){
             <b>${esc(a.name)}</b>
             <p>${esc(a.blurb||'')}</p>
             <div class="alt-meta">
-              ${a.km_from_site!=null?`<span><b>${Number(a.km_from_site)} km</b> detour from ${esc((b.site_name||'').split(',')[0])}</span>`:''}
+              ${a.km_from_site!=null?(Number(a.km_from_site)>0
+                  ? `<span><b>${Number(a.km_from_site)} km</b> further out</span>`
+                  : '<span><b>Same spot</b> as planned</span>'):''}
               ${a.km_from_prior!=null?`<span><b>${Number(a.km_from_prior)} km</b> from the previous stop</span>`:''}
               ${a.cost_per_camper!=null?`<span><b>R${Number(a.cost_per_camper).toLocaleString('en-ZA')}</b> per camper</span>`:''}
               ${a.phone?`<span><a class="bk-link" href="tel:${esc(String(a.phone).replace(/[^\d+]/g,''))}">${esc(a.phone)}</a></span>`:''}
