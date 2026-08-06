@@ -418,6 +418,9 @@ footer .mark{color:var(--rust);font-size:1rem;letter-spacing:0;margin-bottom:10p
 .roster-avatar{width:40px;height:40px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Oswald';font-size:1rem;color:var(--ochre-bright);flex-shrink:0;text-transform:uppercase}
 .roster-name{font-family:'Oswald';text-transform:uppercase;letter-spacing:.05em;font-size:.88rem;color:var(--bone)}
 .roster-role{font-size:.75rem;color:var(--muted);text-transform:capitalize;margin-top:2px}
+.roster-rolesel{margin-top:4px;background:var(--bg);border:1px solid var(--line);color:var(--bone-dim);
+  border-radius:4px;padding:3px 6px;font-size:.74rem;font-family:'Spectral',serif;width:100%}
+.roster-rolesel:focus{outline:none;border-color:var(--ochre)}
 .roster-counts{display:flex;gap:24px;margin-bottom:28px}
 .roster-count{font-family:'Oswald';font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--bone-dim)}
 .roster-count b{color:var(--ochre-bright);font-size:1.3rem;display:block;line-height:1.1}
@@ -852,6 +855,26 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
         <div class="roster-count"><b id="rcPax">0</b>Passengers</div>
       </div>
       <div class="roster-grid reveal" id="rosterGrid"></div>
+      <!-- admin: pre-register crew by email (Phase 16) -->
+      <div id="crewAdminBox" style="display:none">
+        <p class="plan-sub" style="margin:32px 0 10px">Pre-register crew by email so they're on the list and in the headcount before they've signed in — their name and role are pre-filled when they sign in. Roles on the cards above save as you change them.</p>
+        <div class="plan-form">
+        <div class="admin-field"><label>Email</label><input id="invEmail" type="email" placeholder="crew@email.com"></div>
+        <div class="admin-field"><label>Name</label><input id="invName" type="text" placeholder="e.g. Sipho"></div>
+        <div class="admin-field"><label>Role</label><select id="invRole"><option value="driver">🚗 Driver</option><option value="passenger">🎒 Passenger</option></select></div>
+      </div>
+      <button class="admin-save" id="invAddBtn">Add to convoy list</button>
+      <div style="overflow-x:auto;margin-top:18px"><table class="plan-table">
+        <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Status</th><th></th></tr></thead>
+        <tbody id="invTable"></tbody>
+      </table></div>
+        <button class="admin-save" id="invAddBtn">Add to convoy list</button>
+        <div style="overflow-x:auto;margin-top:14px"><table class="plan-table">
+          <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Status</th><th></th></tr></thead>
+          <tbody id="invTable"></tbody>
+        </table></div>
+      </div>
+
       <!-- viewer invites (Phase 11) — full crew only -->
       <div id="viewerInvite" style="display:none">
         <p class="plan-sub" style="margin:32px 0 10px">Invite a follower at home — they sign in with the usual magic link and can watch the trip (dates, live log, photos) without any crew controls.</p>
@@ -932,6 +955,23 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
           </table></div>
         </div>
         <div style="margin-top:32px" class="reveal">
+          <p style="font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:var(--muted);margin-bottom:8px">Cost items — the lines behind the estimate above</p>
+          <p class="dep-note">Everything you can price before departure — park entry &amp; conservation fees, cross-border charges, fuel estimate per vehicle, comms, the shared food kitty. Tick "verified" once you've confirmed the number with the source.</p>
+      <div class="plan-form">
+        <div class="admin-field"><label>Item</label><input id="ciLabel" type="text" placeholder="e.g. Namibia road fund (CBC)"></div>
+        <div class="admin-field"><label>Amount (R)</label><input id="ciAmount" type="number" min="0" step="0.01"></div>
+        <div class="admin-field"><label>Charged</label><select id="ciBasis"><option value="per_camper">Per camper</option><option value="per_vehicle">Per vehicle</option><option value="total">Total (shared)</option></select></div>
+        <div class="admin-field"><label>Source</label><input id="ciSource" type="text" placeholder="e.g. NWR reservations, 2026 tariff"></div>
+        <div class="admin-field"><label>Verification website</label><input id="ciWebsite" type="url" placeholder="https://…"></div>
+      </div>
+      <button class="admin-save" id="ciAddBtn">Add cost item</button>
+      <div style="overflow-x:auto;margin-top:18px"><table class="plan-table">
+        <thead><tr><th style="min-width:170px">Item</th><th style="min-width:90px">Amount (R)</th><th style="min-width:120px">Charged</th><th>Verified</th><th style="min-width:150px">Source</th><th style="min-width:170px">Verification website</th><th></th></tr></thead>
+        <tbody id="costItemRows"></tbody>
+      </table></div>
+        </div>
+
+        <div style="margin-top:32px" class="reveal">
           <p style="font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:var(--muted);margin-bottom:16px">Deposit settings</p>
           <div class="admin-grid">
             <div class="admin-field"><label>Deposit Amount (R)</label><input id="adminDepAmt" type="number" placeholder="e.g. 2310"></div>
@@ -983,29 +1023,6 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
           </div>
 </div>
 
-    <!-- 2 · CREW & ROLES -->
-    <div class="plan-panel reveal in">
-      <h4>Crew &amp; Roles</h4>
-      <div class="plan-body">
-      <p class="plan-sub">Pre-register crew by email so they're on the list and in the headcount before they've signed in — they still sign in with the usual magic link, and their name &amp; role are pre-filled when they do.</p>
-      <div class="plan-form">
-        <div class="admin-field"><label>Email</label><input id="invEmail" type="email" placeholder="crew@email.com"></div>
-        <div class="admin-field"><label>Name</label><input id="invName" type="text" placeholder="e.g. Sipho"></div>
-        <div class="admin-field"><label>Role</label><select id="invRole"><option value="driver">🚗 Driver</option><option value="passenger">🎒 Passenger</option></select></div>
-      </div>
-      <button class="admin-save" id="invAddBtn">Add to convoy list</button>
-      <div style="overflow-x:auto;margin-top:18px"><table class="plan-table">
-        <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Status</th><th></th></tr></thead>
-        <tbody id="invTable"></tbody>
-      </table></div>
-      <p class="plan-sub" style="margin:28px 0 10px">Registered crew — assign roles (saves immediately)</p>
-      <div style="overflow-x:auto"><table class="plan-table">
-        <thead><tr><th>Name</th><th>Email</th><th style="min-width:140px">Role</th></tr></thead>
-        <tbody id="crewAdminTable"></tbody>
-      </table></div>
-          </div>
-</div>
-
     <!-- 3 · CAMPSITE AVAILABILITY & BOOKINGS -->
     <div class="plan-panel reveal in">
       <h4>Campsite Availability &amp; Bookings</h4>
@@ -1025,34 +1042,6 @@ tr.alt-row td{background:rgba(91,151,160,.05);padding:0}
           </div>
 </div>
 
-    <!-- 4 · VERIFIED COST ITEMS -->
-    <div class="plan-panel reveal in">
-      <h4>Verified Cost Items</h4>
-      <div class="plan-body">
-      <p class="plan-sub">Everything you can price before departure — park entry &amp; conservation fees, cross-border charges, fuel estimate per vehicle, comms, the shared food kitty. Tick "verified" once you've confirmed the number with the source.</p>
-      <div class="plan-form">
-        <div class="admin-field"><label>Item</label><input id="ciLabel" type="text" placeholder="e.g. Namibia road fund (CBC)"></div>
-        <div class="admin-field"><label>Amount (R)</label><input id="ciAmount" type="number" min="0" step="0.01"></div>
-        <div class="admin-field"><label>Charged</label><select id="ciBasis"><option value="per_camper">Per camper</option><option value="per_vehicle">Per vehicle</option><option value="total">Total (shared)</option></select></div>
-        <div class="admin-field"><label>Source</label><input id="ciSource" type="text" placeholder="e.g. NWR reservations, 2026 tariff"></div>
-        <div class="admin-field"><label>Verification website</label><input id="ciWebsite" type="url" placeholder="https://…"></div>
-      </div>
-      <button class="admin-save" id="ciAddBtn">Add cost item</button>
-      <div style="overflow-x:auto;margin-top:18px"><table class="plan-table">
-        <thead><tr><th style="min-width:170px">Item</th><th style="min-width:90px">Amount (R)</th><th style="min-width:120px">Charged</th><th>Verified</th><th style="min-width:150px">Source</th><th style="min-width:170px">Verification website</th><th></th></tr></thead>
-        <tbody id="costItemRows"></tbody>
-      </table></div>
-
-      <div class="plan-tiles">
-        <div class="plan-tile"><b id="psHeadcount">—</b><span>Headcount (crew + invited)</span></div>
-        <div class="plan-tile"><b id="psVehicles">—</b><span>Vehicles (drivers)</span></div>
-        <div class="plan-tile"><b id="psCamps">—</b><span>Camps · R per camper</span></div>
-        <div class="plan-tile"><b id="psItems">—</b><span>Cost items · R per camper</span></div>
-        <div class="plan-tile"><b id="psTotal">—</b><span>Estimated total · R per camper</span></div>
-      </div>
-      <p class="plan-sub" style="margin:12px 0 0" id="psNote"></p>
-          </div>
-</div>
   </div>
 </section>
 
@@ -1825,18 +1814,29 @@ async function loadRoster(){
   if(!SB || !AUTH_USER) return;
   document.getElementById('roster-locked').style.display = 'none';
   document.getElementById('roster-content').style.display = 'block';
-  const { data } = await SB.from('crew').select('display_name,role').order('created_at');
+  const { data } = await SB.from('crew').select('id,display_name,role').order('created_at');
   if(!data) return;
   const full = data.filter(r=>r.role!=='viewer');
   document.getElementById('rcTotal').textContent   = full.length;
   document.getElementById('rcDrivers').textContent = full.filter(r=>r.role==='driver').length;
   document.getElementById('rcPax').textContent     = full.filter(r=>r.role==='passenger').length;
+  const canEdit = isAdmin();
   document.getElementById('rosterGrid').innerHTML  = data.map(m=>{
     const init = (m.display_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const role = m.role==='driver' ? '🚗 Driver' : m.role==='passenger' ? '🎒 Passenger' : '👁 Follower';
-    return `<div class="roster-card"><div class="roster-avatar">${init}</div><div><div class="roster-name">${m.display_name||'Unknown'}</div><div class="roster-role">${role}</div></div></div>`;
+    // admin edits the role right where the crew are listed
+    const ctl = (canEdit && m.role!=='viewer')
+      ? `<select class="roster-rolesel" data-id="${m.id}">
+           <option value="driver" ${m.role==='driver'?'selected':''}>🚗 Driver</option>
+           <option value="passenger" ${m.role==='passenger'?'selected':''}>🎒 Passenger</option>
+         </select>`
+      : `<div class="roster-role">${role}</div>`;
+    return `<div class="roster-card"><div class="roster-avatar">${init}</div><div style="flex:1"><div class="roster-name">${m.display_name||'Unknown'}</div>${ctl}</div></div>`;
   }).join('');
+  const box = document.getElementById('crewAdminBox');
+  if(box) box.style.display = canEdit ? 'block' : 'none';
   renderViewerInvites();
+  if(canEdit) renderInvites();
   observeAll();
 }
 
@@ -2168,25 +2168,17 @@ async function loadPlanning(){
   if(crew.error||invites.error||bookings.error||items.error)
     console.warn('Planning load — run supabase-phase7-planning-migration.sql if tables are missing.',
                  crew.error||invites.error||bookings.error||items.error);
-  renderCrewAdmin(); renderInvites(); renderBookings(); renderCostItems(); renderPlanSummary();
+  renderInvites(); renderBookings(); renderCostItems(); renderPlanSummary();
   initPlanAccordion(); syncCollapseAllLabel();
 }
 
 /* ---- 2 · crew & roles ---- */
-function renderCrewAdmin(){
-  document.getElementById('crewAdminTable').innerHTML = PLAN.crew.map(m=>`
-    <tr><td style="color:var(--bone)">${esc(m.display_name)}</td><td>${esc(m.email)}</td>
-    <td><select data-id="${m.id}">
-      <option value="driver" ${m.role==='driver'?'selected':''}>🚗 Driver</option>
-      <option value="passenger" ${m.role==='passenger'?'selected':''}>🎒 Passenger</option>
-    </select></td></tr>`).join('') || '<tr><td colspan="3" style="color:var(--muted)">No one has registered yet.</td></tr>';
-}
-document.getElementById('crewAdminTable')?.addEventListener('change', async e=>{
-  const t = e.target; if(!t.dataset.id) return;
+document.getElementById('rosterGrid')?.addEventListener('change', async e=>{
+  const t = e.target; if(!t.classList.contains('roster-rolesel') || !t.dataset.id) return;
   const { error } = await SB.from('crew').update({ role:t.value }).eq('id',t.dataset.id);
   if(error){ console.warn(error); alert('Could not update the role — make sure the Phase 7 migration has been run.'); return; }
   const r = PLAN.crew.find(x=>x.id===t.dataset.id); if(r) r.role=t.value;
-  loadRoster(); loadGateStats(); renderPlanSummary();
+  loadRoster(); renderPlanSummary();
 });
 
 function renderInvites(){
@@ -2475,30 +2467,8 @@ function renderPlanProgress(){
 
 const fmtR = n => 'R'+Math.round(n).toLocaleString('en-ZA');
 function renderPlanSummary(){
-  const crewEmails = new Set(PLAN.crew.map(c=>(c.email||'').toLowerCase()));
-  const pending  = PLAN.invites.filter(i=>!crewEmails.has(i.email.toLowerCase()));
-  const head     = PLAN.crew.length + pending.length;
-  const vehicles = PLAN.crew.filter(c=>c.role==='driver').length + pending.filter(i=>i.role==='driver').length;
-  const camps = PLAN.bookings
-    .filter(b=>stayRequired(b) && b.status!=='unavailable')
-    .reduce((s,b)=>s+(Number(b.cost_per_camper)||0)*(Number(b.nights)||1),0);
-  let items=0, unverified=0;
-  PLAN.items.forEach(it=>{
-    const amt = Number(it.amount)||0;
-    if(!it.verified) unverified++;
-    if(it.basis==='per_camper')       items += amt;
-    else if(it.basis==='per_vehicle') items += head ? amt*vehicles/head : 0;
-    else                              items += head ? amt/head : 0;
-  });
-  document.getElementById('psHeadcount').textContent = head;
-  document.getElementById('psVehicles').textContent  = vehicles;
-  document.getElementById('psCamps').textContent     = fmtR(camps);
-  document.getElementById('psItems').textContent     = fmtR(items);
-  document.getElementById('psTotal').textContent     = fmtR(camps+items);
-  document.getElementById('psNote').textContent =
-    'Estimates only — per-vehicle and shared costs are spread across the headcount.'
-    + ' Backup stays are excluded.'
-    + (unverified ? ` ${unverified} cost item${unverified>1?'s':''} still unverified.` : ' All cost items verified ✓');
+  // the money now lives in one place (Costs); here we only need the
+  // unverified count that feeds the progress tracker.
   renderPlanProgress();
 }
 
