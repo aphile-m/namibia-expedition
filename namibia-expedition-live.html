@@ -2352,7 +2352,8 @@ const STATUS_LABELS = Object.fromEntries(BOOKING_STATUSES);
 const statusOpts = cur => BOOKING_STATUSES.map(([v,l])=>`<option value="${v}" ${v===cur?'selected':''}>${l}</option>`).join('');
 
 /* Which trip nights a stay covers, from the day label + departure date.
-   "Day 2" on a 25 Sep departure → check in Sat 26 Sep, out Sun 27 Sep. */
+   Day N checks in on departure + (N-1) and out N nights later, so the
+   whole itinerary moves off the one date rather than stored per stay. */
 function stayDates(b){
   if(!TRIP?.departure_date) return null;
   const m = /day\s*(\d+)/i.exec(b.day_label||'');
