@@ -2338,7 +2338,7 @@ async function loadPlanning(){
     console.warn('Planning load — run supabase-phase7-planning-migration.sql if tables are missing.',
                  crew.error||invites.error||bookings.error||items.error);
   renderInvites(); renderBookings(); renderCostItems(); renderPlanSummary();
-  renderCommsCount(); loadCommsLog();
+  renderCommsCount(); loadCommsDraft(); loadCommsLog();
   initPlanAccordion(); syncCollapseAllLabel();
 }
 
@@ -2632,6 +2632,7 @@ async function sendCrewEmail(test){
       : `Sent to ${out.sent}${out.failed?`, ${out.failed} failed`:''}.`;
     if(!test){
       document.getElementById('emSubject').value=''; document.getElementById('emBody').value='';
+      await SB.from('email_draft').upsert({ id:1, subject:'', body:'', updated_at:new Date().toISOString() },{ onConflict:'id' });
       loadCommsLog();
     }
   }catch(e){
@@ -2664,6 +2665,37 @@ document.getElementById('emPreview')?.addEventListener('click', async ()=>{
 
 document.getElementById('emSend')?.addEventListener('click', ()=>sendCrewEmail(false));
 document.getElementById('emSendTest')?.addEventListener('click', ()=>sendCrewEmail(true));
+
+/* The composer keeps a single persistent draft, so a half-written note
+   survives a closed tab and can be picked up on another device. */
+let DRAFT_T = null;
+async function loadCommsDraft(){
+  if(!SB || !isAdmin()) return;
+  const { data } = await SB.from('email_draft').select('*').eq('id',1).maybeSingle();
+  if(!data) return;
+  const s = document.getElementById('emSubject'), b = document.getElementById('emBody'),
+        a = document.getElementById('emAudience');
+  if(s && !s.value) s.value = data.subject || '';
+  if(b && !b.value) b.value = data.body || '';
+  if(a && data.audience) a.value = data.audience;
+  renderCommsCount();
+}
+function saveCommsDraft(){
+  clearTimeout(DRAFT_T);
+  DRAFT_T = setTimeout(async ()=>{
+    if(!SB || !isAdmin()) return;
+    await SB.from('email_draft').upsert({
+      id:1,
+      subject: document.getElementById('emSubject')?.value || '',
+      body:    document.getElementById('emBody')?.value || '',
+      audience:document.getElementById('emAudience')?.value || 'crew',
+      updated_at: new Date().toISOString(),
+    }, { onConflict:'id' });
+  }, 800);
+}
+['emSubject','emBody','emAudience'].forEach(id=>
+  document.getElementById(id)?.addEventListener('input', saveCommsDraft));
+document.getElementById('emAudience')?.addEventListener('change', saveCommsDraft);
 
 async function loadCommsLog(){
   if(!SB || !isAdmin()) return;
