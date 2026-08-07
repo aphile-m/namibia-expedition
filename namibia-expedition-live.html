@@ -1086,6 +1086,37 @@ body.live-mode #buildstamp{top:44px}
           </div>
 </div>
 
+    <!-- CREW COMMS -->
+    <div class="plan-panel reveal in">
+      <h4>Crew Comms</h4>
+      <div class="plan-body">
+      <p class="plan-sub">Send a trip update by email. Everyone gets an unsubscribe link, and anyone who opts out drops off automatically — their place on the convoy is unaffected.</p>
+      <div class="plan-form">
+        <div class="admin-field" style="grid-column:1/-1"><label>Subject</label><input id="emSubject" type="text" placeholder="e.g. Deposits due Friday — and the dates have moved"></div>
+        <div class="admin-field"><label>Send to</label><select id="emAudience">
+          <option value="crew">Crew only</option>
+          <option value="viewers">Followers only</option>
+          <option value="all">Everyone</option>
+        </select></div>
+        <div class="admin-field"><label>Going to</label><input id="emCount" type="text" readonly value="—"></div>
+      </div>
+      <div class="admin-field" style="margin-top:12px"><label>Message</label>
+        <textarea id="emBody" rows="7" placeholder="Write it as you'd say it. Leave a blank line between paragraphs."
+          style="background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--bone);padding:10px 12px;font-size:.9rem;font-family:'Spectral',serif;resize:vertical"></textarea></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center">
+        <button class="admin-save" id="emSendTest" style="background:transparent;border:1px solid var(--line);color:var(--bone-dim)">Send me a test</button>
+        <button class="admin-save" id="emSend">Send to the convoy →</button>
+        <span id="emStatus" class="dep-note" style="margin:0"></span>
+      </div>
+      <div id="emSetup" class="dep-note" style="display:none;margin-top:12px;color:var(--rust-bright)"></div>
+      <p class="plan-sub" style="margin:26px 0 8px">Sent</p>
+      <div style="overflow-x:auto"><table class="plan-table">
+        <thead><tr><th style="min-width:150px">When</th><th style="min-width:200px">Subject</th><th>To</th><th>Sent</th><th>Failed</th></tr></thead>
+        <tbody id="emLog"></tbody>
+      </table></div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -2285,7 +2316,7 @@ async function loadPlanning(){
   document.getElementById('hqTab').style.display='inline-flex';
   syncSideNav();
   const [crew, invites, bookings, alts, items, payments, settings, account] = await Promise.all([
-    SB.from('crew').select('id,email,display_name,role').order('created_at'),
+    SB.from('crew').select('id,email,display_name,role,comms_opt_out').order('created_at'),
     SB.from('invites').select('*').order('created_at'),
     SB.from('site_bookings').select('*').order('sort_order').order('created_at'),
     SB.from('site_alternatives').select('*').order('sort_order'),
@@ -2306,6 +2337,7 @@ async function loadPlanning(){
     console.warn('Planning load — run supabase-phase7-planning-migration.sql if tables are missing.',
                  crew.error||invites.error||bookings.error||items.error);
   renderInvites(); renderBookings(); renderCostItems(); renderPlanSummary();
+  renderCommsCount(); loadCommsLog();
   initPlanAccordion(); syncCollapseAllLabel();
 }
 
@@ -2543,6 +2575,86 @@ window.delCostItem = async function(id){
   await SB.from('cost_items').delete().eq('id',id);
   loadPlanning();
 };
+
+/* ---- crew comms (Phase 16) ----
+   Sending happens in an Edge Function so the mail API key never reaches
+   the browser; it also re-checks that the caller is the organiser. */
+function commsAudience(){
+  const a = document.getElementById('emAudience')?.value || 'crew';
+  const opted = PLAN.crew.filter(c=>!c.comms_opt_out);
+  return a==='crew' ? opted.filter(c=>c.role!=='viewer')
+       : a==='viewers' ? opted.filter(c=>c.role==='viewer')
+       : opted;
+}
+function renderCommsCount(){
+  const el = document.getElementById('emCount');
+  if(!el) return;
+  const n = commsAudience().length;
+  const out = PLAN.crew.filter(c=>c.comms_opt_out).length;
+  el.value = `${n} ${n===1?'person':'people'}${out?` · ${out} opted out`:''}`;
+}
+document.getElementById('emAudience')?.addEventListener('change', renderCommsCount);
+
+async function sendCrewEmail(test){
+  const subject = document.getElementById('emSubject').value.trim();
+  const body    = document.getElementById('emBody').value.trim();
+  const status  = document.getElementById('emStatus');
+  const setup   = document.getElementById('emSetup');
+  if(!subject){ document.getElementById('emSubject').focus(); return; }
+  if(!body){ document.getElementById('emBody').focus(); return; }
+  const audience = document.getElementById('emAudience').value;
+  if(!test && !confirm(`Send "${subject}" to ${commsAudience().length} people?`)) return;
+
+  const btns = [document.getElementById('emSend'), document.getElementById('emSendTest')];
+  btns.forEach(b=>b.disabled = true);
+  status.textContent = test ? 'Sending you a test…' : 'Sending…';
+  setup.style.display = 'none';
+  try{
+    const { data: { session } } = await SB.auth.getSession();
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/send-crew-email`, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${session?.access_token}` },
+      body: JSON.stringify({ subject, body, audience, test:!!test }),
+    });
+    const out = await res.json();
+    if(!res.ok){
+      status.textContent = '';
+      // the one failure worth explaining rather than just reporting
+      setup.style.display = 'block';
+      setup.textContent = /RESEND_API_KEY/.test(out.error||'')
+        ? 'Email isn\'t switched on yet: add RESEND_API_KEY (and optionally RESEND_FROM) to the project\'s Edge Function secrets, then try again.'
+        : `Could not send — ${out.error||res.status}`;
+      return;
+    }
+    status.textContent = test
+      ? `Test sent — check your inbox.${out.failed?` ${out.failed} failed.`:''}`
+      : `Sent to ${out.sent}${out.failed?`, ${out.failed} failed`:''}.`;
+    if(!test){
+      document.getElementById('emSubject').value=''; document.getElementById('emBody').value='';
+      loadCommsLog();
+    }
+  }catch(e){
+    status.textContent = '';
+    setup.style.display='block';
+    setup.textContent = 'Could not reach the mail function — check your connection and try again.';
+  }finally{ btns.forEach(b=>b.disabled = false); }
+}
+document.getElementById('emSend')?.addEventListener('click', ()=>sendCrewEmail(false));
+document.getElementById('emSendTest')?.addEventListener('click', ()=>sendCrewEmail(true));
+
+async function loadCommsLog(){
+  if(!SB || !isAdmin()) return;
+  const { data } = await SB.from('email_log').select('*').order('created_at',{ascending:false}).limit(20);
+  const host = document.getElementById('emLog');
+  if(!host) return;
+  host.innerHTML = (data||[]).map(r=>`<tr>
+    <td>${new Date(r.created_at).toLocaleString('en-ZA',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
+    <td style="color:var(--bone)">${esc(r.subject)}</td>
+    <td>${esc(r.audience)}</td>
+    <td style="color:var(--green-bright)">${r.recipients}</td>
+    <td style="color:${r.failed?'var(--rust-bright)':'var(--muted)'}">${r.failed||'—'}</td>
+  </tr>`).join('') || '<tr><td colspan="5" style="color:var(--muted)">Nothing sent yet.</td></tr>';
+}
 
 /* ---- 0 · planning progress ---- */
 function renderPlanProgress(){
