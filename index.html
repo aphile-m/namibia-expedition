@@ -663,7 +663,7 @@ body.live-mode #buildstamp{top:44px}
 </head>
 <body>
 <div class="topo"></div>
-<div id="buildstamp" title="Version and publish time">v29.b1b39ec · 2026-08-07T07:19:38Z</div>
+<div id="buildstamp" title="Version and publish time">v30.9b22f49 · 2026-08-07T07:36:06Z</div>
 <div id="rail"></div>
 <button id="navToggle" aria-label="Jump to a section">☰ <span>Sections</span></button>
 <nav id="sidenav" aria-label="Page sections">
@@ -1104,6 +1104,7 @@ body.live-mode #buildstamp{top:44px}
         <textarea id="emBody" rows="7" placeholder="Write it as you'd say it. Leave a blank line between paragraphs."
           style="background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--bone);padding:10px 12px;font-size:.9rem;font-family:'Spectral',serif;resize:vertical"></textarea></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center">
+        <button class="admin-save" id="emPreview" style="background:transparent;border:1px solid var(--line);color:var(--teal-bright)">Preview</button>
         <button class="admin-save" id="emSendTest" style="background:transparent;border:1px solid var(--line);color:var(--bone-dim)">Send me a test</button>
         <button class="admin-save" id="emSend">Send to the convoy →</button>
         <span id="emStatus" class="dep-note" style="margin:0"></span>
@@ -2639,6 +2640,28 @@ async function sendCrewEmail(test){
     setup.textContent = 'Could not reach the mail function — check your connection and try again.';
   }finally{ btns.forEach(b=>b.disabled = false); }
 }
+/* Preview renders the real template server-side and opens it in a tab —
+   no mail account needed, so the design can be judged before signing up. */
+document.getElementById('emPreview')?.addEventListener('click', async ()=>{
+  const subject = document.getElementById('emSubject').value.trim() || 'Trip update';
+  const body    = document.getElementById('emBody').value.trim() || 'Your message will appear here.';
+  const status  = document.getElementById('emStatus');
+  status.textContent = 'Building preview…';
+  try{
+    const { data: { session } } = await SB.auth.getSession();
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/send-crew-email`, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${session?.access_token}` },
+      body: JSON.stringify({ subject, body, preview:true }),
+    });
+    if(!res.ok){ status.textContent = 'Preview failed — '+((await res.json().catch(()=>({}))).error || res.status); return; }
+    const url = URL.createObjectURL(new Blob([await res.text()], { type:'text/html' }));
+    window.open(url, '_blank');
+    setTimeout(()=>URL.revokeObjectURL(url), 60000);
+    status.textContent = 'Preview opened in a new tab.';
+  }catch(e){ status.textContent = 'Preview failed — check your connection.'; }
+});
+
 document.getElementById('emSend')?.addEventListener('click', ()=>sendCrewEmail(false));
 document.getElementById('emSendTest')?.addEventListener('click', ()=>sendCrewEmail(true));
 
