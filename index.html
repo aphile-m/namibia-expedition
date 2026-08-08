@@ -663,7 +663,7 @@ body.live-mode #buildstamp{top:44px}
 </head>
 <body>
 <div class="topo"></div>
-<div id="buildstamp" title="Version and publish time">v33.e10d7ad · 2026-08-07T18:13:04Z</div>
+<div id="buildstamp" title="Version and publish time">v34.5ac3289 · 2026-08-08T04:39:50Z</div>
 <div id="rail"></div>
 <button id="navToggle" aria-label="Jump to a section">☰ <span>Sections</span></button>
 <nav id="sidenav" aria-label="Page sections">
@@ -719,10 +719,10 @@ body.live-mode #buildstamp{top:44px}
       <span class="ln"><span>&amp; The Kalahari</span></span>
     </h1>
     <div class="hero-meta">
-      <div><b>8</b><span>Days</span></div>
+      <div><b>9</b><span>Days</span></div>
       <div><b>2</b><span>Rest Days</span></div>
       <div><b>4&times;4</b><span>Convoy Only</span></div>
-      <div><b>~3,490 km</b><span>Full Circuit</span></div>
+      <div><b>~3,600 km</b><span>Full Circuit</span></div>
     </div>
   </div>
   <div class="scrollcue">Scroll to deploy ↓</div>
@@ -735,7 +735,7 @@ body.live-mode #buildstamp{top:44px}
       <div class="gate-headline">Join the Expedition</div>
       <p class="gate-sub">The trip is locked in. Register once with your email — no password. A magic link lands in your inbox and you're in.</p>
       <ul class="gate-benefits">
-        <li><b>See the full itinerary</b> — eight days, dates and camps</li>
+        <li><b>See the full itinerary</b> — nine days, dates and camps</li>
         <li><b>See the crew roster</b> — who's registered and their role</li>
         <li><b>Track costs &amp; your deposit</b> — per-person amount and payment status</li>
         <li><b>Carpool coordination</b> — claim a seat or register your vehicle (coming next)</li>
@@ -843,7 +843,7 @@ body.live-mode #buildstamp{top:44px}
     </div>
         <div class="chart reveal">
       <h4>Where the Driving Lands</h4>
-      <div class="csub">Door to door across the eight days — solid is driving, hatched is time stopped. The two short bars are the rest days.</div>
+      <div class="csub">Door to door across the nine days — solid is driving, hatched is time stopped. The two short bars are the rest days.</div>
       <div id="driveChart"></div>
       <div class="surfkeys" style="margin-top:16px">
         <span><i style="background:var(--green)"></i>Driving</span>
@@ -1287,24 +1287,40 @@ const days = [
    body:'The last of the Namibian gravel, then paved highway east. A game farm stop with a proper bar and a real bed option before the big Botswana push.',
    callouts:[['','Fuel Rule','Top up at Solitaire and again at Rehoboth or Windhoek — the eastern stretch is thin on stations.']]},
 
-  {id:'day7',num:'Day 07',title:'The Big Crush',from:'Gobabis',to:'Gaborone',dist:'882',time:'~10.5 hrs',scene:'grassland',
+  {id:'day7',num:'Day 07',title:'The Kalahari Gate',from:'Gobabis',to:'Ghanzi',dist:'315',time:'~3.5 hrs',scene:'grassland',
+   photos:[
+     {f:'Kgalagadi Transfrontier Park Gate, Red Dune Route, Northern Cape, South Africa (19917615043).jpg', t:'Into Botswana', c:'Wikimedia (CC BY-SA)'},
+     {f:'Kalahari Trails, Red Dune Route, Northern Cape, South Africa (20541582945).jpg', t:'Ghanzi Thornveld', c:'Kalahari · Wikimedia (CC BY-SA)'},
+   ],
+   surface:[['tar',315]],
+   eco:[['Kalahari sandveld',110,'e-thorn'],['Ghanzi thornveld',205,'e-kal']],
+   stops:[[110,'Buitepos / Mamuno','border','Two posts back to back — passports, road levy, third-party insurance. 45 min',-22.2667,20.0],
+          [140,'Charleshill','fuel','First Botswana fuel and the veterinary cordon gate',-21.9833,20.1]],
+   badges:[['100% Asphalt','b-asphalt'],['Mamuno Border','b-corr'],['Half Day','b-gravel']],
+   route:'Trans-Kalahari A2 to Buitepos, then the A3 east to Ghanzi',
+   stay:'Ghanzi',
+   body:'A short morning that exists so tomorrow is survivable. Clear Mamuno when it opens, run the empty A3 through the thornveld, and be in camp by early afternoon with the whole day still ahead.',
+   callouts:[['gold','The Afternoon You Bought','Ghanzi is San country and the only cultural stop on the route — guided tracking walks are bookable from town and the camps outside it. This is what splitting the crush paid for.'],
+             ['warn','Veterinary Cordon','Foot-and-mouth fence at Charleshill: no raw red meat or dairy through the gate. Plan the cooler around it or lose the lot.'],
+             ['','Border Hours','Mamuno opens 07:00. Gobabis is only 110 km out, so there is nothing to gain from leaving before 06:30.']]},
+
+  {id:'day8',num:'Day 08',title:'The Long Haul',from:'Ghanzi',to:'Gaborone',dist:'680',time:'~8 hrs',scene:'grassland',
    photos:[
      {f:'Kalahari Trails, Red Dune Route, Northern Cape, South Africa (20541582945).jpg', t:'The Trans-Kalahari', c:'Kalahari · Wikimedia (CC BY-SA)'},
-     {f:'Kgalagadi Transfrontier Park Gate, Red Dune Route, Northern Cape, South Africa (19917615043).jpg', t:'Kalahari Crossing', c:'Wikimedia (CC BY-SA)'},
+     {f:'Kgalagadi Transfrontier Park banner Red dunes.JPG', t:'Kalahari Crossing', c:'Wikimedia (CC BY-SA)'},
    ],
-   surface:[['tar',882]],
-   eco:[['Kalahari sandveld',110,'e-thorn'],['Central Kalahari',550,'e-kal'],['Kalahari hardveld',222,'e-savanna']],
-   stops:[[110,'Buitepos / Mamuno','border','Two posts back to back — passports, levy, insurance. 45 min',-22.2667,20.0],
-          [400,'Ghanzi','meal','Fuel and food, the only real town on the Trans-Kalahari',-21.7,21.65],
-          [660,'Kang','fuel','The classic Trans-Kalahari fuel oasis',-23.6667,22.7833],
-          [780,'Jwaneng','fuel','Last fuel before the run into Gaborone',-24.6017,24.7281]],
-   badges:[['100% Asphalt','b-asphalt'],['2 Borders','b-corr']],route:'Trans-Kalahari A2 via Buitepos, Ghanzi & Kang',
+   surface:[['tar',680]],
+   eco:[['Central Kalahari',300,'e-kal'],['Kalahari hardveld',380,'e-savanna']],
+   stops:[[300,'Kang','fuel','The classic Trans-Kalahari fuel oasis — and lunch',-23.6667,22.7833],
+          [535,'Jwaneng','fuel','Last fuel before the run into Gaborone',-24.6017,24.7281]],
+   badges:[['100% Asphalt','b-asphalt'],['Longest Drive','b-corr']],
+   route:'A3 south to Kang, then the A2 east through Jwaneng',
    stay:'Gaborone',
-   body:'Sunrise-to-sunset across the width of Botswana. Wheels at 06:30 to clear Buitepos early, and rotate drivers — this is the one day that runs past the eight-hour rule.',
-   callouts:[['warn','The Long One','882 km in a day. Two drivers per vehicle, a hard stop every two hours, and no ambition to sightsee.'],
-             ['','Border Prep','Passports, vehicle papers and the Botswana road levy ready at Buitepos and Mamuno — cash helps.']]},
+   body:'The width of Botswana on straight tar. No border today, no gravel, nothing to see — just distance, rotated drivers, and friends waiting at the other end.',
+   callouts:[['warn','Right at the Limit','680 km is the longest drive of the trip and sits exactly on the eight-hour rule. Two drivers per vehicle, a hard stop every two hours, wheels at 06:30.'],
+             ['','Empty Middle','300 km of nothing between Ghanzi and Kang. Full tanks leaving Ghanzi, and water in the cab, not the trailer.']]},
 
-  {id:'day8',num:'Day 08',title:'The Home Run',from:'Gaborone',to:'Johannesburg',dist:'350',time:'~4.5 hrs',scene:'grassland',
+  {id:'day9',num:'Day 09',title:'The Home Run',from:'Gaborone',to:'Johannesburg',dist:'350',time:'~4.5 hrs',scene:'grassland',
    photos:[
      {f:'Kalahari Trails, Red Dune Route, Northern Cape, South Africa (20541582945).jpg', t:'Last Morning', c:'Wikimedia (CC BY-SA)'},
    ],
@@ -1315,7 +1331,7 @@ const days = [
    badges:[['100% Asphalt','b-asphalt'],['Tlokweng Border','b-gravel']],route:'N4 via Tlokweng/Kopfontein — back on the highveld by lunch',
    stay:'Home',
    body:'A short, easy hop to close the circuit. Back in Joburg early enough to wash the dust off the rigs and still have the afternoon.',
-   callouts:[['gold','Bring It Home','Eight days, seven nights, roughly 3,490 km — and only five of them with real driving in.']]},
+   callouts:[['gold','Bring It Home','Nine days, eight nights, roughly 3,600 km — and two full days that never moved.']]},
 ];
 
 const dayCards = document.getElementById('dayCards');
@@ -1698,7 +1714,7 @@ function renderHeroDate(){
 function applyRouteLock(){
   // the route is final — just draw the homeward leg
   geoShowRoute('2', true);
-  if(GEO) GEO.setFrame(['joburg','kuruman','hobas','aus','sesriem','gaborone']);
+  if(GEO) GEO.setFrame(['joburg','kuruman','hobas','aus','sesriem','ghanzi','gaborone']);
 }
 
 /* Which stays actually count toward planning progress and the cost
@@ -1726,8 +1742,9 @@ const LEGS = {
   4:{ t:'Fish River Canyon → Sesriem via Aus' },
   5:{ t:'Sossusvlei · dune day' },
   6:{ t:'Sesriem → Gobabis' },
-  7:{ t:'Gobabis → Gaborone · The Big Crush' },
-  8:{ t:'Gaborone → Johannesburg' },
+  7:{ t:'Gobabis → Ghanzi · into Botswana' },
+  8:{ t:'Ghanzi → Gaborone · the long haul' },
+  9:{ t:'Gaborone → Johannesburg' },
 };
 function tripDay(){
   const o = new URLSearchParams(location.search).get('liveday');   // demo/testing override
@@ -1739,7 +1756,7 @@ let LIVE = { checkins:[], photos:[], names:{}, crewCount:0, subscribed:false };
 
 function startLive(){
   const d = tripDay();
-  const live = d>=1 && d<=8;
+  const live = d>=1 && d<=9;
   document.body.classList.toggle('live-mode', live);
   document.getElementById('livebar').style.display = live ? 'flex' : 'none';
   if(live){
@@ -2025,7 +2042,7 @@ async function loadCosts(){
   if(ts && ts.deposit_auto && auto != null) ts.deposit_amount = auto;
   const bas = document.getElementById('depBasis');
   if(bas) bas.textContent = (ts?.deposit_auto && auto != null)
-    ? 'This is your share of the accommodation — every camp, all eight days.'
+    ? 'This is your share of the accommodation — every camp, all nine days.'
     : '';
   if(ts){
     document.getElementById('depositAmt').textContent = ts.deposit_amount ? Number(ts.deposit_amount).toLocaleString('en-ZA') : '—';
@@ -2621,7 +2638,8 @@ const WAYPOINTS = {
   sesriem: { ll:[-24.4880, 15.8000], name:'Sesriem',           sub:'Days 4–5 · Sossusvlei', short:'D4-5',go:'day4' },
   swakop:  { ll:[-22.6784, 14.5258], name:'Swakopmund',        sub:'Route 1',               short:'R1',  go:'day6', cls:'r1' },
   gobabis: { ll:[-22.4500, 18.9667], name:'Gobabis',           sub:'Day 6 · Zelda',         short:'D6',  go:'day7' },
-  gaborone:{ ll:[-24.6282, 25.9231], name:'Gaborone',          sub:'Day 7 · Gaborone',      short:'D7',  go:'day7', cls:'r2' },
+  ghanzi:  { ll:[-21.7000, 21.6500], name:'Ghanzi',            sub:'Day 7 · San country',   short:'D7',  go:'day7', cls:'r2' },
+  gaborone:{ ll:[-24.6282, 25.9231], name:'Gaborone',          sub:'Day 8 · Gaborone',      short:'D8',  go:'day8', cls:'r2' },
 };
 let GEO = null;   // { map, r1Layer, r2Layer } once Leaflet is up
 function initGeoMap(){
@@ -2668,7 +2686,8 @@ function initGeoMap(){
       .addTo(map);
   }));
   const r1Layer = L.layerGroup([ L.polyline([P('sesriem'),P('swakop'),P('gobabis'),P('joburg')], { color:'#74b7c0', weight:3 }), mk('swakop','#74b7c0') ]);
-  const r2Layer = L.layerGroup([ L.polyline([P('sesriem'),P('gobabis'),P('gaborone'),P('joburg')], { color:'#a6b366', weight:3 }), mk('gaborone','#a6b366') ]);
+  const r2Layer = L.layerGroup([ L.polyline([P('sesriem'),P('gobabis'),P('ghanzi'),P('gaborone'),P('joburg')], { color:'#a6b366', weight:3 }),
+                                 mk('ghanzi','#a6b366'), mk('gaborone','#a6b366') ]);
   GEO = { map, r1Layer, r2Layer,
     setFrame(keys){
       GEO.frameKeys = keys;
@@ -2679,7 +2698,7 @@ function initGeoMap(){
       map.setMaxBounds(GEO.bounds.pad(0.25)); // pan stays around the route
       GEO.updateLabels?.();                   // re-evaluate compact vs full labels
     } };
-  GEO.setFrame(['joburg','kuruman','hobas','aus','sesriem','gaborone','swakop']);
+  GEO.setFrame(['joburg','kuruman','hobas','aus','sesriem','ghanzi','gaborone','swakop']);
   window.addEventListener('resize', ()=>{ map.invalidateSize(); if(GEO.frameKeys) GEO.setFrame(GEO.frameKeys); });
   // compact day badges at the base zoom (no overlap); full labels once zoomed in
   const updateLabels = ()=>{
